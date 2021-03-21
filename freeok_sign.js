@@ -18,7 +18,7 @@ const puppeteer = require('puppeteer');
       page.click('#login'),    
     ])
     .then(function () {
-      console.log('登录成功');
+      ('登录成功');
     })
     .catch(function (err) {
       console.log('登录失败');
@@ -66,4 +66,5 @@ const puppeteer = require('puppeteer');
     await page.waitFor(3000);
     const inner_html = await page.evaluate( () => document.querySelector( '#msg' ).innerHTML );
     console.log( inner_html );
+    await browser.close();
 })().catch(error => console.log('error: ', error.message));
