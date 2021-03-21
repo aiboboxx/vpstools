@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "puppeteer": "^8.0.0"
+  },
+  "name": "dailyjob",
+  "version": "1.0.0",
+  "main": "freeok_buy.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "node freeok_sign.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
