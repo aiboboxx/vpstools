@@ -1,24 +1,22 @@
 {
-  "dependencies": {
-    "@actions/github": "^4.0.0",
-    "puppeteer": "^8.0.0"
-  },
   "name": "dailyjob",
   "version": "1.0.0",
   "main": "freeok_sign.js",
   "private": true,
   "scripts": {
-    "sign": "node freeok_sign.js",
-    "build": "node build/build.js"
+    "test": "node test.js"
   },
   "author": "爱波波的XX <aiboboxx@gmail.com> (https://www.aiboboxx.ml)",
   "license": "ISC",
   "description": "freeok自动签到续费",
-  "engines": {
-    "node": ">= 6.0.0",
-    "npm": ">= 3.0.0"
-  },
   "homepage": "https://www.aiboboxx.ml",
   "repository": "github:aiboboxx/dailyjob",
-  "bugs": "https://github.com/aiboboxx/dailyjob/issues"
+  "bugs": "https://github.com/aiboboxx/dailyjob/issues",
+  "devDependencies": {
+    "puppeteer": "^8.0.0"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0"
+  }
 }
