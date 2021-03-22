@@ -12,7 +12,7 @@ try {
   console.log(`The event payload: ${payload}`);
   console.log('runId:'+ github.context.runId);
   //console.log('GITHUB_ACTION:' + github.context.payload.private);
-  //console.log('AT_GIT_ACTION:' + github.context.AT_GIT_ACTION);
+  console.log('环境变量AT_GIT_ACTION:' + process.env.AT_GIT_ACTION);
 } catch (error) {
   core.setFailed(error.message);
 }

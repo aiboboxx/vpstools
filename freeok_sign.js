@@ -68,6 +68,6 @@ const github = require('@actions/github');
     });  
     await page.waitFor(3000);
     const inner_html = await page.evaluate( () => document.querySelector( '#msg' ).innerHTML );
-    console.log( "#msg" + inner_html );
+    console.log( "购买套餐结果: " + inner_html );
     if ( runId?true:false ) await browser.close();
 })().catch(error => console.log('error: ', error.message));

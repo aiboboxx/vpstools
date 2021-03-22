@@ -1,0 +1,1 @@
+[![testyml](https://github.com/aiboboxx/dailyjob/actions/workflows/test.yml/badge.svg)](https://github.com/aiboboxx/dailyjob/actions/workflows/test.yml)
