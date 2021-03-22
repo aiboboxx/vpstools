@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const github = require('@actions/github');
+//const github = require('@actions/github');
 
 (async () => {
   const browser = await puppeteer.launch({ headless: false });
