@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 //const github = require('@actions/github');
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
   page.on('dialog', async dialog => {
