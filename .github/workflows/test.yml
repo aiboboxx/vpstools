@@ -10,7 +10,13 @@ jobs:
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2
-              
+            - name: Cache multiple paths
+              uses: actions/cache@v2
+              with:
+                path: |
+                  ~/cache
+                  !~/cache/exclude
+                key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}  
             - name: Use Node.js
               uses: actions/setup-node@v1
               with:

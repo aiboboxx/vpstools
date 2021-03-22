@@ -10,9 +10,9 @@ try {
   // Get the JSON webhook payload for the event that triggered the workflow
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
-  console.log('github.action:'+ github.context.action);
+  console.log('runId:'+ github.context.runId);
   //console.log('GITHUB_ACTION:' + github.context.payload.private);
-  console.log('AT_GIT_ACTION:' + github.context.AT_GIT_ACTION);
+  //console.log('AT_GIT_ACTION:' + github.context.AT_GIT_ACTION);
 } catch (error) {
   core.setFailed(error.message);
 }
