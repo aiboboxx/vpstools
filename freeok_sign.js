@@ -1,8 +1,10 @@
 const puppeteer = require('puppeteer');
-//const github = require('@actions/github');
+const core = require('@actions/core');
+const github = require('@actions/github');
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: true });
+  let runId = github.context.runId;
+  const browser = await puppeteer.launch({ headless: runId?true:false });
   const page = await browser.newPage();
   // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
   page.on('dialog', async dialog => {
@@ -67,5 +69,5 @@ const puppeteer = require('puppeteer');
     await page.waitFor(3000);
     const inner_html = await page.evaluate( () => document.querySelector( '#msg' ).innerHTML );
     console.log( "#msg" + inner_html );
-    //await browser.close();
+    if ( runId?true:false ) await browser.close();
 })().catch(error => console.log('error: ', error.message));
