@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 
 (async () => {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
   page.on('dialog', async dialog => {
@@ -65,6 +65,6 @@ const puppeteer = require('puppeteer');
     });  
     await page.waitFor(3000);
     const inner_html = await page.evaluate( () => document.querySelector( '#msg' ).innerHTML );
-    console.log( inner_html );
-    await browser.close();
+    console.log( "#msg" + inner_html );
+    //await browser.close();
 })().catch(error => console.log('error: ', error.message));

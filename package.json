@@ -4,12 +4,21 @@
   },
   "name": "dailyjob",
   "version": "1.0.0",
-  "main": "freeok_buy.js",
+  "main": "freeok_sign.js",
+  "private": true,
   "devDependencies": {},
   "scripts": {
-    "test": "node freeok_sign.js"
+    "sign": "node freeok_sign.js",
+    "build": "node build/build.js"
   },
-  "author": "",
+  "author": "爱波波的XX <aiboboxx@gmail.com> (https://www.aiboboxx.ml)",
   "license": "ISC",
-  "description": ""
+  "description": "freeok自动签到续费",
+  "engines": {
+    "node": ">= 6.0.0",
+    "npm": ">= 3.0.0"
+  },
+  "homepage": "https://www.aiboboxx.ml",
+  "repository": "github:aiboboxx/dailyjob",
+  "bugs": "https://github.com/aiboboxx/dailyjob/issues"
 }
