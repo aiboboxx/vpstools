@@ -1,12 +1,12 @@
 {
   "dependencies": {
+    "@actions/github": "^4.0.0",
     "puppeteer": "^8.0.0"
   },
   "name": "dailyjob",
   "version": "1.0.0",
   "main": "freeok_sign.js",
   "private": true,
-  "devDependencies": {},
   "scripts": {
     "sign": "node freeok_sign.js",
     "build": "node build/build.js"
