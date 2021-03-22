@@ -2,19 +2,11 @@ const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-(async () => {
-  let runId = github.context.runId;
-  const browser = await puppeteer.launch({ headless: runId?true:false });
-  const page = await browser.newPage();
-  // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
-  page.on('dialog', async dialog => {
-    console.info(`➞ ${dialog.message()}`);
-    await dialog.dismiss();
-  });
+async function  fnFreeokSign (sEmail , sPasswd , page) {
   await page.goto('https://v2.freeok.xyz/auth/login');
   //await page.waitForSelector("#email");
-    await page.type('#email', 'eroslp@163.com', {delay: 20});
-    await page.type('#passwd', '780830lp', {delay: 20});
+    await page.type('#email', sEmail, {delay: 20});
+    await page.type('#passwd', sPasswd, {delay: 20});
     await Promise.all([
       page.waitForNavigation({timeout: 10000}), 
       //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
@@ -46,7 +38,7 @@ const github = require('@actions/github');
         console.log('今日已签到');
        }
     }
-    catch(err){
+    catch(err) {
       console.log('签到失败:' + err);
     }
    
@@ -69,5 +61,26 @@ const github = require('@actions/github');
     await page.waitFor(3000);
     const inner_html = await page.evaluate( () => document.querySelector( '#msg' ).innerHTML );
     console.log( "购买套餐结果: " + inner_html );
-    if ( runId?true:false ) await browser.close();
-})().catch(error => console.log('error: ', error.message));
+    await page.goto('https://v2.freeok.xyz/user/logout');
+}
+
+async function  main () {
+  let runId = github.context.runId;
+  const browser = await puppeteer.launch({ 
+    headless: runId?true:false ,
+    args: ['--window-size=1920,1080'],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true
+  });
+  const page = await browser.newPage();
+  // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
+  page.on('dialog', async dialog => {
+    console.info(`➞ ${dialog.message()}`);
+    await dialog.dismiss();
+  });
+  await fnFreeokSign('eroslp@163.com','780830lp',page);
+  if ( runId?true:false ) await browser.close();
+
+}
+
+main().catch(error => console.log('error: ', error.message));
