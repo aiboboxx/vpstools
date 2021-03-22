@@ -11,8 +11,8 @@ try {
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
   console.log('github.action:'+ github.context.action);
-  console.log(`GITHUB_ACTION: $GITHUB_ACTION`);
-  console.log('env.AT_GIT_ACTION:' + env.AT_GIT_ACTION);
+  console.log('GITHUB_ACTION:' + $GITHUB_ACTION);
+  console.log('env.AT_GIT_ACTION:' + $env.AT_GIT_ACTION);
 } catch (error) {
   core.setFailed(error.message);
 }
