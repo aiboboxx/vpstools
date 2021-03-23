@@ -92,7 +92,7 @@ async function  main () {
   for (let i =0; i < cookiesArr.length; i++) {
     let [email , pwd] =  cookiesArr[i].split('  ');
     console.log(`*****************开始freeok签到*******************\n`);   
-    await freeokSign(email,pwd,page);
+    if ( email&&pwd ) await freeokSign(email,pwd,page);
   }
   if ( runId?true:false ) await browser.close();
 }
