@@ -1,1 +1,2 @@
+[![dailyjob](https://github.com/aiboboxx/dailyjob/actions/workflows/work.yml/badge.svg)](https://github.com/aiboboxx/dailyjob/actions/workflows/work.yml)
 [![testyml](https://github.com/aiboboxx/dailyjob/actions/workflows/test.yml/badge.svg)](https://github.com/aiboboxx/dailyjob/actions/workflows/test.yml)

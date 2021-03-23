@@ -10,18 +10,17 @@ jobs:
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2
-            - name: Cache multiple paths
-              uses: actions/cache@v2
-              with:
-                path: ~/.npm
-                key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-                restore-keys: |
-                  ${{ runner.os }}-node-
             - name: Use Node.js
               uses: actions/setup-node@v1
               with:
                 node-version: '12.x'
-                
+            - name: Cache node_modules
+              uses: actions/cache@v2 # 使用 GitHub 官方的缓存 Action。
+              env:
+                cache-name: cache-node-modules
+              with:
+                path: node_modules
+                key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }}                
             - name: Run install
               run: npm install
               

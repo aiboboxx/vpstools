@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-async function  fnFreeokSign (sEmail , sPasswd , page) {
+async function  freeokSign (sEmail , sPasswd , page) {
   await page.goto('https://v2.freeok.xyz/auth/login');
   //await page.waitForSelector("#email");
     await page.type('#email', sEmail, {delay: 20});
@@ -32,7 +32,7 @@ async function  fnFreeokSign (sEmail , sPasswd , page) {
          console.log('签到成功');
        })
        .catch(function (err) {
-         console.log('签到失败');
+         console.log('签到超时');
        });
        } else {
         console.log('今日已签到');
@@ -78,7 +78,8 @@ async function  main () {
     console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await fnFreeokSign('eroslp@163.com','780830lp',page);
+  
+  await freeokSign('eroslp@163.com','780830lp',page);
   if ( runId?true:false ) await browser.close();
 
 }
