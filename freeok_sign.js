@@ -66,7 +66,18 @@ async function  freeokSign (sEmail , sPasswd , page) {
 
 async function  main () {
   let runId = github.context.runId;
-  const browser = await puppeteer.launch({ 
+  const jdCookieNode = require('./getCookie.js') ;
+  let cookiesArr = [], cookie = '';
+  if (runId) {
+    Object.keys(jdCookieNode).forEach((item) => {
+      cookiesArr.push(jdCookieNode[item])
+      console.log(`${item} : ${jdCookieNode[item]}`);
+    })
+    //if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
+  }else{
+    cookiesArr = ['eroslp@163.com  780830lp'];
+  }
+    const browser = await puppeteer.launch({ 
     headless: runId?true:false ,
     args: ['--window-size=1920,1080'],
     defaultViewport: null,
@@ -78,10 +89,11 @@ async function  main () {
     console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  
-  await freeokSign('eroslp@163.com','780830lp',page);
+  for (let i =0; i < cookiesArr.length; i++) {
+    let [email , pwd] =  cookiesArr[i].split('  ');
+    console.log(`*****************开始freeok签到*******************\n`);   
+    await freeokSign(email,pwd,page);
+  }
   if ( runId?true:false ) await browser.close();
-
 }
-
 main().catch(error => console.log('error: ', error.message));

@@ -14,7 +14,7 @@ on:
     
 env:
   FREEOK_ACCOUNTS: ${{ secrets.FREEOK_ACCOUNTS }}
-  PUSH_KEY: ${{ secrets.PUSH_KEY }}
+  FREEOK_COOKIS: ${{ secrets.FREEOK_COOKIS }}
   UPLOAD_BESULT_DIR: true
 
 jobs:
