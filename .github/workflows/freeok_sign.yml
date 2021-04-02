@@ -2,11 +2,7 @@ name: dailyjob
 
 on:
   repository_dispatch:
-  release:
-    types: published
-  # push:
-  #   branches:
-  #     - master
+  workflow_dispatch:
   schedule:
     - cron: 0 20 * * *
   watch:

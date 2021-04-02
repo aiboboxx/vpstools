@@ -1,9 +1,11 @@
+const fs = require("fs")
+const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
 async function  freeokSign (sEmail , sPasswd , page) {
-  await page.goto('https://v2.freeok.xyz/auth/login');
+    await page.goto('https://v2.freeok.xyz/auth/login');
   //await page.waitForSelector("#email");
     await page.type('#email', sEmail, {delay: 20});
     await page.type('#passwd', sPasswd, {delay: 20});
@@ -54,38 +56,31 @@ async function  freeokSign (sEmail , sPasswd , page) {
     const inner_html = await page.evaluate( () => document.querySelector( '#msg' ).innerHTML );
     console.log( "购买套餐结果: " + inner_html );
     await page.goto('https://v2.freeok.xyz/user/logout');
-}
+}  
 
 async function  main () {
-  let runId = github.context.runId;
-  const jdCookieNode = require('./getCookie.js') ;
-  let cookiesArr = [], cookie = '';
-  if (runId) {
-    Object.keys(jdCookieNode).forEach((item) => {
-      cookiesArr.push(jdCookieNode[item])
-      console.log(`${item} : ${jdCookieNode[item]}`);
-    })
-    //if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
-  }else{
-    cookiesArr = ['eroslp@163.com  780830lp','eroslp@139.com  780830lp'];
-  }
+    let runId = github.context.runId;
+    console.log(await sqlite.open('./freeok.db'))
     const browser = await puppeteer.launch({ 
-    headless: runId?true:false ,
-    args: ['--window-size=1920,1080'],
-    defaultViewport: null,
-    ignoreHTTPSErrors: true
-  });
-  const page = await browser.newPage();
-  // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
-  page.on('dialog', async dialog => {
-    console.info(`➞ ${dialog.message()}`);
-    await dialog.dismiss();
-  });
-  for (let i =0; i < cookiesArr.length; i++) {
-    let [email , pwd] =  cookiesArr[i].split('  ');
-    console.log(`*****************开始freeok签到*******************\n`);   
-    if ( email&&pwd ) await freeokSign(email,pwd,page);
-  }
-  if ( runId?true:false ) await browser.close();
+        headless: runId?true:false ,
+        args: ['--window-size=1920,1080'],
+        defaultViewport: null,
+        ignoreHTTPSErrors: true
+    });
+    const page = await browser.newPage();
+    // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
+    page.on('dialog', async dialog => {
+        console.info(`➞ ${dialog.message()}`);
+        await dialog.dismiss();
+    });
+    console.log(`*****************开始freeok签到*******************\n`);  
+    var sql = "SELECT * FROM freeok"
+    var r = await sqlite.all(sql, []);
+    for (const row of r) {
+      console.log("user:", row.id, row.usr, row.pwd);
+      if (row.usr&&row.pwd) await freeokSign(row.usr,row.pwd,page);
+     }
+    sqlite.close();
+    if ( runId?true:false ) await browser.close();
 }
 main().catch(error => console.log('error: ', error.message));
