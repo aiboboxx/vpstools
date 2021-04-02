@@ -1,4 +1,4 @@
-name: dailyjob
+name: freeok_sign
 
 on:
   repository_dispatch:

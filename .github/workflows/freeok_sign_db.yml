@@ -34,7 +34,7 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign.js
+              run: node freeok_sign_db.js
                 
             - name: Create report file
               run: date +%s > report.txt
@@ -44,3 +44,4 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 COMMIT_MESSAGE: Add build artifact
                 PULL_REQUEST_TITLE: Add build artifact
+              branch: main
