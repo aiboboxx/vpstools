@@ -34,14 +34,13 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign_db.js
-                
+              run: node freeok_sign_db.js               
             - name: Create report file
               run: date +%s > report.txt
-            - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v3
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                COMMIT_MESSAGE: Add build artifact
-                PULL_REQUEST_TITLE: Add build artifact
-              branch: main
+            - name: Commit report
+              run: |
+                git config --global user.name 'aiboboxx'
+                git config --global user.email 'aiboboxx@gmail.com'
+                git commit -am "Automated report"
+                git push
+              
