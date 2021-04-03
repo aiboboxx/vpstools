@@ -34,11 +34,12 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign_db.js #> report.txt             
+              run: node freeok_sign_db.js > report.txt             
             - name: Commit report
               run: |
                 git config --global user.name 'aiboboxx'
                 git config --global user.email 'aiboboxx@gmail.com'
-                git commit -am "Automated report $(date '+%Y-%m-%d')"
+                git add .
+                git commit -m "Automated report $(date '+%Y/%m/%d')"
                 git push
               
