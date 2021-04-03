@@ -1,10 +1,10 @@
-name: freeok_sign
+name: freeok_buy_db
 
 on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: 0 20 * * *
+   - cron: '*/30 * * * *'
   watch:
     types: started
     
@@ -34,11 +34,11 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign.js
-                
-            - name: Upload result file
-              uses: actions/upload-artifact@master
-              if: env.UPLOAD_BESULT_DIR == 'true'
-              with:
-                name: result
-                path: ./*.txt
+              run: node freeok_buy_db.js #> report.txt             
+            - name: Commit report
+              run: |
+                git config --global user.name 'aiboboxx'
+                git config --global user.email 'aiboboxx@gmail.com'
+                git commit -am "Automated report $(date '+%Y-%m-%d')"
+                git push
+              

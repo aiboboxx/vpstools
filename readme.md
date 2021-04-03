@@ -1,2 +1,2 @@
-[![dailyjob](https://github.com/aiboboxx/dailyjob/actions/workflows/work.yml/badge.svg)](https://github.com/aiboboxx/dailyjob/actions/workflows/work.yml)
+[![freeok_sign_db](https://github.com/aiboboxx/freeok_auto/actions/workflows/freeok_sign_db.yml/badge.svg)](https://github.com/aiboboxx/freeok_auto/actions/workflows/freeok_sign_db.yml)
 [![testyml](https://github.com/aiboboxx/dailyjob/actions/workflows/test.yml/badge.svg)](https://github.com/aiboboxx/dailyjob/actions/workflows/test.yml)

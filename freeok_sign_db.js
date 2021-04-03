@@ -62,7 +62,7 @@ async function  main () {
     const page = await browser.newPage();
     // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
     page.on('dialog', async dialog => {
-        console.info(`➞ ${dialog.message()}`);
+        //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok签到*******************\n`);  
