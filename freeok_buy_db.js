@@ -63,7 +63,7 @@ async function  main () {
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);  
-    var sql = "SELECT * FROM freeok WHERE balance != 0 and level_end_time < datetime('now');"
+    var sql = "SELECT * FROM freeok WHERE balance != 0 and level_end_time < datetime('now','+8 hours');"
     var r = await sqlite.all(sql, []);
     console.log(`共有${r.length}个账户要购买套餐`);
     for (let row of r) {
