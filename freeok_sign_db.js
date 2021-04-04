@@ -65,11 +65,11 @@ async function  main () {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     });
-    console.log(`*****************开始freeok签到*******************\n`);  
+    console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     var sql = "SELECT * FROM freeok"
     var r = await sqlite.all(sql, []);
     for (let row of r) {
-      console.log("user:", row.id, row.usr, row.pwd);
+      console.log("user:", row.id, row.usr);
       if (row.usr&&row.pwd) await freeokSign(row,page).then(row => {
         //console.log(row);
         sqlite.run("UPDATE freeok SET balance = ?, level_end_time = ?, update_time = datetime('now')  WHERE id = ?", [row.balance,row.level_end_time,row.id])

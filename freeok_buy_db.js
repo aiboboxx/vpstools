@@ -62,11 +62,12 @@ async function  main () {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     });
-    console.log(`*****************开始freeok购买套餐*******************\n`);  
-    var sql = "SELECT * FROM freeok WHERE balance != 0 and level_end_time < datetime('now','+8 hour');"
+    console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);  
+    var sql = "SELECT * FROM freeok WHERE balance != 0 and level_end_time < datetime('now');"
     var r = await sqlite.all(sql, []);
+    console.log(`共有${r.length}个账户要购买套餐`);
     for (let row of r) {
-      console.log("user:", row.id, row.usr, row.pwd);
+      console.log("user:", row.id, row.usr);
       if (row.usr&&row.pwd) await freeokBuy(row,page).then(row => {
         //console.log(row);
         sqlite.run("UPDATE freeok SET balance = ?, level_end_time = ?, update_time = datetime('now')  WHERE id = ?", [row.balance,row.level_end_time,row.id])

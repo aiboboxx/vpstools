@@ -34,7 +34,7 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign_db.js > report.txt             
+              run: node freeok_sign_db.js # > report.txt             
             - name: Commit report
               run: |
                 git config --global user.name 'aiboboxx'
