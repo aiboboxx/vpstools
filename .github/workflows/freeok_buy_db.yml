@@ -37,6 +37,7 @@ jobs:
               run: node freeok_buy_db.js # > report2.txt             
             - name: Commit report
               run: |
+                echo  "freeok_buy_db运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
                 git config --global user.name 'aiboboxx'
                 git config --global user.email 'aiboboxx@gmail.com'
                 git add .
