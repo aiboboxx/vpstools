@@ -16,6 +16,18 @@
             "name": "freeok_buy_db",
             "request": "launch",
             "program": "${workspaceFolder}\\freeok_buy_db.js"
+        },
+        {
+            "type": "pwa-node",
+            "name": "freeok_getrss",
+            "request": "launch",
+            "program": "${workspaceFolder}\\freeok_getrss.js"
+        },
+        {
+            "type": "pwa-node",
+            "name": "matters_post",
+            "request": "launch",
+            "program": "${workspaceFolder}\\matters_post.js"
         }
     ]
 }
