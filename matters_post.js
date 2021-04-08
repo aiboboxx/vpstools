@@ -3,11 +3,12 @@ const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
-
+const myfuns = require('./myfuns.js');
+Date.prototype.Format = myfuns.Format;
 async function  mattersPost (rsss,page) {
     await page.goto('https://matters.news/');
     await page.waitForSelector('#__next > div > main > article > header > section > section > section > button.jsx-2415535273.container.isTransparent.centering-y.spacing-x-loose.bg-active-grey-lighter > div > div');
-    await page.waitFor(1000);
+    await page.waitFor(500);
     await page.click('#__next > div > main > article > header > section > section > section > button.jsx-2415535273.container.isTransparent.centering-y.spacing-x-loose.bg-active-grey-lighter > div > div');
     await page.waitForSelector('#field-email');
     //await page.waitFor(1000);
@@ -40,55 +41,26 @@ https://www.aiboboxx.ml/post/v2ray-mian-fei-dian-yue-di-zhi
         );
     await page.waitForSelector("#__next > div > main > article > header > section > section.jsx-1977480329.right > button > div > span > span");
     await page.waitFor(1000);
-    await Promise.all([
+    page.click('#__next > div > main > article > header > section > section.jsx-1977480329.right > button > div > span > span');
+/*     await Promise.all([
         page.click('#__next > div > main > article > header > section > section.jsx-1977480329.right > button > div > span > span'),
         page.waitForNavigation()  
-    ]);
+    ]); */
+    await page.waitFor(1500);
     await page.waitForSelector("body > reach-portal > div:nth-child(3) > div > div > div.l-container.full > div > div > header > section.jsx-53354085.right > button > div > span > span");
     await page.waitFor(1500);
     await Promise.all([
-        page.click('body > reach-portal > div:nth-child(3) > div > div > div.l-container.full > div > div > header > section.jsx-53354085.right > button > div > span > span'),
+        page.click('body > reach-portal > div:nth-child(3) > div > div > div.l-container.full > div > div > header > section.jsx-53354085.right > button > div > span > span')
+        .then(()=>console.log(`最后发布`)),
         page.waitForNavigation()  
     ]);
 }  
-// 对Date的扩展，将 Date 转化为指定格式的String  
-// 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，   
-// 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)   
-// 例子：   
-// (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423   
-// (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18   
-  
-Date.prototype.Format = function(fmt){  
-    var o = {  
-         "M+": this.getMonth()+1,  
-         "d+": this.getDate(),  
-         "H+": this.getHours(),  
-         "m+": this.getMinutes(),  
-         "s+": this.getSeconds(),  
-         "S+": this.getMilliseconds()  
-    };  
-    //因位date.getFullYear()出来的结果是number类型的,所以为了让结果变成字符串型，下面有两种方法：  
-    if(/(y+)/.test(fmt)){  
-        //第一种：利用字符串连接符“+”给date.getFullYear()+""，加一个空字符串便可以将number类型转换成字符串。  
-  
-        fmt=fmt.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length));  
-    }  
-    for(var k in o){  
-        if (new RegExp("(" + k +")").test(fmt)){  
-  
-            //第二种：使用String()类型进行强制数据类型转换String(date.getFullYear())，这种更容易理解。  
-  
-            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(String(o[k]).length)));  
-        }  
-    }     
-    return fmt;  
-}
 async function  main () {
     let runId = github.context.runId;
         console.log(await sqlite.open('./freeok.db'))
     const browser = await puppeteer.launch({ 
         headless: runId?true:false ,
-        args: ['--window-size=1920,1080'],
+        args: ['--window-size=1920,1080','--proxy-server=127.0.0.1:10809'],
         defaultViewport: null,
         ignoreHTTPSErrors: true
     });

@@ -3,7 +3,7 @@ const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
-
+const myfuns = require('./myfuns.js');
 async function  freeokSign (row,page) {
     await page.goto('https://v2.freeok.xyz/auth/login');
   //await page.waitForSelector("#email");
@@ -46,7 +46,11 @@ async function  freeokSign (row,page) {
     inner_html = inner_html.split(';')[1];
     console.log( "等级过期时间: " +  inner_html);
     row.level_end_time = inner_html;
-    await page.goto('https://v2.freeok.xyz/user/logout');
+    //await page.goto('https://v2.freeok.xyz/user/logout');
+    //await page.deleteCookie();
+    //const client = await page.target().createCDPSession()		
+		//await await client.send('Network.clearBrowserCookies')
+    await myfuns.clearBrowser(page); //clear all cookies
     return row;
 }  
 
@@ -66,15 +70,20 @@ async function  main () {
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
-    var sql = "SELECT * FROM freeok"
-    var r = await sqlite.all(sql, []);
+    let sql = "SELECT * FROM freeok order by update_time asc;"
+    let r = await sqlite.all(sql, []);
+    let i = 0;
     for (let row of r) {
-      console.log("user:", row.id, row.usr);
-      if (row.usr&&row.pwd) await freeokSign(row,page).then(row => {
+      i++;
+      console.log("user:",i, row.id, row.usr);      
+      if (i % 3 == 0) await myfuns.Sleep(3000).then(() =>  console.log('暂停3秒！'));
+      if (row.usr&&row.pwd) await freeokSign(row,page)
+        .then(row => {
         //console.log(row);
         sqlite.run("UPDATE freeok SET balance = ?, level_end_time = ?, update_time = datetime('now')  WHERE id = ?", [row.balance,row.level_end_time,row.id])
-        .then((reslut)=>console.log(reslut))
+        .then((reslut)=>{console.log(reslut);myfuns.Sleep(1000);})
       });
+
      }
     sqlite.close();
     if ( runId?true:false ) await browser.close();
