@@ -63,15 +63,18 @@ async function  main () {
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);  
-    var sql = "SELECT * FROM freeok WHERE (balance != 0 or balance is null) and (level_end_time < datetime('now','+8 hours') or level_end_time is null);"
-    var r = await sqlite.all(sql, []);
+    let sql = "SELECT * FROM freeok WHERE (balance != 0 or balance is null) and (level_end_time < datetime('now') or level_end_time is null);"
+    let r = await sqlite.all(sql, []);
+    let i = 0;
     console.log(`共有${r.length}个账户要购买套餐`);
     for (let row of r) {
+      i++;
       console.log("user:", row.id, row.usr);
+      if (i % 3 == 0) await myfuns.Sleep(3000).then(() =>  console.log('暂停3秒！'));
       if (row.usr&&row.pwd) await freeokBuy(row,page).then(row => {
         //console.log(row);
-        sqlite.run("UPDATE freeok SET balance = ?, level_end_time = ?, update_time = datetime('now')  WHERE id = ?", [row.balance,row.level_end_time,row.id])
-        .then((reslut)=>console.log(reslut))
+        sqlite.run("UPDATE freeok SET balance = ?, level_end_time = ?  WHERE id = ?", [row.balance,row.level_end_time,row.id])
+        .then((reslut)=>{console.log(reslut);myfuns.Sleep(1000);})
       });
      }
     sqlite.close();

@@ -81,16 +81,22 @@ async function  main () {
     });
     console.log(`*****************开始matters发帖 ${Date()}*******************\n`);  
     var rsss = '';
-    var sql = "SELECT * FROM freeok WHERE id > 3  ORDER BY RANDOM() limit 3;"
+    var sql = "SELECT id, rss FROM freeok WHERE id > 3  ORDER BY sendout_time asc limit 3;"
     var r = await sqlite.all(sql, []);
     console.log(`共有${r.length}个账户要发布`);
     for (let row of r) {
       //console.log("user:", row.usr ,row.rss);
       rsss = rsss + row.rss +'\n';
+      //await sqlite.run("UPDATE freeok SET  sendout_time = datetime('now')  WHERE id = ?", [row.id]);
     }
     console.log(rsss);
-    sqlite.close();
-    await mattersPost(rsss,page);
+    
+    await mattersPost(rsss,page).then(()=>{
+        for (let row of r) {
+            sqlite.run("UPDATE freeok SET  sendout_time = datetime('now')  WHERE id = ?", [row.id]);
+          }
+    });
+    sqlite.close(); 
     if ( runId?true:false ) await browser.close();
 }
 main().catch(error => console.log('error: ', error.message));

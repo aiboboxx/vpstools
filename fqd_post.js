@@ -12,7 +12,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 Date.prototype.Format = myfuns.Format;
 async function  autoPost (rsss,page) {
-    let selecter;
+    var selecter;
     await page.goto('https://fanqiangdang.com/forum.php');
     await myfuns.Sleep(7000);
     selecter = '#ls_username';
@@ -25,19 +25,28 @@ async function  autoPost (rsss,page) {
     });
     //await page.waitFor(1000);
     //await page.type(selecter, 'eroslp');
-    await page.evaluate( () => document.querySelector('#ls_username').value = 'eroslp').then(()=>console.log('用户名：eroslp'));
+    await page.evaluate(() => document.querySelector('#ls_username').value = 'eroslp').then(()=>console.log('用户名：eroslp'));
     //await page.type('#ls_password', '780830lp');
-    await page.evaluate( () => document.querySelector('#ls_password').value = '780830lp').then(()=>console.log('密码：780830lp'));
+    await page.evaluate(() => document.querySelector('#ls_password').value = '780830lp').then(()=>console.log('密码：780830lp'));
     selecter = '#lsform > div > div > table > tbody > tr:nth-child(2) > td.fastlg_l > button > em';
     await Promise.all([
-      page.waitForNavigation(), 
+      page.waitForNavigation({timeout:10000}), 
       //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
-      page.click(selecter),    
+      page.click(selecter)   
     ])
-    .then( () =>  console.log ('登录成功'))
-    .catch( (err) => {
+    .then(()=>console.log ('登录成功'))
+    .catch(async (err) => {
         console.log ("登录失败: "+ err);
-        throw new Error("登录失败,返回");
+        await Promise.all([
+            page.waitForNavigation({timeout:20000}), 
+            //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
+            page.evaluate(() => document.querySelector('#lsform > div > div > table > tbody > tr:nth-child(2) > td.fastlg_l > button > em').click())    
+          ])
+          .then(()=>console.log ('又登录成功'),
+                err=>{
+                    console.log ("又登录失败: "+ err);
+                    return Promise.reject(new Error('登录失败，返回'));
+                });
         });
     await page.goto('https://fanqiangdang.com/forum.php?mod=post&action=newthread&fid=51');
     //await page.waitFor(1500);
@@ -95,16 +104,20 @@ async function  main () {
     });
     console.log(`*****************开始matters发帖 ${Date()}*******************\n`);  
     var rsss = '';
-    var sql = "SELECT * FROM freeok WHERE id > 3  ORDER BY RANDOM() limit 3;"
+    var sql = "SELECT id, rss FROM freeok WHERE id > 3  ORDER BY sendout_time asc limit 3;"
     var r = await sqlite.all(sql, []);
     console.log(`共有${r.length}个账户要发布`);
     for (let row of r) {
       //console.log("user:", row.usr ,row.rss);
       rsss = rsss + row.rss +'\n';
     }
-    console.log(rsss);
+    console.log(rsss); 
+    await autoPost(rsss,page).then(()=>{
+        for (let row of r) {
+            sqlite.run("UPDATE freeok SET  sendout_time = datetime('now')  WHERE id = ?", [row.id]);
+          }
+    });
     sqlite.close();
-    await autoPost(rsss,page);
     if ( runId?true:false ) await browser.close();
 }
 main().catch(error => console.log('error: ', error.message));
