@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
     
 
         {
@@ -29,6 +30,12 @@
             "name": "matters_post",
             "request": "launch",
             "program": "${workspaceFolder}\\matters_post.js"
+        },
+        {
+            "type": "pwa-node",
+            "name": "fqd_post",
+            "request": "launch",
+            "program": "${workspaceFolder}\\fqd_post.js"
         }
     ]
 }

@@ -4,14 +4,21 @@ const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
+//const puppeteer = require('puppeteer-extra')
+//const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+//puppeteer.use(StealthPlugin())
 Date.prototype.Format = myfuns.Format;
 async function  mattersPost (rsss,page) {
+    let selecter;
     await page.goto('https://matters.news/');
-    await page.waitForSelector('#__next > div > main > article > header > section > section > section > button.jsx-2415535273.container.isTransparent.centering-y.spacing-x-loose.bg-active-grey-lighter > div > div');
-    await page.waitFor(500);
-    await page.click('#__next > div > main > article > header > section > section > section > button.jsx-2415535273.container.isTransparent.centering-y.spacing-x-loose.bg-active-grey-lighter > div > div');
-    await page.waitForSelector('#field-email');
-    //await page.waitFor(1000);
+    selecter = '#__next > div > main > article > header > section > section > section > button.jsx-2415535273.container.isTransparent.centering-y.spacing-x-loose.bg-active-grey-lighter > div > div';
+    await page.waitForSelector(selecter);
+    await page.click(selecter);
+    await myfuns.Sleep(2000);
+    await page.waitForSelector('#field-email',{timeout:5000}).catch(async ()=>{        
+        await page.click(selecter);
+        await page.waitForSelector('#field-email',{timeout:5000})
+    });
     await page.type('#field-email', 'aiboboxx@gmail.com');
     await page.type('#field-password', '780830lp');
     await Promise.all([
@@ -57,12 +64,14 @@ https://www.aiboboxx.ml/post/v2ray-mian-fei-dian-yue-di-zhi
 }  
 async function  main () {
     let runId = github.context.runId;
-        console.log(await sqlite.open('./freeok.db'))
+
+    console.log(await sqlite.open('./freeok.db'))
     const browser = await puppeteer.launch({ 
         headless: runId?true:false ,
-        args: ['--window-size=1920,1080','--proxy-server=127.0.0.1:10809'],
+        args: ['--window-size=1920,1080',runId?'':'--proxy-server=127.0.0.1:10809'],
         defaultViewport: null,
-        ignoreHTTPSErrors: true
+        ignoreHTTPSErrors: true,
+        ignoreDefaultArgs: ["--enable-automation"]
     });
     const page = await browser.newPage();
     // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出

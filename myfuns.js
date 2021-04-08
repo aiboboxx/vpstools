@@ -19,17 +19,29 @@ const Format = function(fmt){
         for (var k in o)
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
         return fmt;
-	}
+}
 exports.Format = Format ;
 
 function Sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
-	}
+}
 exports.Sleep = Sleep ;
 
 async function clearBrowser (page) {
 		// clear cookies
 		const client = await page.target().createCDPSession()		
 		await await client.send('Network.clearBrowserCookies')
-	}
+}
 exports.clearBrowser = clearBrowser ;
+
+    //find frame index
+async function findFrames (page) {
+	const frames = await page.mainFrame().childFrames();   
+    let i = 0;
+    for (let frame of frames){
+        i++;
+		console.log(frames.length,frame.setContent(i));
+	}
+	
+}
+exports.findFrames = findFrames ;
