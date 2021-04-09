@@ -3,7 +3,7 @@ const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
-
+const myfuns = require('./myfuns.js');
 async function  freeokBuy (row,page) {
     await page.goto('https://v2.freeok.xyz/auth/login');
   //await page.waitForSelector("#email");
