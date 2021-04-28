@@ -1,8 +1,9 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
-    
+
+
+
 
         {
             "type": "pwa-node",
@@ -11,13 +12,13 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\freeok_sign_db.js"
+            "program": "${workspaceFolder}\\freeok_sign.js"
         },
         {
             "type": "pwa-node",
-            "name": "freeok_buy_db",
+            "name": "freeok_buy",
             "request": "launch",
-            "program": "${workspaceFolder}\\freeok_buy_db.js"
+            "program": "${workspaceFolder}\\freeok_buy.js"
         },
         {
             "type": "pwa-node",
@@ -36,6 +37,18 @@
             "name": "fqd_post",
             "request": "launch",
             "program": "${workspaceFolder}\\fqd_post.js"
+        },
+        {
+            "type": "pwa-node",
+            "name": "test",
+            "request": "launch",
+            "program": "${workspaceFolder}\\test.js"
+        },
+        {
+            "type": "pwa-node",
+            "name": "mysqltest",
+            "request": "launch",
+            "program": "${workspaceFolder}\\mysqltest.js"
         }
     ]
 }

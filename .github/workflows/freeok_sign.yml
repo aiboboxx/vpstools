@@ -1,10 +1,10 @@
-name: matters_post
+name: freeok_sign
 
 on:
   repository_dispatch:
   workflow_dispatch:
-#  schedule:
-#    - cron: 0 21 * * *
+  schedule:
+    - cron: '59 */12 * * *'
   watch:
     types: started
     
@@ -16,7 +16,7 @@ env:
 jobs:
     build:
         runs-on: ubuntu-latest
-        timeout-minutes: 5
+        timeout-minutes: 10
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2 
@@ -34,6 +34,11 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node matters_post.js # > report.txt             
-           
+              run: node freeok_sign.js # > report.txt             
+#            - name: Commit report
+#              run: |
+#                echo  "freeok_sign_db运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt 
+#                git config --global user.email 'eroslp99@gmail.com'
+#                git commit -am "Automated report $(date '+%Y/%m/%d')"
+#                git push
               

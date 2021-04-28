@@ -48,7 +48,7 @@ async function  autoPost (rsss,page) {
                     return Promise.reject(new Error('登录失败，返回'));
                 });
         });
-    await page.goto('https://fanqiangdang.com/forum.php?mod=post&action=newthread&fid=51');
+    await page.goto('https://fanqiangdang.com/forum.php?mod=post&action=newthread&fid=36');
     //await page.waitFor(1500);
     selecter = '#typeid_ctrl';
     await page.waitForSelector(selecter);

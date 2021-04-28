@@ -1,10 +1,10 @@
-name: matters_post
+name: freeok_buy
 
 on:
   repository_dispatch:
   workflow_dispatch:
-#  schedule:
-#    - cron: 0 21 * * *
+  schedule:
+    - cron: '59 */2 * * *'
   watch:
     types: started
     
@@ -34,6 +34,12 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node matters_post.js # > report.txt             
-           
+              run: node freeok_buy.js # > report2.txt             
+            - name: Commit report
+              run: |
+                echo  "freeok_buy运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt   
+                git config --global user.name 'eroslp99'
+                git config --global user.email 'eroslp99@gmail.com'
+                git commit -am "Automated report $(date '+%Y/%m/%d')"
+                git push
               

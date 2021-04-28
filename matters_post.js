@@ -59,7 +59,7 @@ https://www.aiboboxx.ml/post/v2ray-mian-fei-dian-yue-di-zhi
     await Promise.all([
         page.click('body > reach-portal > div:nth-child(3) > div > div > div.l-container.full > div > div > header > section.jsx-53354085.right > button > div > span > span')
         .then(()=>console.log(`最后发布`)),
-        page.waitForNavigation()  
+        page.waitFor(3000)
     ]);
 }  
 async function  main () {
