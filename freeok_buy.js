@@ -66,7 +66,7 @@ async function  freeokBuy (row,page) {
     //是否清空fetcher
     if (row.last_userd_time === null){
       date = new Date(row.regtime);
-      if ((Date.now()-date.getTime())/(24*60*60*1000)>2){
+      if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
         if (row.fetcher !== null){
           await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
           row.fetcher = null;
@@ -74,7 +74,7 @@ async function  freeokBuy (row,page) {
       }
     }else{
       date = new Date(row.last_used_time);
-      if ((Date.now()-date.getTime())/(24*60*60*1000)>2){
+      if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
         if (row.fetcher !== null){
           await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
           row.fetcher = null;
