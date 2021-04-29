@@ -4,7 +4,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 6,18 * * *'
   watch:
     types: started
     
@@ -34,11 +34,12 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign.js # > report.txt             
-#            - name: Commit report
-#              run: |
-#                echo  "freeok_sign_db运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt 
-#                git config --global user.email 'eroslp99@gmail.com'
-#                git commit -am "Automated report $(date '+%Y/%m/%d')"
-#                git push
+              run: node freeok_sign.js  > report.txt             
+            - name: Commit report
+              run: |
+                echo  "freeok_sign_db运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt
+                git config --global user.name 'aiboboxx' 
+                git config --global user.email 'aiboboxx@gmail.com'
+                git commit -am "Automated report $(date '+%Y/%m/%d')"
+                git push
               

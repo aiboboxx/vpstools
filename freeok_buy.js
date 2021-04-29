@@ -64,7 +64,7 @@ async function  freeokBuy (row,page) {
     //console.log( "rss: " + inner_html);
     row.rss = inner_html;
     //是否清空fetcher
-    if (row.last_userd_time === null){
+/*     if (row.last_userd_time === null){
       date = new Date(row.regtime);
       if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
         if (row.fetcher !== null){
@@ -80,7 +80,7 @@ async function  freeokBuy (row,page) {
           row.fetcher = null;
         }
       }
-    } 
+    }  */
     //购买套餐
     date = new Date(row.level_end_time);
     if  (date.getTime() < Date.now()){
@@ -138,8 +138,8 @@ async function  main () {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
           //sql = `UPDATE freeok SET balance = '${row.balance}', level_end_time = '${row.level_end_time}', rss = '${row.rss}' WHERE id =${row.id};`;
-          sql = 'UPDATE `freeok` SET `balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `fetcher` = ?, `update_time` = NOW() WHERE `id` = ?';
-          arr = [row.balance, row.level_end_time, row.rss, row.last_used_time ,row.fetcher ,row.id];
+          sql = 'UPDATE `freeok` SET `balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
+          arr = [row.balance, row.level_end_time, row.rss, row.last_used_time ,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
