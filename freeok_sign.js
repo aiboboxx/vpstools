@@ -5,6 +5,7 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
 const mysql = require('mysql2/promise');
+const { maxHeaderSize } = require("http");
 const pool = mysql.createPool({
   host: 'app.aiboboxx.ml',
   user: 'aiboboxx',
@@ -16,14 +17,16 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 async function  freeokSign  (row,page) {
-    let inner_html, date;
+    //let inner_html, date;
     await myfuns.clearBrowser(page); //clear all cookies
     await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
-  //await page.waitForSelector("#email");
+    await myfuns.Sleep(1000);
+    //await page.waitForSelector("#email");
     await page.type('#email', row.usr, {delay: 20});
     await page.type('#passwd', row.pwd, {delay: 20});
+    await myfuns.Sleep(1000);
     await Promise.all([
-      page.waitForNavigation({timeout: 5000}), 
+      page.waitForNavigation({timeout: 10000}), 
       //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
       page.click('#login'),    
     ])
@@ -41,58 +44,74 @@ async function  freeokSign  (row,page) {
       await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账户被限制'));
     }
-    //await page.goto('https://v2.freeok.xyz/user')
+    await myfuns.Sleep(1000);
+    let selecter, inner_html;
+    selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
+    await page.waitForSelector(selecter,{timeout:3000})
+    .then(async ()=>{
+      console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
+      //await page.goto('https://v2.freeok.xyz/user');
+    });
+    //余额
     inner_html = await page.evaluate(() => document.querySelector( 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div' ).innerHTML.trim());
     inner_html = inner_html.split(' ')[0];
     //console.log( "余额: " + inner_html);
     row.balance = Number(inner_html);
     //等级过期时间
-    inner_html = await page.evaluate( () => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );
+    inner_html = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );
     inner_html = inner_html.split(';')[1];
     //console.log( "等级过期时间: " +  inner_html);
     row.level_end_time = inner_html;
+    //上次签到时间
+/*     inner_html = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(29)').innerHTML.trim());
+    inner_html = inner_html.split(';')[1];
+    console.log( "上次签到时间: " +  inner_html);
+    row.last_signed_time = inner_html;  */   
     //上次使用时间
-    inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)" ).innerHTML.trim());
+    inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
     inner_html = inner_html.split(';')[1];
     console.log( "上次使用时间: " +  inner_html);
     if (inner_html == '从未使用')
       row.last_used_time = null;
     else
       row.last_used_time = inner_html;
-    //rss
+    
+      //rss
     inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
         //console.log( "rss: " + inner_html);
     row.rss = inner_html;
     //是否清空fetcher
-    if (row.last_userd_time === null){
-      date = new Date(row.regtime);
-      if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
-        if (row.fetcher !== null){
-          await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-          row.fetcher = null;
-        }
+    if (row.fetcher !== null){
+      let unixtimes = [
+        new Date(row.regtime).getTime(),
+        new Date(row.last_used_time).getTime(),
+        new Date(row.fetch_time).getTime()
+      ];
+      console.log((Date.now()-Math.max(...unixtimes))/(24*60*60*1000),unixtimes[1]<unixtimes[2]?0.5:1.5);
+      if ((Date.now()-Math.max(...unixtimes))/(24*60*60*1000)>(unixtimes[1]<unixtimes[2]?0.5:1.5)){
+        await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+        row.fetcher = null;
+        console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
+      }else{
+        console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
-    }else{
-      date = new Date(row.last_used_time);
-      if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
-        if (row.fetcher !== null){
-          await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-          row.fetcher = null;
-        }
-      }
-    } 
-    //await page.waitFor(1000);
+    }
+      //今日已用
+      selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
+      inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
+      console.log( "今日已用: " + inner_html);
+    await myfuns.Sleep(1500);
     await page.click('#checkin', {delay:200})
     .then(async ()=>{
-        await page.waitForFunction(
-          'document.querySelector("#msg").innerText.includes("获得了")',
-          {timeout:3000}
-        )
-        .then(async ()=>console.log('签到成功',await page.evaluate(()=>document.querySelector('#msg').innerHTML)))
+        await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")',{timeout:3000})
+        .then(async ()=>{
+          console.log('签到成功',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+          //await page.goto('https://v2.freeok.xyz/user');
+        })
         .catch((err)=>console.log('签到超时'));
       })
     .catch((err)=>console.log('今日已签到'));
-    await page.waitFor(1000);
+    await myfuns.Sleep(2000);
     return row;
 }  
 
@@ -112,8 +131,8 @@ async function  main () {
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by update_time asc limit 20;"
-    //let sql = "SELECT * FROM freeok where id >46 order by update_time asc limit 20;"
+    //let sql = "SELECT * FROM freeok where Invalid IS NULL and datediff(NOW(),last_signed_time)>1 order by sign_time asc limit 20;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 15;"
     let r =  await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要签到`);
@@ -125,9 +144,9 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-          //sql = `UPDATE freeok SET balance = '${row.balance}', level_end_time = '${row.level_end_time}', rss = '${row.rss}' WHERE id =${row.id};`;
-          sql = 'UPDATE `freeok` SET `balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `fetcher` = ?, `update_time` = NOW() WHERE `id` = ?';
-          arr = [row.balance, row.level_end_time, row.rss, row.last_used_time ,row.fetcher ,row.id];
+          //sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`last_signed_time`=?,`fetcher`=?,`sign_time`=NOW() WHERE `id`=?';
+          sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW() WHERE `id`=?';
+          arr = [row.balance,row.level_end_time,row.rss,row.last_used_time,row.fetcher,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)

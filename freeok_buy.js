@@ -16,7 +16,6 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 async function  freeokBuy (row,page) {
-    let inner_html, date;
     await myfuns.clearBrowser(page); //clear all cookies
     await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
   //await page.waitForSelector("#email");
@@ -41,6 +40,13 @@ async function  freeokBuy (row,page) {
       await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账户被限制'));
     }
+    let selecter,inner_html, date;
+    selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
+    await page.waitForSelector(selecter,{timeout:3000})
+    .then(async ()=>{
+      console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
+      //await page.goto('https://v2.freeok.xyz/user');
+    });
     //await page.goto('https://v2.freeok.xyz/user')
     inner_html = await page.evaluate(() => document.querySelector( 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div' ).innerHTML.trim());
     inner_html = inner_html.split(' ')[0];
@@ -63,24 +69,6 @@ async function  freeokBuy (row,page) {
     inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
     //console.log( "rss: " + inner_html);
     row.rss = inner_html;
-    //是否清空fetcher
-/*     if (row.last_userd_time === null){
-      date = new Date(row.regtime);
-      if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
-        if (row.fetcher !== null){
-          await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-          row.fetcher = null;
-        }
-      }
-    }else{
-      date = new Date(row.last_used_time);
-      if ((Date.now()-date.getTime())/(24*60*60*1000)>1.5){
-        if (row.fetcher !== null){
-          await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-          row.fetcher = null;
-        }
-      }
-    }  */
     //购买套餐
     date = new Date(row.level_end_time);
     if  (date.getTime() < Date.now()){
@@ -92,12 +80,12 @@ async function  freeokBuy (row,page) {
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
       });
-      await page.waitFor(1500)
+      await myfuns.Sleep(2500);
       await page.click('#coupon_input', {delay:200});
-      await page.waitFor(1500);
+      await myfuns.Sleep(2500);
       //await page.waitForSelector("#order_input");
       await page.click('#order_input', {delay:200});  
-      await page.waitFor(1500);
+      await myfuns.Sleep(2500);
       inner_html = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
       if (inner_html == '')
       console.log( "购买成功！");
@@ -124,7 +112,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 20;"
+    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 15;"
     //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
     let r =  await pool.query(sql);
     let i = 0;

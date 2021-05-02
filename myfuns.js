@@ -22,7 +22,7 @@ const Format = function(fmt){
 }
 exports.Format = Format ;
 
-function Sleep(ms) {
+async function Sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
 exports.Sleep = Sleep ;
