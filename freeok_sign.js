@@ -4,8 +4,8 @@ const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
+Date.prototype.Format = myfuns.Format;
 const mysql = require('mysql2/promise');
-const { maxHeaderSize } = require("http");
 const pool = mysql.createPool({
   host: 'app.aiboboxx.ml',
   user: 'aiboboxx',
@@ -62,12 +62,7 @@ async function  freeokSign  (row,page) {
     inner_html = inner_html.split(';')[1];
     //console.log( "等级过期时间: " +  inner_html);
     row.level_end_time = inner_html;
-    //上次签到时间
-/*     inner_html = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(29)').innerHTML.trim());
-    inner_html = inner_html.split(';')[1];
-    console.log( "上次签到时间: " +  inner_html);
-    row.last_signed_time = inner_html;  */   
-    //上次使用时间
+
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
     inner_html = inner_html.split(';')[1];
     console.log( "上次使用时间: " +  inner_html);
@@ -75,11 +70,6 @@ async function  freeokSign  (row,page) {
       row.last_used_time = null;
     else
       row.last_used_time = inner_html;
-    
-      //rss
-    inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
-        //console.log( "rss: " + inner_html);
-    row.rss = inner_html;
     //是否清空fetcher
     if (row.fetcher !== null){
       let unixtimes = [
@@ -91,16 +81,36 @@ async function  freeokSign  (row,page) {
       if ((Date.now()-Math.max(...unixtimes))/(24*60*60*1000)>(unixtimes[1]<unixtimes[2]?0.5:1.5)){
         await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
         row.fetcher = null;
-        console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
+        //console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
+        console.log('清空fetcher');
       }else{
-        console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
+        //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
     }
       //今日已用
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
       inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
-      console.log( "今日已用: " + inner_html);
-    await myfuns.Sleep(1500);
+      console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
+      if (inner_html.slice(-2) == 'GB'){
+        if (Number(inner_html.slice(0,inner_html.length-2))>6){
+          await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+          await page.waitForFunction(
+            'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+            {timeout:5000}
+          ).then(async ()=>{
+            console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+            await myfuns.Sleep(2000);        
+            await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+            row.fetcher = null;   
+            row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
+          })   
+        }
+      }
+      //rss
+      inner_html = await page.evaluate(() => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
+      //console.log( "rss: " + inner_html);
+      row.rss = inner_html;
+    //await myfuns.Sleep(10000);
     await page.click('#checkin', {delay:200})
     .then(async ()=>{
         await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")',{timeout:3000})
@@ -131,7 +141,7 @@ async function  main () {
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
-    //let sql = "SELECT * FROM freeok where Invalid IS NULL and datediff(NOW(),last_signed_time)>1 order by sign_time asc limit 20;"
+    //let sql = "SELECT * FROM freeok where id = 9;"
     let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 15;"
     let r =  await pool.query(sql, []);
     let i = 0;
@@ -144,11 +154,11 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-          //sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`last_signed_time`=?,`fetcher`=?,`sign_time`=NOW() WHERE `id`=?';
-          sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW() WHERE `id`=?';
-          arr = [row.balance,row.level_end_time,row.rss,row.last_used_time,row.fetcher,row.id];
+          sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW(),`rss_refresh_time`=? WHERE `id`=?';
+          //sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW() WHERE `id`=?';
+          arr = [row.balance,row.level_end_time,row.rss,row.last_used_time,row.fetcher,row.rss_refresh_time,row.id];
           sql = await pool.format(sql,arr);
-          //console.log(sql);
+          console.log(sql);
           await pool.query(sql)
           .then((reslut)=>{console.log('changedRows',reslut[0].changedRows);myfuns.Sleep(3000);})
           .catch((error)=>{console.log('UPDATEerror: ', error.message);myfuns.Sleep(3000);});
@@ -159,5 +169,5 @@ async function  main () {
     await pool.end();
     if ( runId?true:false ) await browser.close();
 }
-main().catch(error => console.log('main-error: ', error.message));
+main();
 
