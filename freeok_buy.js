@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
+Date.prototype.Format = myfuns.Format;
 const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
   host: 'app.aiboboxx.ml',
@@ -11,43 +12,85 @@ const pool = mysql.createPool({
   password : 'LaI9DCyNBpEKWe9pn5B',   
   port: '33060',  
   database: 'mydb',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  waitForConnections: true, //连接超额是否等待
+  connectionLimit: 10, //一次创建的最大连接数
+  queueLimit: 0 //可以等待的连接的个数
 });
-async function  freeokBuy (row,page) {
-    await myfuns.clearBrowser(page); //clear all cookies
-    await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
-  //await page.waitForSelector("#email");
-    await page.type('#email', row.usr, {delay: 20});
-    await page.type('#passwd', row.pwd, {delay: 20});
-    await Promise.all([
-      page.waitForNavigation({timeout: 5000}), 
-      //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
-      page.click('#login'),    
-    ])
-    .then(()=>console.log ('登录成功'))
-    .catch(async (err)=>{
-      let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
-      if (msg == "账号在虚无之地，请尝试重新注册") {
-        await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
-        return Promise.reject(new Error('账号在虚无之地'));
-      }else{
-        return Promise.reject(new Error('登录失败'));
-      }    
-    });
-    if (await page.$('#reactive',{timeout: 2000})) {
+async function login(row,page){
+  await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+//await page.waitForSelector("#email");
+  await page.type('#email', row.usr, {delay: 20});
+  await page.type('#passwd', row.pwd, {delay: 20});
+  await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
+  await myfuns.Sleep(1000);
+  await Promise.all([
+    page.waitForNavigation({timeout: 5000}), 
+    //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
+    page.click('#login'),    
+  ])
+  .then(()=>console.log ('登录成功'))
+  .catch(async (err)=>{
+    let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
+    if (msg == "账号在虚无之地，请尝试重新注册") {
       await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
-      return Promise.reject(new Error('账户被限制'));
-    }
-    let selecter,inner_html, date;
-    selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-    await page.waitForSelector(selecter,{timeout:3000})
+      return Promise.reject(new Error('账号在虚无之地'));
+    }else{
+      return Promise.reject(new Error('登录失败'));
+    }    
+  });
+}
+async function loginWithCookies(row,page){
+  let cookies = JSON.parse(row.cookies);
+  await page.setCookie(...cookies);
+  await page.goto('https://v2.freeok.xyz/user');
+  let selecter, inner_html;
+  selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
+  await page.waitForSelector(selecter,{timeout:3000})
+  .then(
+    async ()=>{
+    console.log('登录成功');
+    //await page.goto('https://v2.freeok.xyz/user');
+    return true;
+  },
+  async (err)=>{
+    let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
+    if (msg == "账号在虚无之地，请尝试重新注册") {
+      await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+      return Promise.reject(new Error('账号在虚无之地'));
+    }else{
+      return Promise.reject(new Error('登录失败'));
+    }    
+  });
+}
+async function  freeokBuy (row,page) {
+  await myfuns.clearBrowser(page); //clear all cookies
+  if (row.cookies == null){
+    await login(row,page);
+  }else{
+    await loginWithCookies(row,page);
+  }
+  cookies = await page.cookies();
+  row.cookies = JSON.stringify(cookies, null, '\t');
+  if (await page.$('#reactive',{timeout:3000})) {
+    await page.type('#email', row.usr);
+    await page.click('#reactive')
     .then(async ()=>{
-      console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-      //await page.goto('https://v2.freeok.xyz/user');
+      let bt = await page.waitForSelector('#result_ok',{timeout:10000}).catch((error)=>{console.log('result_ok: ', error.message);myfuns.Sleep(1000);});
+      await bt.click().catch((error)=>{console.log('result_ok click: ', error.message);myfuns.Sleep(1000);});
     });
-    //await page.goto('https://v2.freeok.xyz/user')
+    console.log ('账户解除限制');
+  }
+  await myfuns.Sleep(1000);
+  let selecter, inner_html;
+  selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
+  await page.waitForSelector(selecter,{timeout:10000})
+  .then(async ()=>{
+    console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
+    //await page.goto('https://v2.freeok.xyz/user');
+  });
+//////////do something
+  
+    //余额
     inner_html = await page.evaluate(() => document.querySelector( 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div' ).innerHTML.trim());
     inner_html = inner_html.split(' ')[0];
     //console.log( "余额: " + inner_html);
@@ -65,10 +108,49 @@ async function  freeokBuy (row,page) {
       row.last_used_time = null;
     else
       row.last_used_time = inner_html;
-    //rss
-    inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
-    //console.log( "rss: " + inner_html);
-    row.rss = inner_html;
+    //是否清空fetcher
+    if (row.fetcher !== null){
+      let unixtimes = [
+        new Date(row.regtime).getTime(),
+        new Date(row.last_used_time).getTime(),
+        new Date(row.fetch_time).getTime()
+      ];
+      //console.log((Date.now()-Math.max(...unixtimes))/(24*60*60*1000),unixtimes[1]<unixtimes[2]?0.5:1);
+      if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){
+        await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+        row.fetcher = null;
+        //console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
+        console.log('清空fetcher');
+      }else{
+        //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
+      }
+    }
+      //今日已用
+      selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
+      inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
+      console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
+      if (inner_html.slice(-2) == 'GB'){
+        if (Number(inner_html.slice(0,inner_html.length-2))>5){
+          if((Date.now()-new Date(row.rss_refresh_time).getTime())/(24*60*60*1000)>1||row.fetcher!=null||row.id>10){
+            await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+            await page.waitForFunction(
+              'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+              {timeout:5000}
+            ).then(async ()=>{
+              console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+              await myfuns.Sleep(2000);        
+              await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+              row.fetcher = null;   
+              row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
+            });  
+
+          }
+        }
+      }
+      //rss
+      inner_html = await page.evaluate(() => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
+      //console.log( "rss: " + inner_html);
+      row.rss = inner_html;
     //购买套餐
     date = new Date(row.level_end_time);
     if  (date.getTime() < Date.now()){
@@ -80,12 +162,12 @@ async function  freeokBuy (row,page) {
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
       });
-      await myfuns.Sleep(2500);
+      await myfuns.Sleep(2000);
       await page.click('#coupon_input', {delay:200});
-      await myfuns.Sleep(2500);
+      await myfuns.Sleep(2000);
       //await page.waitForSelector("#order_input");
       await page.click('#order_input', {delay:200});  
-      await myfuns.Sleep(2500);
+      await myfuns.Sleep(2000);
       inner_html = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
       if (inner_html == '')
       console.log( "购买成功！");
@@ -125,9 +207,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-          //sql = `UPDATE freeok SET balance = '${row.balance}', level_end_time = '${row.level_end_time}', rss = '${row.rss}' WHERE id =${row.id};`;
-          sql = 'UPDATE `freeok` SET `balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
-          arr = [row.balance, row.level_end_time, row.rss, row.last_used_time ,row.id];
+          sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
+          arr = [row.cookies,row.balance, row.level_end_time, row.rss, row.last_used_time ,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
