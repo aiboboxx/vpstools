@@ -142,7 +142,7 @@ async function  main () {
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 15;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 20;"
     let r =  await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要签到`);
@@ -158,7 +158,7 @@ async function  main () {
           //sql = 'UPDATE `freeok` SET `balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW() WHERE `id`=?';
           arr = [row.balance,row.level_end_time,row.rss,row.last_used_time,row.fetcher,row.rss_refresh_time,row.id];
           sql = await pool.format(sql,arr);
-          console.log(sql);
+          //console.log(sql);
           await pool.query(sql)
           .then((reslut)=>{console.log('changedRows',reslut[0].changedRows);myfuns.Sleep(3000);})
           .catch((error)=>{console.log('UPDATEerror: ', error.message);myfuns.Sleep(3000);});
