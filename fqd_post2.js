@@ -12,7 +12,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
 Date.prototype.Format = myfuns.Format;
 async function  autoPost (rsss,page) {
-    var selecter;
+    let selecter;
     await page.goto('https://fanqiangdang.com/forum.php');
     await myfuns.Sleep(5000);
     selecter = '#ls_username';

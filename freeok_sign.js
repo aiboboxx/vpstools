@@ -74,14 +74,14 @@ async function  freeokSign  (row,page) {
   row.cookies = JSON.stringify(cookies, null, '\t');
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
-    await page.click('#reactive')
-    .then(async ()=>{
+    await page.click('#reactive');
+/*     .then(async ()=>{
       let bt = await page.waitForSelector('#result_ok',{timeout:10000}).catch((error)=>{console.log('result_ok: ', error.message);myfuns.Sleep(1000);});
       await bt.click().catch((error)=>{console.log('result_ok click: ', error.message);myfuns.Sleep(1000);});
-    });
+    }); */
     console.log ('账户解除限制');
   }
-  await myfuns.Sleep(1000);
+  await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
@@ -118,7 +118,7 @@ async function  freeokSign  (row,page) {
       ];
       //console.log((Date.now()-Math.max(...unixtimes))/(24*60*60*1000),unixtimes[1]<unixtimes[2]?0.5:1);
       if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){
-        await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+        //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
         row.fetcher = null;
         //console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
         console.log('清空fetcher');
