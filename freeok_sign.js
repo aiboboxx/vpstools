@@ -68,7 +68,7 @@ async function  freeokSign  (row,page) {
   if (row.cookies == null){
     await login(row,page);
   }else{
-    await loginWithCookies(row,page);
+    await loginWithCookies(row,page).catch(async ()=>await login(row,page));
   }
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
@@ -110,17 +110,18 @@ async function  freeokSign  (row,page) {
     else
       row.last_used_time = inner_html;
     //是否清空fetcher
+    
     if (row.fetcher !== null){
       let unixtimes = [
         new Date(row.regtime).getTime(),
         new Date(row.last_used_time).getTime(),
         new Date(row.fetch_time).getTime()
       ];
-      //console.log((Date.now()-Math.max(...unixtimes))/(24*60*60*1000),unixtimes[1]<unixtimes[2]?0.5:1);
+      //console.log((Date.now()-Math.max(...unixtimes))/60*60*1000),unixtimes[1]<unixtimes[2]?3:24);
       if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){
         //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
         row.fetcher = null;
-        //console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
+        //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
         console.log('清空fetcher');
       }else{
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);

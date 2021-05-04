@@ -14,7 +14,7 @@ Date.prototype.Format = myfuns.Format;
 async function  autoPost (rsss,page) {
     let selecter;
     await page.goto('https://fanqiangdang.com/forum.php');
-    await myfuns.Sleep(5000);
+    await myfuns.Sleep(8000);
     selecter = '#ls_username';
     await page.waitForSelector(selecter,{timeout:30000})
     .catch(async ()=>{

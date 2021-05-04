@@ -67,7 +67,7 @@ async function  freeokBuy (row,page) {
   if (row.cookies == null){
     await login(row,page);
   }else{
-    await loginWithCookies(row,page);
+    await loginWithCookies(row,page).catch(async ()=>await login(row,page));
   }
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
