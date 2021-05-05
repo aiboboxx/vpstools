@@ -134,7 +134,7 @@ async function  freeokSign  (row,page) {
       inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
       console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
       if (inner_html.slice(-2) == 'GB'){
-        if (Number(inner_html.slice(0,inner_html.length-2))>5){
+        if (Number(inner_html.slice(0,inner_html.length-2))>6){
           if((Date.now()-new Date(row.rss_refresh_time).getTime())/(24*60*60*1000)>1||row.fetcher!=null||row.id>10){
             await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
             await page.waitForFunction(
