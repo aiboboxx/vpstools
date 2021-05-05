@@ -118,7 +118,15 @@ async function  freeokSign  (row,page) {
         new Date(row.fetch_time).getTime()
       ];
       //console.log((Date.now()-Math.max(...unixtimes))/60*60*1000),unixtimes[1]<unixtimes[2]?3:24);
-      if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){      
+      if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){  
+        await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+        await page.waitForFunction(
+          'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+          {timeout:5000}
+        ).then(async ()=>{
+          console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+          await myfuns.Sleep(2000);        
+        });     
         row.fetcher = null;
         //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
         console.log('清空fetcher');
