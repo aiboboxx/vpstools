@@ -117,10 +117,12 @@ async function  freeokBuy (row,page) {
       ];
       //console.log((Date.now()-Math.max(...unixtimes))/(24*60*60*1000),unixtimes[1]<unixtimes[2]?0.5:1);
       if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){
-        //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
         row.fetcher = null;
-        //console.log('清空fetcher',row.regtime,row.last_used_time,row.fetch_time);
+        //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
         console.log('清空fetcher');
+        if (unixtimes[1]<unixtimes[2]){
+          await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+        }
       }else{
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
