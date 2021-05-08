@@ -59,7 +59,7 @@ async function  autoPost (rsss,page) {
     await myfuns.Sleep(500);
     selecter = '#subject';
     await page.type(selecter,
-        ` 高速稳定 秒开4k Vmess/V2ray节点,长期可用  ${(new Date()).Format("yyyy-MM-dd") }更新`
+        ` 高速稳定 秒开4k Vmess/V2ray节点,长期可用  ${(new Date()).Format("yyyy-MM-dd hh:mm:ss") }更新`
         );
     let content = `
     网速：10+Mbps网速，720-1080P支持；

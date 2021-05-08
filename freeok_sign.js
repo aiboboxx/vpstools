@@ -75,10 +75,8 @@ async function  freeokSign  (row,page) {
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-/*     .then(async ()=>{
-      let bt = await page.waitForSelector('#result_ok',{timeout:10000}).catch((error)=>{console.log('result_ok: ', error.message);myfuns.Sleep(1000);});
-      await bt.click().catch((error)=>{console.log('result_ok click: ', error.message);myfuns.Sleep(1000);});
-    }); */
+    //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+    //row.fetcher = null;
     console.log ('账户解除限制');
   }
   await myfuns.Sleep(3000);
@@ -195,7 +193,7 @@ async function  main () {
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 20;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 30;"
     let r =  await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要签到`);

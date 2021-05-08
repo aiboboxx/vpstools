@@ -74,10 +74,8 @@ async function  freeokBuy (row,page) {
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-/*     .then(async ()=>{
-      let bt = await page.waitForSelector('#result_ok',{timeout:10000}).catch((error)=>{console.log('result_ok: ', error.message);myfuns.Sleep(1000);});
-      await bt.click().catch((error)=>{console.log('result_ok click: ', error.message);myfuns.Sleep(1000);});
-    }); */
+    //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+    //row.fetcher = null;
     console.log ('账户解除限制');
   }
   await myfuns.Sleep(3000);
