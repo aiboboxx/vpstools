@@ -123,7 +123,7 @@ async function  freeokSign  (row,page) {
           {timeout:5000}
         ).then(async ()=>{
           console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-          await myfuns.Sleep(2000);        
+          await myfuns.Sleep(3000);        
         });     
         row.fetcher = null;
         //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
@@ -140,7 +140,7 @@ async function  freeokSign  (row,page) {
       inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
       console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
       if (inner_html.slice(-2) == 'GB'){
-        if (Number(inner_html.slice(0,inner_html.length-2))>6){
+        if (Number(inner_html.slice(0,inner_html.length-2))>4){
           if((Date.now()-new Date(row.rss_refresh_time).getTime())/(24*60*60*1000)>1||row.fetcher!=null||row.id>10){
             await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
             await page.waitForFunction(
@@ -148,7 +148,7 @@ async function  freeokSign  (row,page) {
               {timeout:5000}
             ).then(async ()=>{
               console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-              await myfuns.Sleep(2000);        
+              await myfuns.Sleep(3000); 
               await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
               row.fetcher = null;   
               row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
@@ -193,7 +193,7 @@ async function  main () {
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 30;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 1;"
     let r =  await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要签到`);
