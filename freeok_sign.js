@@ -135,6 +135,19 @@ async function  freeokSign  (row,page) {
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
     }
+    if ((Date.now()-new Date(row.fetcher).getTime())/(60*60*1000)>24){
+      await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+      await page.waitForFunction(
+        'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+        {timeout:5000}
+      ).then(async ()=>{
+        console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+        await myfuns.Sleep(3000);        
+      });     
+      row.fetcher = null;
+      //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
+      console.log('24小时重置');
+    }
       //今日已用
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
       inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
@@ -193,7 +206,7 @@ async function  main () {
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 1;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 30;"
     let r =  await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要签到`);
