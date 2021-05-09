@@ -135,7 +135,7 @@ async function  freeokSign  (row,page) {
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
     }
-    if ((Date.now()-new Date(row.fetcher).getTime())/(60*60*1000)>24){
+    if ((Date.now()-new Date(row.fetch_time).getTime())/(60*60*1000)>24){
       await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
       await page.waitForFunction(
         'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
