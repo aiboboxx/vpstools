@@ -108,13 +108,12 @@ async function  freeokSign  (row,page) {
     else
       row.last_used_time = inner_html;
     //是否清空fetcher
-    
+    let unixtimes = [
+      new Date(row.regtime).getTime(),
+      new Date(row.last_used_time).getTime(),
+      new Date(row.fetch_time).getTime()
+    ];
     if (row.fetcher !== null){
-      let unixtimes = [
-        new Date(row.regtime).getTime(),
-        new Date(row.last_used_time).getTime(),
-        new Date(row.fetch_time).getTime()
-      ];
       //console.log((Date.now()-Math.max(...unixtimes))/60*60*1000),unixtimes[1]<unixtimes[2]?3:24);
       if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){  
         await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
@@ -122,31 +121,31 @@ async function  freeokSign  (row,page) {
           'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
           {timeout:5000}
         ).then(async ()=>{
-          console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+          console.log('超时重置：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
           await myfuns.Sleep(3000);        
         });     
         row.fetcher = null;
         //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-        console.log('清空fetcher');
         if (unixtimes[1]<unixtimes[2]){
           await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+          console.log('三小时内未使用');
         }
       }else{
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
     }
-    if ((Date.now()-new Date(row.fetch_time).getTime())/(60*60*1000)>24){
+    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>30){
       await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
       await page.waitForFunction(
         'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
         {timeout:5000}
       ).then(async ()=>{
-        console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+        //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
         await myfuns.Sleep(3000);        
       });     
       row.fetcher = null;
       //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-      console.log('24小时重置');
+      console.log('30天重置');
     }
       //今日已用
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
@@ -154,19 +153,18 @@ async function  freeokSign  (row,page) {
       console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
       if (inner_html.slice(-2) == 'GB'){
         if (Number(inner_html.slice(0,inner_html.length-2))>4){
-          if((Date.now()-new Date(row.rss_refresh_time).getTime())/(24*60*60*1000)>1||row.fetcher!=null||row.id>10){
+          if((new Date(new Date().setHours(0,0,0,0)).getTime()-new Date(row.rss_refresh_time).getTime())>0||row.fetcher!=null||row.id>10){
             await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
             await page.waitForFunction(
               'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
               {timeout:5000}
             ).then(async ()=>{
-              console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+              console.log('超流量重置：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
               await myfuns.Sleep(3000); 
-              await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-              row.fetcher = null;   
-              row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
             });  
-
+            await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+            row.fetcher = null;   
+            row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
           }
         }
       }
