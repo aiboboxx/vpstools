@@ -153,7 +153,9 @@ async function  freeokSign  (row,page) {
       console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
       if (inner_html.slice(-2) == 'GB'){
         if (Number(inner_html.slice(0,inner_html.length-2))>4){
-          if((new Date(new Date().setHours(0,0,0,0)).getTime()-new Date(row.rss_refresh_time).getTime())>0||row.fetcher!=null||row.id>10){
+          //console.log(new Date().setHours(0,0,0,0),new Date(row.rss_refresh_time).getTime(),new Date(new Date().setHours(0,0,0,0)),new Date(row.rss_refresh_time));
+          //console.log((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0);
+          if((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0&&row.fetcher!=null&&row.id>10){
             await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
             await page.waitForFunction(
               'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
@@ -205,6 +207,7 @@ async function  main () {
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
     let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 30;"
+    //let sql = "SELECT * FROM freeok where Invalid IS NULL and fetcher is null order by sign_time asc limit 1;"
     let r =  await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要签到`);

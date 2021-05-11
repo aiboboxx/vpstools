@@ -153,7 +153,7 @@ async function  freeokBuy (row,page) {
       console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
       if (inner_html.slice(-2) == 'GB'){
         if (Number(inner_html.slice(0,inner_html.length-2))>4){
-          if((new Date(new Date().setHours(0,0,0,0)).getTime()-new Date(row.rss_refresh_time).getTime())>0||row.fetcher!=null||row.id>10){
+          if((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0&&row.fetcher!=null&&row.id>10){
             await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
             await page.waitForFunction(
               'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
