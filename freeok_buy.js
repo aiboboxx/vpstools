@@ -16,6 +16,8 @@ const pool = mysql.createPool({
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0 //可以等待的连接的个数
 });
+const runId = github.context.runId;
+let browser;
 async function login(row,page){
   await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
 //await page.waitForSelector("#email");
@@ -62,6 +64,35 @@ async function loginWithCookies(row,page){
     }    
   });
 }
+async function  resetPwd (browser){
+  const page = await browser.newPage();
+  page.on('dialog', async dialog => {
+      //console.info(`➞ ${dialog.message()}`);
+      await dialog.dismiss();
+  });
+  await page.goto('https://v2.freeok.xyz/user/edit');
+  await myfuns.Sleep(1000);
+  let selecter, inner_html;
+  selecter = '#sspwd';
+  await page.waitForSelector(selecter,{timeout:10000})
+  .then(async ()=>{
+    console.log('进入页面：修改资料');
+    //await page.goto('https://v2.freeok.xyz/user');
+  });
+  //inner_html = await page.$eval(selecter, el => el.value);
+  await page.type(selecter, Math.random().toString(36).slice(-8));
+  await page.click('#ss-pwd-update')
+  .then(async ()=>{
+    await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")',{timeout:3000})
+    .then(async ()=>{
+      console.log('修改v2ray密码成功');
+      //await page.goto('https://v2.freeok.xyz/user');
+    })
+    .catch((err)=>console.log('修改v2ray密码失败'));
+  });
+  await myfuns.Sleep(500);
+  page.close();
+}
 async function  freeokBuy (row,page) {
   await myfuns.clearBrowser(page); //clear all cookies
   if (row.cookies == null){
@@ -74,9 +105,13 @@ async function  freeokBuy (row,page) {
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-    //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-    //row.fetcher = null;
+    let sql;   
+    sql = 'UPDATE `freeok` SET  `unfreeze_time` = NOW() WHERE `id` = ?';
+    await pool.query(sql,[row.id])
+    .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
     console.log ('账户解除限制');
+    //await resetPwd(browser);
+    needreset = true;
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;
@@ -113,17 +148,9 @@ async function  freeokBuy (row,page) {
         new Date(row.fetch_time).getTime()
       ];
     if (row.fetcher !== null){
-
-      //console.log((Date.now()-Math.max(...unixtimes))/(24*60*60*1000),unixtimes[1]<unixtimes[2]?0.5:1);
-      if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){
-        await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-        await page.waitForFunction(
-          'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-          {timeout:5000}
-        ).then(async ()=>{
-          console.log('超时重置：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-          await myfuns.Sleep(3000);        
-        });     
+      //console.log((Date.now()-Math.max(...unixtimes))/60*60*1000),unixtimes[1]<unixtimes[2]?3:24);
+      if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){  
+        needreset = true;  
         row.fetcher = null;
         //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
         if (unixtimes[1]<unixtimes[2]){
@@ -135,14 +162,9 @@ async function  freeokBuy (row,page) {
       }
     }
     if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>30){
+      if (needreset) await resetPwd(browser);
       await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-      await page.waitForFunction(
-        'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-        {timeout:5000}
-      ).then(async ()=>{
-        //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-        await myfuns.Sleep(3000);        
-      });     
+      needreset = true;
       row.fetcher = null;
       //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
       console.log('30天重置');
@@ -154,19 +176,24 @@ async function  freeokBuy (row,page) {
       if (inner_html.slice(-2) == 'GB'){
         if (Number(inner_html.slice(0,inner_html.length-2))>4){
           if((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0&&row.fetcher!=null&&row.id>10){
-            await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-            await page.waitForFunction(
-              'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-              {timeout:5000}
-            ).then(async ()=>{
-              console.log('超流量重置：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-              await myfuns.Sleep(3000); 
-            });  
+            needreset = true;
+
             await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
             row.fetcher = null;   
             row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
           }
         }
+      }
+      if (needreset) {
+        await resetPwd(browser);
+        await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+        await page.waitForFunction(
+          'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+          {timeout:5000}
+        ).then(async ()=>{
+          console.log('订阅链接：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+          await myfuns.Sleep(3000);        
+        });  
       }
       //rss
       inner_html = await page.evaluate(() => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
@@ -199,14 +226,13 @@ async function  freeokBuy (row,page) {
 }  
 
 async function  main () {
-    let runId = github.context.runId;
+   browser = await puppeteer.launch({ 
+    headless: runId?true:false ,
+    args: ['--window-size=1920,1080'],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true
+  });
     //console.log(await sqlite.open('./freeok.db'))
-    const browser = await puppeteer.launch({ 
-        headless: runId?true:false ,
-        args: ['--window-size=1920,1080'],
-        defaultViewport: null,
-        ignoreHTTPSErrors: true
-    });
     const page = await browser.newPage();
     // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
     page.on('dialog', async dialog => {
@@ -215,7 +241,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 15;"
+    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 20;"
     //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
     let r =  await pool.query(sql);
     let i = 0;
@@ -241,4 +267,5 @@ async function  main () {
     await pool.end();
     if ( runId?true:false ) await browser.close();
 }
-main().catch(error => console.log('main-error: ', error.message));
+main();
+

@@ -21,7 +21,7 @@ async function  autoPost (rsss,page) {
         console.log ('等待输入用户名');
         await myfuns.Sleep(3000);
         //await page.goto('https://fanqiangdang.com/forum.php');
-        await page.waitForSelector(selecter,{timeout:3000});
+        await page.waitForSelector(selecter,{timeout:10000});
     });
     //await page.waitFor(1000);
     //await page.type(selecter, 'eroslp');
