@@ -94,6 +94,7 @@ async function  resetPwd (browser){
   page.close();
 }
 async function  freeokBuy (row,page) {
+  let needreset = false;
   await myfuns.clearBrowser(page); //clear all cookies
   if (row.cookies == null){
     await login(row,page);
@@ -142,7 +143,7 @@ async function  freeokBuy (row,page) {
     else
       row.last_used_time = inner_html;
     //是否清空fetcher
-          let unixtimes = [
+        let unixtimes = [
         new Date(row.regtime).getTime(),
         new Date(row.last_used_time).getTime(),
         new Date(row.fetch_time).getTime()
@@ -248,7 +249,7 @@ async function  main () {
     console.log(`共有${r[0].length}个账户要购买套餐`);
     for (let row of r[0]) {
       i++;
-      console.log("user:", row.id, row.usr);
+      console.log("user:",i, row.id, row.usr);
       if (i % 3 == 0) await myfuns.Sleep(3000).then(()=>console.log('暂停3秒！'));
       if (row.usr&&row.pwd) await freeokBuy(row,page)
       .then(async row => {
