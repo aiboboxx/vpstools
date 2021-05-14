@@ -1,3 +1,4 @@
+//专注于购买套餐
 const fs = require("fs");
 //const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
@@ -64,35 +65,7 @@ async function loginWithCookies(row,page){
     }    
   });
 }
-async function  resetPwd (browser){
-  const page = await browser.newPage();
-  page.on('dialog', async dialog => {
-      //console.info(`➞ ${dialog.message()}`);
-      await dialog.dismiss();
-  });
-  await page.goto('https://v2.freeok.xyz/user/edit');
-  await myfuns.Sleep(1000);
-  let selecter, inner_html;
-  selecter = '#sspwd';
-  await page.waitForSelector(selecter,{timeout:10000})
-  .then(async ()=>{
-    console.log('进入页面：修改资料');
-    //await page.goto('https://v2.freeok.xyz/user');
-  });
-  //inner_html = await page.$eval(selecter, el => el.value);
-  await page.type(selecter, Math.random().toString(36).slice(-8));
-  await page.click('#ss-pwd-update')
-  .then(async ()=>{
-    await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")',{timeout:3000})
-    .then(async ()=>{
-      console.log('修改v2ray密码成功');
-      //await page.goto('https://v2.freeok.xyz/user');
-    })
-    .catch((err)=>console.log('修改v2ray密码失败'));
-  });
-  await myfuns.Sleep(500);
-  page.close();
-}
+
 async function  freeokBuy (row,page) {
   let needreset = false;
   await myfuns.clearBrowser(page); //clear all cookies
@@ -106,13 +79,7 @@ async function  freeokBuy (row,page) {
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-    let sql;   
-    sql = 'UPDATE `freeok` SET  `unfreeze_time` = NOW() WHERE `id` = ?';
-    await pool.query(sql,[row.id])
-    .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
     console.log ('账户解除限制');
-    //await resetPwd(browser);
-    needreset = true;
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;
@@ -142,59 +109,6 @@ async function  freeokBuy (row,page) {
       row.last_used_time = null;
     else
       row.last_used_time = inner_html;
-    //是否清空fetcher
-        let unixtimes = [
-        new Date(row.regtime).getTime(),
-        new Date(row.last_used_time).getTime(),
-        new Date(row.fetch_time).getTime()
-      ];
-    if (row.fetcher !== null){
-      //console.log((Date.now()-Math.max(...unixtimes))/60*60*1000),unixtimes[1]<unixtimes[2]?3:24);
-      if ((Date.now()-Math.max(...unixtimes))/(60*60*1000)>(unixtimes[1]<unixtimes[2]?3:24)){  
-        needreset = true;  
-        row.fetcher = null;
-        //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-        if (unixtimes[1]<unixtimes[2]){
-          await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-          console.log('三小时内未使用');
-        }
-      }else{
-        //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
-      }
-    }
-    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>30){
-      if (needreset) await resetPwd(browser);
-      await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-      needreset = true;
-      row.fetcher = null;
-      //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-      console.log('30天重置');
-    }
-      //今日已用
-      selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
-      inner_html =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
-      console.log( "今日已用: " + inner_html,Number(inner_html.slice(0,inner_html.length-2)));
-      if (inner_html.slice(-2) == 'GB'){
-        if (Number(inner_html.slice(0,inner_html.length-2))>4){
-          if((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0&&row.fetcher!=null&&row.id>10){
-            needreset = true;
-            await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-            row.fetcher = null;   
-            row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
-          }
-        }
-      }
-      if (needreset) {
-        await resetPwd(browser);
-        await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-        await page.waitForFunction(
-          'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-          {timeout:5000}
-        ).then(async ()=>{
-          console.log('订阅链接：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-          await myfuns.Sleep(3000);        
-        });  
-      }
       //rss
       inner_html = await page.evaluate(() => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
       //console.log( "rss: " + inner_html);
@@ -221,6 +135,19 @@ async function  freeokBuy (row,page) {
       console.log( "购买成功！");
       else
       console.log( "购买套餐结果: " + inner_html );
+      await page.goto('https://v2.freeok.xyz/user');
+      selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
+      await page.waitForSelector(selecter,{timeout:10000})
+      .then(async ()=>{
+        console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
+        //await page.goto('https://v2.freeok.xyz/user');
+      });
+          //等级过期时间 xpath
+    inner_html = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );
+    inner_html = inner_html.split(';')[1];
+    //console.log( "等级过期时间: " +  inner_html);
+    row.level_end_time = inner_html;
+
     }
     return row;
 }  
@@ -254,8 +181,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-          sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?,`fetcher`=?, `rss_refresh_time`=?, `update_time` = NOW() WHERE `id` = ?';
-          arr = [row.cookies,row.balance, row.level_end_time, row.rss, row.last_used_time ,row.fetcher,row.rss_refresh_time,row.id];
+          sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
+          arr = [row.cookies,row.balance, row.level_end_time, row.rss, row.last_used_time ,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
