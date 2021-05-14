@@ -178,7 +178,6 @@ async function  freeokBuy (row,page) {
         if (Number(inner_html.slice(0,inner_html.length-2))>4){
           if((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0&&row.fetcher!=null&&row.id>10){
             needreset = true;
-
             await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
             row.fetcher = null;   
             row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
@@ -255,8 +254,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-          sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
-          arr = [row.cookies,row.balance, row.level_end_time, row.rss, row.last_used_time ,row.id];
+          sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?,`fetcher`=?, `rss_refresh_time`=?, `update_time` = NOW() WHERE `id` = ?';
+          arr = [row.cookies,row.balance, row.level_end_time, row.rss, row.last_used_time ,row.fetcher,row.rss_refresh_time,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
