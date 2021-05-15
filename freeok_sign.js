@@ -90,7 +90,7 @@ async function  resetPwd (browser){
     })
     .catch((err)=>console.log('修改v2ray密码失败'));
   });
-  await myfuns.Sleep(500);
+  await myfuns.Sleep(1000);
   page.close();
 }
 async function  freeokSign  (row,page) {
@@ -112,7 +112,11 @@ async function  freeokSign  (row,page) {
     .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
     console.log ('账户解除限制');
     //await resetPwd(browser);
-    needreset = true;
+    if (row.fetcher !== null){
+      needreset = true;
+      await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+      row.fetcher = null;
+    }
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;
@@ -188,6 +192,7 @@ async function  freeokSign  (row,page) {
       }
       if (needreset) {
         await resetPwd(browser);
+        await myfuns.Sleep(500);
         await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
         await page.waitForFunction(
           'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
