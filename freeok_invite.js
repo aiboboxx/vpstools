@@ -110,7 +110,6 @@ async function  freeokBuy (row,page) {
     await pool.query(sql,[row.id])
     .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
     console.log ('账户解除限制');
-    await resetPwd(browser);
   }
   await page.goto('https://v2.freeok.xyz/user/invite');
   await myfuns.Sleep(3000);
@@ -131,8 +130,6 @@ async function  freeokBuy (row,page) {
     //invite
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
     row.invite = inner_html;
-    //console.log( "invite: " + inner_html);
-    await resetPwd(browser);
     return row;
 }  
 
@@ -152,8 +149,9 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok WHERE id=56 and Invalid IS NULL order by update_time asc limit 20;"
+    //let sql = "SELECT * FROM freeok WHERE id=56 and Invalid IS NULL order by update_time asc limit 20;"
     //let sql = "SELECT * FROM freeok WHERE score < 0.1 and Invalid IS NULL order by update_time asc limit 1;"
+    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL order by update_time asc limit 30;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);

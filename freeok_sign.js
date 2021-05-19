@@ -166,7 +166,7 @@ async function  freeokSign  (row,page) {
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
     }
-    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>30){
+    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>30&&row.id>10){
       if (needreset) await resetPwd(browser);
       await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
       needreset = true;
