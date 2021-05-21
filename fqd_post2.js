@@ -67,7 +67,7 @@ async function  autoPost (rsss,page) {
     节点：香港、新加坡、日本、韩国等100+数量全球节点，高速稳定 秒开4k 支持网飞
     ${(new Date()).Format("yyyy-MM-dd") }更新
     订阅地址公开后容易失效，
-    请到 https://www.aiboboxx.ml/post/v2ray-mian-fei-dian-yue-di-zhi/ 
+    请到 https://www.aiboboxx.ml/post/free-v2ray/
     获取私人专属v2ray订阅地址，长期可用。资源有限，先到先得。
     [hide]
     https://rss.srss.xyz/link/3IyNlMsb93pAuo7d?mu=2

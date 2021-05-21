@@ -67,7 +67,7 @@ async function  autoPost (rsss,page) {
     节点：香港、新加坡、日本、韩国等100+数量全球节点，高速稳定 秒开4k 支持网飞
     ${(new Date()).Format("yyyy-MM-dd") }更新
     节点公开后容易失效，
-    请到 https://www.aiboboxx.ml/post/v2ray-mian-fei-dian-yue-di-zhi/ 
+    请到 https://www.aiboboxx.ml/post/free-v2ray/ 
     获取私人专属v2ray订阅地址，长期可用。资源有限，先到先得。
     [hide]vmess://eyJ2IjoiMiIsImhvc3QiOiJzMzYxLnNub2Rlcy54eXoiLCJwYXRoIjoiXC9wYW5lbCIsInRscyI6InRscyIsInBzIiA6Iue/u+WimeWFmmZhbnFpYW5nZGFuZy5jb20iLCIiIDoi576O5Zu9IzM2MXwwLjd8MXwxMSV8NDU0R3xva21lLnh5enzlhaznm4roioLngrkiLCJhZGQiOiJzMzYxLnNub2Rlcy54eXoiLCJwb3J0IjoiNDQzIiwiaWQiOiJkOGEzOTNlMi1lMjdlLTM0MjItOWY2NS0zZGNkYWI1MmY2YWMiLCJhaWQiOiIxIiwibmV0Ijoid3MiLCJ0eXBlIjoibm9uZSJ9
     vmess://eyJ2IjoiMiIsImhvc3QiOiJzMjEzLnNub2Rlcy54eXoiLCJwYXRoIjoiXC9wYW5lbCIsInRscyI6IiIsInBzIiA6Iue/u+WimeWFmmZhbnFpYW5nZGFuZy5jb20iLCIiIDoi6aaZ5rivIOe9kemjniMyMTN8MS42fDF8OCV8ODA2R3xva21lLnh5enzlhaznm4roioLngrl8ODBub1RscyIsImFkZCI6InMyMTMuc25vZGVzLnh5eiIsInBvcnQiOjgwLCJpZCI6ImQ4YTM5M2UyLWUyN2UtMzQyMi05ZjY1LTNkY2RhYjUyZjZhYyIsImFpZCI6IjEiLCJuZXQiOiJ3cyIsInR5cGUiOiJub25lIn0=
