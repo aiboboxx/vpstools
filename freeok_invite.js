@@ -163,10 +163,10 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-        sql = 'UPDATE `freeok` SET  `score` = ?, `invite` = ?, `update_time` = NOW()  WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET  `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
         arr = [row.score,row.invite,row.id];
           sql = await pool.format(sql,arr);
-          console.log(sql);
+          //console.log(sql);
           await pool.query(sql)
           .then((reslut)=>{console.log('changedRows',reslut[0].changedRows);myfuns.Sleep(3000);})
           .catch((error)=>{console.log('UPDATEerror: ', error.message);myfuns.Sleep(3000);});

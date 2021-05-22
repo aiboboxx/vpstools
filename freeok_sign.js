@@ -106,12 +106,11 @@ async function  freeokSign  (row,page) {
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-    let sql;   
+/*     let sql;   
     sql = 'UPDATE `freeok` SET  `unfreeze_time` = NOW() WHERE `id` = ?';
     await pool.query(sql,[row.id])
-    .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
+    .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);}); */
     //console.log ('账户解除限制');
-    //await resetPwd(browser);
     if (row.fetcher !== null){
       needreset = true;
       await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);

@@ -80,6 +80,10 @@ async function  freeokBuy (row,page) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
     console.log ('账户解除限制');
+    if (row.fetcher !== null){
+      await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
+      await pool.query("UPDATE freeok SET fetcher = null  WHERE id = ?", [row.id]);
+    }
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;
