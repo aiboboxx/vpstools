@@ -120,6 +120,8 @@ async function  freeokBuy (row,page) {
     console.log('进入页面：invite');
     //await page.goto('https://v2.freeok.xyz/user');
   });
+  selecter = "body > main > div.content-header.ui-content-header > div > h1" ;
+  //await page.evaluate((selecter,test) => document.querySelector(selecter).innerText=test,selecter,"兴文并");
 //////////do something
     //score
     inner_html = await page.evaluate(() => document.querySelector( 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)' ).innerText.trim());
@@ -151,7 +153,7 @@ async function  main () {
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok WHERE id=56 and Invalid IS NULL order by update_time asc limit 20;"
     //let sql = "SELECT * FROM freeok WHERE score < 0.1 and Invalid IS NULL order by update_time asc limit 1;"
-    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL order by update_time asc limit 30;"
+    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL order by invite_refresh_time asc limit 30;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);

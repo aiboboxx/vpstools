@@ -25,6 +25,14 @@ async function login(row,page){
   await page.type('#passwd', row.pwd, {delay: 20});
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
   await myfuns.Sleep(1000);
+  await page.waitForSelector('#embed-captcha > div');
+  await page.click('#embed-captcha > div');
+  await page.waitForFunction(
+   (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
+   {timeout:60000},
+   '#embed-captcha > div'
+ );
+  await myfuns.Sleep(1000);
   await Promise.all([
     page.waitForNavigation({timeout: 5000}), 
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
@@ -95,6 +103,7 @@ async function  resetPwd (browser){
 }
 async function  freeokSign  (row,page) {
   let needreset = false;
+  let cookies = [];
   await myfuns.clearBrowser(page); //clear all cookies
   if (row.cookies == null){
     await login(row,page);
@@ -236,7 +245,7 @@ async function  main () {
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 30;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 25;"
     //let sql = "SELECT * FROM freeok where Invalid IS NULL and fetcher is null order by sign_time asc limit 1;"
     let r =  await pool.query(sql, []);
     let i = 0;
