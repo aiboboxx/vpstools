@@ -88,6 +88,8 @@ async function  main () {
    await myfuns.Sleep(100);
    await page.click('body > div.authpage.auth-reg > div > section > div > div:nth-child(6) > div > div > ul > li:nth-child(4) > a');
    await myfuns.Sleep(100);
+   await page.waitForSelector('#embed-captcha > div')
+   .catch((error)=>{console.log(error.message);myfuns.Sleep(2000);});
    await page.click('#embed-captcha > div');
    await page.waitForFunction(
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
@@ -98,8 +100,8 @@ async function  main () {
   await page.click('#tos');
   await myfuns.Sleep(500);
   await page.click('#reg');
-  await page.waitForNavigation({timeout: 5000})
-  await myfuns.Sleep(1000);
+  //await page.waitForNavigation({timeout: 5000})
+  await myfuns.Sleep(3000);
   let sql,arr;   
   sql = 'insert into  freeok (usr,pwd,regtime) values (?,?,NOW());';
   arr = [usr,pwd];
