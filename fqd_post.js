@@ -49,7 +49,6 @@ async function  autoPost (rsss,page) {
                 });
         });
     await page.goto('https://fanqiangdang.com/forum.php?mod=post&action=newthread&fid=36');
-    //await page.waitFor(1500);
     selecter = '#typeid_ctrl';
     await page.waitForSelector(selecter);
     await page.click(selecter);
