@@ -30,13 +30,17 @@ async function login(row,page){
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
     page.click('#login'),    
   ])
-  .then(()=>console.log ('登录成功'))
+  .then(async ()=>{
+    console.log ('登录成功');
+    await pool.query("UPDATE freeok SET Invalid = null  WHERE id = ?", [row.id]);
+  })
   .catch(async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
     if (msg == "账号在虚无之地，请尝试重新注册") {
       await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账号在虚无之地'));
     }else{
+      await pool.query("UPDATE freeok SET Invalid = 2  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('登录失败'));
     }    
   });
@@ -100,8 +104,6 @@ async function  freeokBuy (row,page) {
   }else{
     await loginWithCookies(row,page).catch(async ()=>await login(row,page));
   }
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
@@ -132,6 +134,8 @@ async function  freeokBuy (row,page) {
     //invite
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
     row.invite = inner_html;
+    cookies = await page.cookies();
+    row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
 
@@ -153,7 +157,7 @@ async function  main () {
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok WHERE id=56 and Invalid IS NULL order by update_time asc limit 20;"
     //let sql = "SELECT * FROM freeok WHERE score < 0.1 and Invalid IS NULL order by update_time asc limit 1;"
-    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL order by invite_refresh_time asc limit 30;"
+    let sql = "SELECT * FROM freeok WHERE score>3 order by invite_refresh_time asc limit 1;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);

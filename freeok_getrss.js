@@ -70,8 +70,6 @@ async function  freeokBuy (row,page) {
   }else{
     await loginWithCookies(row,page);
   }
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive')
@@ -95,6 +93,8 @@ async function  freeokBuy (row,page) {
 /*     inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
     console.log( "rss: " + inner_html);
     row.rss = inner_html; */
+    cookies = await page.cookies();
+    row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
 
@@ -113,7 +113,7 @@ async function  main () {
     });
     console.log(`*****************开始freeokgetrss ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok WHERE Invalid IS NULL and rss IS NULL;"
-    let sql = "SELECT * FROM freeok WHERE Invalid IS NOT NULL;"
+    let sql = "SELECT * FROM freeok WHERE score>3;"
     let r = await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要getrss`);

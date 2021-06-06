@@ -38,13 +38,17 @@ async function login(row,page){
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
     page.click('#login'),    
   ])
-  .then(()=>console.log ('登录成功'))
+  .then(async ()=>{
+    console.log ('登录成功');
+    await pool.query("UPDATE freeok SET Invalid = null  WHERE id = ?", [row.id]);
+  })
   .catch(async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
     if (msg == "账号在虚无之地，请尝试重新注册") {
       await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账号在虚无之地'));
     }else{
+      await pool.query("UPDATE freeok SET Invalid = 2  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('登录失败'));
     }    
   });
@@ -110,9 +114,7 @@ async function  freeokSign  (row,page) {
   }else{
     await loginWithCookies(row,page).catch(async ()=>await login(row,page));
   }
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
-  if (await page.$('#reactive',{timeout:3000})) {
+  if (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
 /*     let sql;   
@@ -226,6 +228,8 @@ async function  freeokSign  (row,page) {
       })
     .catch((err)=>console.log('今日已签到'));
     await myfuns.Sleep(2000);
+    cookies = await page.cookies();
+    row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
 
