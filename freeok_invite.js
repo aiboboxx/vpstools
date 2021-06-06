@@ -155,9 +155,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
-    //let sql = "SELECT * FROM freeok WHERE id=56 and Invalid IS NULL order by update_time asc limit 20;"
-    //let sql = "SELECT * FROM freeok WHERE score < 0.1 and Invalid IS NULL order by update_time asc limit 1;"
-    let sql = "SELECT * FROM freeok WHERE score>3 order by invite_refresh_time asc limit 1;"
+    let sql = "SELECT * FROM freeok  order by invite_refresh_time asc limit 20;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);
