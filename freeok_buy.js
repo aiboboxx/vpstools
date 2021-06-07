@@ -41,7 +41,7 @@ async function login(row,page){
   ])
   .then(async ()=>{
     console.log ('登录成功');
-    //await pool.query("UPDATE freeok SET Invalid = null  WHERE id = ?", [row.id]);
+    await pool.query("UPDATE freeok SET Invalid = null  WHERE id = ?", [row.id]);
   })
   .catch(async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);

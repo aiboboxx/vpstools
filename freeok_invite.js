@@ -25,6 +25,14 @@ async function login(row,page){
   await page.type('#passwd', row.pwd, {delay: 20});
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
   await myfuns.Sleep(1000);
+  await page.waitForSelector('#embed-captcha > div');
+  await page.click('#embed-captcha > div');
+  await page.waitForFunction(
+   (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
+   {timeout:60000},
+   '#embed-captcha > div'
+ );
+  await myfuns.Sleep(1000);
   await Promise.all([
     page.waitForNavigation({timeout: 5000}), 
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
@@ -167,8 +175,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-        sql = 'UPDATE `freeok` SET  `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.score,row.invite,row.id];
+        sql = 'UPDATE `freeok` SET  `cookies`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.cookies,row.score,row.invite,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
