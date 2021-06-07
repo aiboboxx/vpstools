@@ -17,7 +17,7 @@ const pool = mysql.createPool({
 });
 async function  freeokBuy (row,page) {
     await myfuns.clearBrowser(page); //clear all cookies
-    await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+    await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
   //await page.waitForSelector("#email");
     await page.type('#email', row.usr, {delay: 20});
     await page.type('#passwd', row.pwd, {delay: 20});
@@ -36,7 +36,7 @@ async function  freeokBuy (row,page) {
         return Promise.reject(new Error('登录失败'));
       }    
     });
-    //await page.goto('https://v2.freeok.xyz/user')
+    //await page.goto('https://okme.xyz/user')
     let inner_html = await page.evaluate(() => document.querySelector( 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div' ).innerHTML.trim());
     inner_html = inner_html.split(' ')[0];
     //console.log( "余额: " + inner_html);
@@ -61,7 +61,7 @@ async function  freeokBuy (row,page) {
     let  date = new Date(row.level_end_time);
     if  (date.getTime() < Date.now()){
       //await page.waitFor(1500);
-      await page.goto('https://v2.freeok.xyz/user/shop');
+      await page.goto('https://okme.xyz/user/shop');
       await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
         delay: 200
       })

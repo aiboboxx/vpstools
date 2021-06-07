@@ -19,7 +19,7 @@ const pool = mysql.createPool({
 const runId = github.context.runId;
 let browser;
 async function login(usr,pwd,page){
-  await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
 //await page.waitForSelector("#email");
   await page.type('#email', usr, {delay: 20});
   await page.type('#passwd', pwd, {delay: 20});
@@ -108,7 +108,7 @@ async function  main () {
   sql = await pool.format(sql,arr);
   await pool.query(sql)
   .then((reslut)=>{console.log('添加成功:',reslut[0].insertId);myfuns.Sleep(2000);});
-  await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
     await page.type('#email', usr);
     await page.type('#passwd', pwd);

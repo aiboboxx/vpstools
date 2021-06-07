@@ -20,7 +20,7 @@ const pool = mysql.createPool({
 const runId = github.context.runId;
 let browser;
 async function login(row,page){
-  await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
 //await page.waitForSelector("#email");
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
@@ -57,14 +57,14 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeok.xyz/user');
+  await page.goto('https://okme.xyz/user');
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter,{timeout:3000})
   .then(
     async ()=>{
     console.log('登录成功');
-    //await page.goto('https://v2.freeok.xyz/user');
+    //await page.goto('https://okme.xyz/user');
     return true;
   },
   async (err)=>{
@@ -102,7 +102,7 @@ async function  freeokBuy (row,page) {
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-    //await page.goto('https://v2.freeok.xyz/user');
+    //await page.goto('https://okme.xyz/user');
   });
 //////////do something
   
@@ -132,7 +132,7 @@ async function  freeokBuy (row,page) {
     date = new Date(row.level_end_time);
     if  (date.getTime() < Date.now()){
       //await page.waitFor(1500);
-      await page.goto('https://v2.freeok.xyz/user/shop');
+      await page.goto('https://okme.xyz/user/shop');
       await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
         delay: 200
       })
@@ -150,12 +150,12 @@ async function  freeokBuy (row,page) {
       console.log( "购买成功！");
       else
       console.log( "购买套餐结果: " + inner_html );
-      await page.goto('https://v2.freeok.xyz/user');
+      await page.goto('https://okme.xyz/user');
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
       await page.waitForSelector(selecter,{timeout:10000})
       .then(async ()=>{
         console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-        //await page.goto('https://v2.freeok.xyz/user');
+        //await page.goto('https://okme.xyz/user');
       });
           //等级过期时间 xpath
     inner_html = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );

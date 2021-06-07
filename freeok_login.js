@@ -1,4 +1,6 @@
-const fs = require("fs")
+//专注于购买套餐
+const fs = require("fs");
+//const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
@@ -11,9 +13,9 @@ const pool = mysql.createPool({
   password : 'LaI9DCyNBpEKWe9pn5B',   
   port: '33060',  
   database: 'mydb',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  waitForConnections: true, //连接超额是否等待
+  connectionLimit: 10, //一次创建的最大连接数
+  queueLimit: 0 //可以等待的连接的个数
 });
 const runId = github.context.runId;
 let browser;
@@ -73,28 +75,24 @@ async function loginWithCookies(row,page){
     }else{
       return Promise.reject(new Error('登录失败'));
     }    
-  }
-  );
-
+  });
 }
+
 async function  freeokBuy (row,page) {
+  let needreset = false;
+  let cookies = [];
   await myfuns.clearBrowser(page); //clear all cookies
   if (row.cookies == null){
     await login(row,page);
   }else{
-    await loginWithCookies(row,page);
+    await loginWithCookies(row,page).catch(async ()=>await login(row,page));
   }
-  if (await page.$('#reactive',{timeout:3000})) {
+  if (await page.$('#reactive')) {
     await page.type('#email', row.usr);
-    await page.click('#reactive')
-    .then(async ()=>{
-      let bt = await page.waitForSelector('#result_ok',{visible: true,timeout:10000});
-      await bt.click();
-    });
-    //await pool.query("UPDATE freeok SET Invalid = null,cookies = ? WHERE id = ?", [row.cookies,row.id]);
+    await page.click('#reactive');
     console.log ('账户解除限制');
   }
-  await myfuns.Sleep(1000);
+  await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
@@ -102,49 +100,53 @@ async function  freeokBuy (row,page) {
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
     //await page.goto('https://okme.xyz/user');
   });
-  console.log('do something');
-    //fs.writeFileSync(`./cookie.txt`, JSON.stringify(cookies, null, '\t'))
-/*     inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
-    console.log( "rss: " + inner_html);
-    row.rss = inner_html; */
+//////////do something
     cookies = await page.cookies();
     row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
 
-const addCookies = async (cookies_str, page, domain) => { let cookies = cookies_str.split(';').map( pair => { let name = pair.trim().slice(0, pair.trim().indexOf('=')); let value = pair.trim().slice(pair.trim().indexOf('=') + 1); return {name, value, domain} }); await Promise.all(cookies.map(pair => { console.log(pair); return page.setCookie(pair) })) };
 async function  main () {
-    let runId = github.context.runId;
-    const browser = await puppeteer.launch({ 
-        headless: runId?true:false ,
-        args: ['--window-size=1920,1080'],
-        defaultViewport: null,
-        ignoreHTTPSErrors: true
-    });
+   browser = await puppeteer.launch({ 
+    headless: runId?true:false ,
+    args: ['--window-size=1920,1080'],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true
+  });
+    //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage();
+    // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
     page.on('dialog', async dialog => {
+        //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     });
-    console.log(`*****************开始freeokgetrss ${Date()}*******************\n`);  
-    //let sql = "SELECT * FROM freeok WHERE Invalid IS NULL and rss IS NULL;"
-    let sql = "SELECT * FROM freeok WHERE score>3;"
-    let r = await pool.query(sql, []);
+
+    console.log(`*****************开始freeok_login ${Date()}*******************\n`);  
+    let sql = "SELECT * FROM freeok WHERE id>99 order by update_time asc limit 20;"
+    //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
+    let r =  await pool.query(sql);
     let i = 0;
-    console.log(`共有${r[0].length}个账户要getrss`);
+    console.log(`共有${r[0].length}个账户要login`);
     for (let row of r[0]) {
       i++;
-      console.log("user:",i, row.id, row.usr);      
+      console.log("user:",i, row.id, row.usr);
       if (i % 3 == 0) await myfuns.Sleep(3000).then(()=>console.log('暂停3秒！'));
       if (row.usr&&row.pwd) await freeokBuy(row,page)
       .then(async row => {
-        //console.log(row);
-        await pool.query("UPDATE freeok SET cookies = ?  WHERE id = ?", [row.cookies,row.id])
-        .then((reslut)=>{console.log(row.usr,"update_time");myfuns.Sleep(3000);})
+        //console.log(JSON.stringify(row));    
+        let sql,arr;   
+          sql = 'UPDATE `freeok` SET `cookies`=?, `update_time` = NOW() WHERE `id` = ?';
+          arr = [row.cookies,row.id];
+          sql = await pool.format(sql,arr);
+          //console.log(sql);
+          await pool.query(sql)
+          .then((reslut)=>{console.log('changedRows',reslut[0].changedRows);myfuns.Sleep(3000);})
+          .catch((error)=>{console.log('UPDATEerror: ', error.message);myfuns.Sleep(3000);});
         })
-      .catch(error => console.log('error: ', error.message));
+      .catch(error => console.log('buyerror: ', error.message));
      }
-     await pool.end();
+    await pool.end();
     if ( runId?true:false ) await browser.close();
 }
-main().catch(error => console.log('main-error: ', error.message));
+main();
 

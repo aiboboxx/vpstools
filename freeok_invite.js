@@ -19,7 +19,7 @@ const pool = mysql.createPool({
 const runId = github.context.runId;
 let browser;
 async function login(row,page){
-  await page.goto('https://v2.freeok.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
 //await page.waitForSelector("#email");
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
@@ -56,14 +56,14 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeok.xyz/user');
+  await page.goto('https://okme.xyz/user');
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter,{timeout:3000})
   .then(
     async ()=>{
     console.log('登录成功');
-    //await page.goto('https://v2.freeok.xyz/user');
+    //await page.goto('https://okme.xyz/user');
     return true;
   },
   async (err)=>{
@@ -82,14 +82,14 @@ async function  resetPwd (browser){
       //console.info(`➞ ${dialog.message()}`);
       await dialog.dismiss();
   });
-  await page.goto('https://v2.freeok.xyz/user/edit');
+  await page.goto('https://okme.xyz/user/edit');
   await myfuns.Sleep(1000);
   let selecter, inner_html;
   selecter = '#sspwd';
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：修改资料');
-    //await page.goto('https://v2.freeok.xyz/user');
+    //await page.goto('https://okme.xyz/user');
   });
   //inner_html = await page.$eval(selecter, el => el.value);
   await page.type(selecter, Math.random().toString(36).slice(-8));
@@ -98,7 +98,7 @@ async function  resetPwd (browser){
     await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")',{timeout:3000})
     .then(async ()=>{
       console.log('修改v2ray密码成功');
-      //await page.goto('https://v2.freeok.xyz/user');
+      //await page.goto('https://okme.xyz/user');
     })
     .catch((err)=>console.log('修改v2ray密码失败'));
   });
@@ -121,14 +121,14 @@ async function  freeokBuy (row,page) {
     .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
     console.log ('账户解除限制');
   }
-  await page.goto('https://v2.freeok.xyz/user/invite');
+  await page.goto('https://okme.xyz/user/invite');
   await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)';
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：invite');
-    //await page.goto('https://v2.freeok.xyz/user');
+    //await page.goto('https://okme.xyz/user');
   });
   selecter = "body > main > div.content-header.ui-content-header > div > h1" ;
   //await page.evaluate((selecter,test) => document.querySelector(selecter).innerText=test,selecter,"兴文并");
@@ -141,7 +141,12 @@ async function  freeokBuy (row,page) {
     console.log( "score: " + inner_html);
     //invite
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
-    row.invite = inner_html;
+    row.invite = Number(inner_html);
+    if (row.invite>3.3){
+      await resetPwd(browser);
+      row.Invalid = 3;
+    }
+
     cookies = await page.cookies();
     row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
@@ -175,8 +180,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-        sql = 'UPDATE `freeok` SET  `cookies`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.cookies,row.score,row.invite,row.id];
+        sql = 'UPDATE `freeok` SET  `cookies`=?, `Invalid`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.cookies,row.Invalid,row.score,row.invite,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
