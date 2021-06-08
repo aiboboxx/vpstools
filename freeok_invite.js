@@ -136,8 +136,10 @@ async function  freeokBuy (row,page) {
     row.score = Number(inner_html);
     console.log( "score: " + inner_html);
     if (row.score>3.3){
-      await resetPwd(browser);
-      row.Invalid = 3;
+      if (row.id>10){
+        await resetPwd(browser);
+        row.Invalid = 3;
+      }
     }
     //console.log('row.Invalid',row.Invalid);
     //invite 邀请码
