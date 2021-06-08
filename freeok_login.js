@@ -91,6 +91,7 @@ async function  freeokBuy (row,page) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
     console.log ('账户解除限制');
+    await page.goto('https://okme.xyz/user');
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;

@@ -117,6 +117,7 @@ async function  freeokSign  (row,page) {
   if (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
+    console.log ('账户解除限制');
     await myfuns.Sleep(3000);
     needreset = true;
     if (row.fetcher !== null){

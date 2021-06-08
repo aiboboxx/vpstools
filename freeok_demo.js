@@ -83,19 +83,15 @@ async function  freeokBuy (row,page) {
   if (row.cookies == null){
     await login(row,page);
   }else{
-    await loginWithCookies(row,page);
+    await loginWithCookies(row,page).catch(async ()=>await login(row,page));
   }
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
-    await page.click('#reactive')
-    .then(async ()=>{
-      let bt = await page.waitForSelector('#result_ok',{visible: true,timeout:10000});
-      await bt.click();
-    });
-    //await pool.query("UPDATE freeok SET Invalid = null,cookies = ? WHERE id = ?", [row.cookies,row.id]);
+    await page.click('#reactive');
     console.log ('账户解除限制');
   }
-  await myfuns.Sleep(1000);
+  await page.goto('https://okme.xyz/user/invite');
+  await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
@@ -113,15 +109,14 @@ async function  freeokBuy (row,page) {
     return row;
 }  
 
-const addCookies = async (cookies_str, page, domain) => { let cookies = cookies_str.split(';').map( pair => { let name = pair.trim().slice(0, pair.trim().indexOf('=')); let value = pair.trim().slice(pair.trim().indexOf('=') + 1); return {name, value, domain} }); await Promise.all(cookies.map(pair => { console.log(pair); return page.setCookie(pair) })) };
 async function  main () {
-    let runId = github.context.runId;
-    const browser = await puppeteer.launch({ 
-        headless: runId?true:false ,
-        args: ['--window-size=1920,1080'],
-        defaultViewport: null,
-        ignoreHTTPSErrors: true
-    });
+   browser = await puppeteer.launch({ 
+    headless: runId?true:false ,
+    args: ['--window-size=1920,1080'],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true
+  });
+    //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage();
     page.on('dialog', async dialog => {
         await dialog.dismiss();
@@ -147,5 +142,4 @@ async function  main () {
      await pool.end();
     if ( runId?true:false ) await browser.close();
 }
-main().catch(error => console.log('main-error: ', error.message));
-
+main();

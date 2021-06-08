@@ -115,10 +115,6 @@ async function  freeokBuy (row,page) {
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-    let sql;   
-    sql = 'UPDATE `freeok` SET  `unfreeze_time` = NOW() WHERE `id` = ?';
-    await pool.query(sql,[row.id])
-    .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);});
     console.log ('账户解除限制');
   }
   await page.goto('https://okme.xyz/user/invite');
@@ -139,14 +135,15 @@ async function  freeokBuy (row,page) {
     inner_html = inner_html.split('=')[1].trim();
     row.score = Number(inner_html);
     console.log( "score: " + inner_html);
-    //invite
-    inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
-    row.invite = Number(inner_html);
-    if (row.invite>3.3){
+    if (row.score>3.3){
       await resetPwd(browser);
       row.Invalid = 3;
     }
-
+    //console.log('row.Invalid',row.Invalid);
+    //invite 邀请码
+    inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
+    row.invite = inner_html;
+  
     cookies = await page.cookies();
     row.cookies = JSON.stringify(cookies, null, '\t');
     return row;

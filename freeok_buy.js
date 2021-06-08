@@ -95,6 +95,7 @@ async function  freeokBuy (row,page) {
       await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
       await pool.query("UPDATE freeok SET fetcher = null  WHERE id = ?", [row.id]);
     }
+    await page.goto('https://okme.xyz/user');
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;
