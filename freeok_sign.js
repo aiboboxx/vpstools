@@ -117,18 +117,15 @@ async function  freeokSign  (row,page) {
   if (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-/*     let sql;   
-    sql = 'UPDATE `freeok` SET  `unfreeze_time` = NOW() WHERE `id` = ?';
-    await pool.query(sql,[row.id])
-    .then((reslut)=>{console.log('账户解除限制:',reslut[0].changedRows);myfuns.Sleep(300);}); */
-    //console.log ('账户解除限制');
+    await myfuns.Sleep(3000);
+    needreset = true;
     if (row.fetcher !== null){
-      needreset = true;
       await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
       row.fetcher = null;
     }
+    await page.goto('https://okme.xyz/user');
   }
-  await myfuns.Sleep(3000);
+  await myfuns.Sleep(2000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
@@ -209,10 +206,13 @@ async function  freeokSign  (row,page) {
           {timeout:5000}
         ).then(async ()=>{
           console.log('订阅链接：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-          await myfuns.Sleep(3000);        
+          await myfuns.Sleep(2000);     
+          await page.goto('https://okme.xyz/user');   
         });  
       }
       //rss
+      selecter = '#all_v2ray_windows > div.float-clear > input';
+      await page.waitForSelector(selecter,{timeout:10000});
       inner_html = await page.evaluate(() => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
       //console.log( "rss: " + inner_html);
       row.rss = inner_html;

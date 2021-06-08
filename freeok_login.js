@@ -122,7 +122,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok_login ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok WHERE id>99 order by update_time asc limit 20;"
+    let sql = "SELECT * FROM freeok WHERE Invalid = 2;"
     //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
     let r =  await pool.query(sql);
     let i = 0;

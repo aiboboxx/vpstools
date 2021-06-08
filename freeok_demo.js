@@ -1,4 +1,5 @@
-const fs = require("fs")
+const fs = require("fs");
+//const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
@@ -11,9 +12,9 @@ const pool = mysql.createPool({
   password : 'LaI9DCyNBpEKWe9pn5B',   
   port: '33060',  
   database: 'mydb',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  waitForConnections: true, //连接超额是否等待
+  connectionLimit: 10, //一次创建的最大连接数
+  queueLimit: 0 //可以等待的连接的个数
 });
 const runId = github.context.runId;
 let browser;
@@ -127,7 +128,7 @@ async function  main () {
     });
     console.log(`*****************开始freeokgetrss ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok WHERE Invalid IS NULL and rss IS NULL;"
-    let sql = "SELECT * FROM freeok WHERE score>3;"
+    let sql = "SELECT * FROM freeok WHERE Invalid = 2;"
     let r = await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要getrss`);
