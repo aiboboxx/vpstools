@@ -103,6 +103,16 @@ async function  resetPwd (browser){
     .catch((err)=>console.log('修改v2ray密码失败'));
   });
   await myfuns.Sleep(500);
+  await page.goto('https://okme.xyz/user');
+  await page.waitForSelector('body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a');
+  await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+  await page.waitForFunction(
+    'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+    {timeout:5000}
+  ).then(async ()=>{
+    console.log('订阅链接：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+    await myfuns.Sleep(2000);     
+  }); 
   page.close();
 }
 async function  freeokBuy (row,page) {
@@ -138,7 +148,8 @@ async function  freeokBuy (row,page) {
     if (row.score>3.3){
       if (row.id>10){
         await resetPwd(browser);
-        row.Invalid = 3;
+        row.fetcher = null;
+        row.Invalid = 6;
       }
     }
     //console.log('row.Invalid',row.Invalid);
@@ -167,7 +178,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok  order by invite_refresh_time asc limit 20;"
+    let sql = "SELECT * FROM freeok  where Invalid < 5 or Invalid is null order by invite_refresh_time asc limit 30;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);
@@ -179,8 +190,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-        sql = 'UPDATE `freeok` SET  `cookies`=?, `Invalid`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.cookies,row.Invalid,row.score,row.invite,row.id];
+        sql = 'UPDATE `freeok` SET  `cookies`=?, `Invalid`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.cookies,row.Invalid,row.fetcher,row.score,row.invite,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)

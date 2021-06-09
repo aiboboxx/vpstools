@@ -91,7 +91,7 @@ async function  freeokBuy (row,page) {
     console.log ('账户解除限制');
   }
   await page.goto('https://okme.xyz/user/invite');
-  await myfuns.Sleep(3000);
+  await myfuns.Sleep(5000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
@@ -123,7 +123,7 @@ async function  main () {
     });
     console.log(`*****************开始freeokgetrss ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok WHERE Invalid IS NULL and rss IS NULL;"
-    let sql = "SELECT * FROM freeok WHERE Invalid = 2;"
+    let sql = "SELECT * FROM freeok WHERE Invalid = 6;"
     let r = await pool.query(sql, []);
     let i = 0;
     console.log(`共有${r[0].length}个账户要getrss`);
