@@ -91,7 +91,7 @@ async function  freeokBuy (row,page) {
     console.log ('账户解除限制');
   }
   await page.goto('https://okme.xyz/user/invite');
-  await myfuns.Sleep(5000);
+  await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
@@ -100,10 +100,15 @@ async function  freeokBuy (row,page) {
     //await page.goto('https://okme.xyz/user');
   });
   console.log('do something');
-    //fs.writeFileSync(`./cookie.txt`, JSON.stringify(cookies, null, '\t'))
-/*     inner_html = await page.evaluate( () => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
-    console.log( "rss: " + inner_html);
-    row.rss = inner_html; */
+  selecter = "body > main > div.content-header.ui-content-header > div > h1" ;
+  //await page.evaluate((selecter,test) => document.querySelector(selecter).innerText=test,selecter,"兴文并");
+//////////do something
+    //score
+    inner_html = await page.evaluate(() => document.querySelector( 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)' ).innerText.trim());
+    //console.log( inner_html);
+    inner_html = inner_html.split('=')[1].trim();
+    row.score = Number(inner_html);
+    console.log( "score: " + inner_html);
     cookies = await page.cookies();
     row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
