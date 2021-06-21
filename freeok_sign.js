@@ -6,18 +6,24 @@ const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
 Date.prototype.Format = myfuns.Format;
 const mysql = require('mysql2/promise');
+const runId = github.context.runId;
+let browser;
+let setup = {};
+if (!runId) {
+  setup  = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
+}else{
+  setup  = JSON.parse(process.env.SETUP);
+}
 const pool = mysql.createPool({
-  host: 'app.aiboboxx.ml',
-  user: 'aiboboxx',
-  password : 'LaI9DCyNBpEKWe9pn5B',   
-  port: '33060',  
-  database: 'mydb',
+  host: setup.mysql.host,
+  user: setup.mysql.user,
+  password : setup.mysql.password,   
+  port: setup.mysql.port,  
+  database: setup.mysql.database,
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0 //可以等待的连接的个数
 });
-const runId = github.context.runId;
-let browser;
 async function login(row,page){
   await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
 //await page.waitForSelector("#email");
