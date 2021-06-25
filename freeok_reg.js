@@ -72,12 +72,12 @@ async function main() {
   await page.emulate(puppeteer.devices[randomOne(devices)]);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await myfuns.clearBrowser(page); //clear all cookies
-  let usr = '', pwd = '780830lp';
+  let usr = '', pwd = setup.pwd;
   let selecter, inner_html;
   const aEmails = ['@126.com', '@163.com', '@qq.com', '@gmail.com'];
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   console.log(usr);
-  await page.goto('https://okme.xyz/auth/register?code=4G8v');
+  await page.goto('https://okme.xyz/auth/register?code=XTtC');
   await page.waitForSelector('#name', { timeout: 10000 });
   await page.type('#name', usr);
   //await myfuns.Sleep(100);
