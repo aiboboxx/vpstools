@@ -1,7 +1,10 @@
 //专注于购买套餐
 const fs = require("fs");
 //const sqlite = require('./asqlite3.js')
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
@@ -26,8 +29,8 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 async function login(row,page){
-  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
-//await page.waitForSelector("#email");
+  await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 15000}).catch((err)=>console.log('首页超时'));
+  await page.waitForSelector("#email",{timeout:30000});
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
@@ -41,7 +44,7 @@ async function login(row,page){
  );
   await myfuns.Sleep(1000);
   await Promise.all([
-    page.waitForNavigation({timeout: 5000}), 
+    page.waitForNavigation({timeout: 10000}), 
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
     page.click('#login'),    
   ])
@@ -63,14 +66,14 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okme.xyz/user');
+  await page.goto('https://v2.freeyes.xyz/user');
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter,{timeout:3000})
+  await page.waitForSelector(selecter,{timeout:12000})
   .then(
     async ()=>{
     console.log('登录成功');
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
     return true;
   },
   async (err)=>{
@@ -101,15 +104,15 @@ async function  freeokBuy (row,page) {
       await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
       await pool.query("UPDATE freeok SET fetcher = null  WHERE id = ?", [row.id]);
     }
-    await page.goto('https://okme.xyz/user');
+    await page.goto('https://v2.freeyes.xyz/user');
   }
   await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter,{timeout:10000})
+  await page.waitForSelector(selecter,{timeout:15000})
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
   });
 //////////do something
   
@@ -139,7 +142,7 @@ async function  freeokBuy (row,page) {
     date = new Date(row.level_end_time);
     if  (date.getTime() < Date.now()){
       //await page.waitFor(1500);
-      await page.goto('https://okme.xyz/user/shop');
+      await page.goto('https://v2.freeyes.xyz/user/shop');
       await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
         delay: 200
       })
@@ -157,12 +160,12 @@ async function  freeokBuy (row,page) {
       console.log( "购买成功！");
       else
       console.log( "购买套餐结果: " + inner_html );
-      await page.goto('https://okme.xyz/user');
+      await page.goto('https://v2.freeyes.xyz/user');
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
       await page.waitForSelector(selecter,{timeout:10000})
       .then(async ()=>{
         console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-        //await page.goto('https://okme.xyz/user');
+        //await page.goto('https://v2.freeyes.xyz/user');
       });
           //等级过期时间 xpath
     inner_html = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );

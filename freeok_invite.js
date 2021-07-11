@@ -1,6 +1,9 @@
 const fs = require("fs");
 //const sqlite = require('./asqlite3.js')
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
@@ -25,8 +28,8 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 async function login(row,page){
-  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
-//await page.waitForSelector("#email");
+  await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 15000}).catch((err)=>console.log('首页超时'));
+  await page.waitForSelector("#email",{timeout:30000});
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
@@ -40,7 +43,7 @@ async function login(row,page){
  );
   await myfuns.Sleep(1000);
   await Promise.all([
-    page.waitForNavigation({timeout: 5000}), 
+    page.waitForNavigation({timeout: 10000}), 
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
     page.click('#login'),    
   ])
@@ -62,14 +65,14 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okme.xyz/user');
+  await page.goto('https://v2.freeyes.xyz/user');
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter,{timeout:3000})
+  await page.waitForSelector(selecter,{timeout:12000})
   .then(
     async ()=>{
     console.log('登录成功');
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
     return true;
   },
   async (err)=>{
@@ -88,14 +91,14 @@ async function  resetPwd (browser){
       //console.info(`➞ ${dialog.message()}`);
       await dialog.dismiss();
   });
-  await page.goto('https://okme.xyz/user/edit');
+  await page.goto('https://v2.freeyes.xyz/user/edit');
   await myfuns.Sleep(1000);
   let selecter, inner_html;
   selecter = '#sspwd';
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：修改资料');
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
   });
   //inner_html = await page.$eval(selecter, el => el.value);
   await page.type(selecter, Math.random().toString(36).slice(-8));
@@ -104,12 +107,12 @@ async function  resetPwd (browser){
     await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")',{timeout:3000})
     .then(async ()=>{
       console.log('修改v2ray密码成功');
-      //await page.goto('https://okme.xyz/user');
+      //await page.goto('https://v2.freeyes.xyz/user');
     })
     .catch((err)=>console.log('修改v2ray密码失败'));
   });
   await myfuns.Sleep(500);
-  await page.goto('https://okme.xyz/user');
+  await page.goto('https://v2.freeyes.xyz/user');
   await page.waitForSelector('body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a');
   await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
   await page.waitForFunction(
@@ -133,14 +136,14 @@ async function  freeokBuy (row,page) {
     await page.click('#reactive');
     console.log ('账户解除限制');
   }
-  await page.goto('https://okme.xyz/user/invite');
+  await page.goto('https://v2.freeyes.xyz/user/invite');
   await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)';
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：invite');
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
   });
   selecter = "body > main > div.content-header.ui-content-header > div > h1" ;
   //await page.evaluate((selecter,test) => document.querySelector(selecter).innerText=test,selecter,"兴文并");

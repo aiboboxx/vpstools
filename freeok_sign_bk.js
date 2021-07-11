@@ -26,7 +26,7 @@ const pool = mysql.createPool({
 });
 
 async function login(row,page){
-  await page.goto('https://okme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
 //await page.waitForSelector("#email");
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
@@ -51,14 +51,14 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okme.xyz/user');
+  await page.goto('https://v2.freeyes.xyz/user');
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter,{timeout:3000})
   .then(
     async ()=>{
     console.log('登录成功');
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
     return true;
   },
   async (err)=>{
@@ -95,7 +95,7 @@ async function  freeokSign  (row,page) {
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-    //await page.goto('https://okme.xyz/user');
+    //await page.goto('https://v2.freeyes.xyz/user');
   });
 //////////do something
   
@@ -190,7 +190,7 @@ async function  freeokSign  (row,page) {
         await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")',{timeout:3000})
         .then(async ()=>{
           console.log('签到成功',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-          //await page.goto('https://okme.xyz/user');
+          //await page.goto('https://v2.freeyes.xyz/user');
         })
         .catch((err)=>console.log('签到超时'));
       })

@@ -1,6 +1,9 @@
 const fs = require("fs");
 //const sqlite = require('./asqlite3.js')
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-extra');
+// add stealth plugin and use defaults (all evasion techniques)
+const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+puppeteer.use(StealthPlugin());
 const core = require('@actions/core');
 const github = require('@actions/github');
 const myfuns = require('./myfuns.js');
@@ -25,8 +28,8 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 async function login(usr, pwd, page) {
-  await page.goto('https://okme.xyz/auth/login', { timeout: 10000 }).catch((err) => console.log('首页超时'));
-  //await page.waitForSelector("#email");
+  await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+  await page.waitForSelector("#email",{timeout:30000});
   await page.type('#email', usr, { delay: 20 });
   await page.type('#passwd', pwd, { delay: 20 });
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
@@ -40,7 +43,7 @@ async function login(usr, pwd, page) {
   );
   await myfuns.Sleep(1000);
   await Promise.all([
-    page.waitForNavigation({ timeout: 5000 }),
+    page.waitForNavigation({timeout: 10000}), 
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
     page.click('#login'),
   ])
@@ -77,7 +80,7 @@ async function main() {
   const aEmails = ['@126.com', '@163.com', '@qq.com', '@gmail.com'];
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   console.log(usr);
-  await page.goto('https://okme.xyz/auth/register?code=XTtC');
+  await page.goto('https://v2.freeyes.xyz/auth/register?code=XTtC');
   await page.waitForSelector('#name', { timeout: 10000 });
   await page.type('#name', usr);
   //await myfuns.Sleep(100);
@@ -113,7 +116,7 @@ async function main() {
   sql = await pool.format(sql, arr);
   await pool.query(sql)
     .then((reslut) => { console.log('添加成功:', reslut[0].insertId); myfuns.Sleep(2000); });
-  await page.goto('https://okme.xyz/auth/login', { timeout: 10000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 10000 }).catch((err) => console.log('首页超时'));
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr, { delay: 20 });
   await page.type('#passwd', pwd, { delay: 20 });
@@ -146,7 +149,7 @@ async function main() {
       });
   let cookies = [], ck = '', msg = '';
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 10000 });
+  await page.waitForSelector(selecter, { timeout: 15000 });
   await myfuns.Sleep(1000);
   selecter = 'body > main > div.content-header.ui-content-header > div > h1';
   await page.waitForSelector(selecter);
