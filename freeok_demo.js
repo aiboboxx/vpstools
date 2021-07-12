@@ -29,7 +29,7 @@ const pool = mysql.createPool({
 });
 async function login(row,page){
   await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
-//await page.waitForSelector("#email");
+  await page.waitForSelector("#email",{timeout:30000});
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
@@ -65,7 +65,7 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user');
+  await page.goto('https://v2.freeyes.xyz/user',{timeout:10000});
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter,{timeout:3000})
