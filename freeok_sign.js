@@ -116,23 +116,23 @@ async function  resetPwd (browser){
   page.close();
 }
 async function  freeokSign  (row,page) {
-  let needreset = false;
-  let cookies = [];
   await page.goto('http://ip.3322.org/');
   console.log(
     await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
     );
-  await myfuns.Sleep(60000);
+  await myfuns.Sleep(1000);
+  let needreset = false;
+  let cookies = [];
   await myfuns.clearBrowser(page); //clear all cookies
     if (row.cookies == null){
     if (!runId) await login(row,page);
   }else{
     await loginWithCookies(row,page).catch(async ()=> {
-      //if (!runId) await login(row,page);
-      await myfuns.Sleep(6000);
-      console.log(
-        await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
-        );
+      if (!runId) await login(row,page);
+      // await myfuns.Sleep(6000);
+      // console.log(
+      //   await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
+      //   );
     });
   }
   if (await page.$('#reactive')) {
