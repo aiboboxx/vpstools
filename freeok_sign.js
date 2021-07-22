@@ -124,6 +124,9 @@ async function  freeokSign  (row,page) {
     await loginWithCookies(row,page).catch(async ()=> {
       //if (!runId) await login(row,page);
       await myfuns.Sleep(6000);
+      console.log(await page.evaluate(
+        () => document.querySelector( 'body' ).innerHTML.trim())
+        );
     });
   }
   if (await page.$('#reactive')) {
