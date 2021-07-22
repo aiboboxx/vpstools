@@ -66,7 +66,7 @@ async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
   await page.goto('https://v2.freeyes.xyz/user',{timeout:20000});
-  await myfuns.Sleep(6000);
+  //await myfuns.Sleep(6000);
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter,{timeout:30000})
@@ -253,7 +253,10 @@ async function  freeokSign  (row,page) {
 async function  main () {
    browser = await puppeteer.launch({ 
     headless: runId?true:false ,
-    args: ['--window-size=1920,1080'],
+    args: [
+      '--window-size=1920,1080',
+      '--proxy-server=socks5://app.aiboboxx.ml:20170'
+    ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
   });
