@@ -65,10 +65,10 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user',{timeout:10000});
+  await page.goto('https://v2.freeyes.xyz/user',{timeout:20000});
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter,{timeout:3000})
+  await page.waitForSelector(selecter,{timeout:15000})
   .then(
     async ()=>{
     console.log('登录成功');
@@ -127,9 +127,12 @@ async function  resetPwd (browser){
 async function  freeokBuy (row,page) {
   await myfuns.clearBrowser(page); //clear all cookies
   if (row.cookies == null){
-    await login(row,page);
+    if (!runId) await login(row,page);
   }else{
-    await loginWithCookies(row,page).catch(async ()=>await login(row,page));
+    await loginWithCookies(row,page).catch(async ()=> {
+      //if (!runId) await login(row,page);
+      await myfuns.Sleep(6000);
+    });
   }
   if (await page.$('#reactive',{timeout:3000})) {
     await page.type('#email', row.usr);
@@ -187,7 +190,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok  where Invalid < 5 or Invalid is null order by invite_refresh_time asc limit 30;"
+    let sql = "SELECT * FROM freeok  where  Invalid is null order by invite_refresh_time asc limit 30;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);

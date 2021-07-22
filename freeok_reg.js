@@ -72,7 +72,7 @@ async function main() {
     await dialog.dismiss();
   });
   let devices = ['Galaxy Note 3', 'Galaxy Note II', 'iPhone 11', 'Galaxy S III', 'Galaxy S5', 'iPad Mini', 'iPad', 'iPhone 6', 'iPhone 6 Plus', 'iPhone 7', 'iPhone 7 Plus', 'iPhone XR'];
-  await page.emulate(puppeteer.devices[randomOne(devices)]);
+  //await page.emulate(puppeteer.devices[randomOne(devices)]);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await myfuns.clearBrowser(page); //clear all cookies
   let usr = '', pwd = setup.pwd;
