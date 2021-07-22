@@ -93,8 +93,8 @@ async function  freeokBuy (row,page) {
     if (!runId) await login(row,page);
   }else{
     await loginWithCookies(row,page).catch(async ()=> {
-      //if (!runId) await login(row,page);
-      await myfuns.Sleep(6000);
+      if (!runId) await login(row,page);
+      //await myfuns.Sleep(6000);
     });
   }
   if (await page.$('#reactive',{timeout:3000})) {
