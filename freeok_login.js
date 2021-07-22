@@ -91,7 +91,7 @@ async function  freeokBuy (row,page) {
   let needreset = false;
   let cookies = [];
   await myfuns.clearBrowser(page); //clear all cookies
-  if (row.cookies == null){
+    if (row.cookies == null){
     await login(row,page);
   }else{
     await loginWithCookies(row,page).catch(async ()=>await login(row,page));
