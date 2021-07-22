@@ -66,9 +66,10 @@ async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
   await page.goto('https://v2.freeyes.xyz/user',{timeout:20000});
+  await myfuns.Sleep(6000);
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter,{timeout:15000})
+  await page.waitForSelector(selecter,{timeout:30000})
   .then(
     async ()=>{
     console.log('登录成功');
@@ -144,7 +145,7 @@ async function  freeokSign  (row,page) {
   await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter,{timeout:60000})
+  await page.waitForSelector(selecter,{timeout:15000})
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
     //await page.goto('https://v2.freeyes.xyz/user');
@@ -259,7 +260,7 @@ async function  main () {
     //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage();
     // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
-    page.on('dialog', async dialog => {
+      page.on('dialog', async dialog => {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
     });
