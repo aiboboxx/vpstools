@@ -125,7 +125,7 @@ async function  freeokSign  (row,page) {
       //if (!runId) await login(row,page);
       await myfuns.Sleep(6000);
       console.log(await page.evaluate(
-        () => document.querySelector( 'body' ).innerHTML.trim())
+        () => document.querySelector( 'body' ).innerText.trim())
         );
     });
   }
@@ -144,7 +144,7 @@ async function  freeokSign  (row,page) {
   await myfuns.Sleep(3000);
   let selecter, inner_html;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter,{timeout:15000})
+  await page.waitForSelector(selecter,{timeout:60000})
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
     //await page.goto('https://v2.freeyes.xyz/user');
