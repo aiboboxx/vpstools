@@ -28,7 +28,7 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 async function login(row,page){
-  await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 12000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 30000}).catch((err)=>console.log('首页超时'));
   await page.waitForSelector("#email",{timeout: 30000});
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
@@ -65,7 +65,7 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user',{timeout:20000});
+  await page.goto('https://v2.freeyes.xyz/user',{timeout:30000});
   //await myfuns.Sleep(6000);
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
@@ -116,15 +116,15 @@ async function  resetPwd (browser){
   page.close();
 }
 async function  freeokSign  (row,page) {
-  await page.goto('http://ip.3322.org/');
-  console.log(
-    await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
-    );
-  await myfuns.Sleep(1000);
+  // await page.goto('http://ip.3322.org/');
+  // console.log(
+  //   await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
+  //   );
+  // await myfuns.Sleep(1000);
   let needreset = false;
   let cookies = [];
   await myfuns.clearBrowser(page); //clear all cookies
-    if (row.cookies == null){
+  if (row.cookies == null){
     if (!runId) await login(row,page);
   }else{
     await loginWithCookies(row,page).catch(async ()=> {

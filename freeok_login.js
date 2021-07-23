@@ -66,10 +66,10 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user',{timeout:20000});
+  await page.goto('https://v2.freeyes.xyz/user',{timeout:30000});
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter,{timeout:15000})
+  await page.waitForSelector(selecter,{timeout:30000})
   .then(
     async ()=>{
     console.log('登录成功');

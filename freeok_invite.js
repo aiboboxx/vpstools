@@ -65,10 +65,10 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user',{timeout:20000});
+  await page.goto('https://v2.freeyes.xyz/user',{timeout:30000});
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter,{timeout:15000})
+  await page.waitForSelector(selecter,{timeout:30000})
   .then(
     async ()=>{
     console.log('登录成功');
@@ -131,7 +131,10 @@ async function  freeokBuy (row,page) {
   }else{
     await loginWithCookies(row,page).catch(async ()=> {
       if (!runId) await login(row,page);
-      //await myfuns.Sleep(6000);
+      // await myfuns.Sleep(6000);
+      // console.log(
+      //   await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
+      //   );
     });
   }
   if (await page.$('#reactive',{timeout:3000})) {
