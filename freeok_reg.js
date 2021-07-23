@@ -80,8 +80,21 @@ async function main() {
   const aEmails = ['@126.com', '@163.com', '@qq.com', '@gmail.com'];
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   console.log(usr);
-  await page.goto('https://v2.freeyes.xyz/auth/register?code=XTtC');
-  await page.waitForSelector('#name', { timeout: 10000 });
+  await page.goto('https://v2.freeyes.xyz/auth/register?code=XTtC',{timeout: 60000});
+  console.log("a");
+  await page.waitForFunction(
+    (selecter) => {
+        if (document.querySelector(selecter)){
+            return document.querySelector(selecter).innerText.includes("确认注册");
+        }else{
+            return false;
+        }
+    },
+    { timeout: 60000 },
+    'body'
+)      .then(async () => { console.log("无需验证"); await myfuns.Sleep(1000); });
+  await page.waitForSelector('#name', { timeout: 60000 });  
+  console.log("b");
   await page.type('#name', usr);
   //await myfuns.Sleep(100);
   await page.type('#email', usr);
@@ -117,6 +130,7 @@ async function main() {
   await pool.query(sql)
     .then((reslut) => { console.log('添加成功:', reslut[0].insertId); myfuns.Sleep(2000); });
   await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 10000 }).catch((err) => console.log('首页超时'));
+  await myfuns.Sleep(3000);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr, { delay: 20 });
   await page.type('#passwd', pwd, { delay: 20 });

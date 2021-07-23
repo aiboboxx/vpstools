@@ -66,6 +66,17 @@ async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
   await page.goto('https://v2.freeyes.xyz/user',{timeout:30000});
+  await page.waitForFunction(
+    (selecter) => {
+        if (document.querySelector(selecter)){
+            return document.querySelector(selecter).innerText.includes("用户中心");
+        }else{
+            return false;
+        }
+    },
+    { timeout: 60000 },
+    'body'
+)      .then(async () => { console.log("无需验证"); await myfuns.Sleep(1000); });
   //await myfuns.Sleep(6000);
   let selecter, inner_html;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
