@@ -196,8 +196,38 @@ async function  freeokBuy (row,page) {
     row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
-
+async function v2raya() {
+  browser = await puppeteer.launch({ 
+    headless: runId?true:false ,
+    args: [
+      '--window-size=1920,1080'    ],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true
+  });
+    //console.log(await sqlite.open('./freeok.db'))
+    const page = await browser.newPage();
+    // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
+      page.on('dialog', async dialog => {
+        //console.info(`➞ ${dialog.message()}`);
+        await dialog.dismiss();
+    });
+    await page.goto('http://app.aiboboxx.ml:2017/');  
+    selecter = '#login > div.animation-content > div > section > div:nth-child(2) > div > input';
+    await page.waitForSelector(selecter,{timeout:15000});
+    await page.type(selecter, "eroslp");
+    await page.type("#login > div.animation-content > div > section > div:nth-child(3) > div > input", setup.pwd_v2raya);
+    await page.click("#login > div.animation-content > div > footer > button > span");
+    await myfuns.Sleep(2000);
+    await page.waitForSelector("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)",{timeout:15000});
+    await page.click("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)");
+    await myfuns.Sleep(2000);
+    await page.click("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary");
+    await myfuns.Sleep(2000);
+    await page.close();
+    await browser.close();
+}
 async function  main () {
+  await v2raya();
    browser = await puppeteer.launch({ 
     headless: runId?true:false ,
     args: [
