@@ -296,7 +296,7 @@ async function v2raya() {
     await browser.close();
 }
 async function  main () {
-  await v2raya();
+  if ( runId?true:false ) await v2raya();
    browser = await puppeteer.launch({ 
     headless: runId?true:false ,
     args: [
