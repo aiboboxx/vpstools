@@ -221,13 +221,15 @@ async function v2raya() {
     await page.waitForSelector("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)",{timeout:15000});
     await page.click("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)");
     await myfuns.Sleep(2000);
-    await page.click("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary");
+    await page.click("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary")
+    .catch(error => console.log('clickerror: ', error.message));
     await myfuns.Sleep(2000);
     await page.close();
     await browser.close();
 }
 async function  main () {
-  if ( runId?true:false ) await v2raya();
+   await v2raya();
+  //await v2raya();
    browser = await puppeteer.launch({ 
     headless: runId?true:false ,
     args: [
