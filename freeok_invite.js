@@ -171,13 +171,13 @@ async function  freeokBuy (row,page) {
     inner_html = inner_html.split('=')[1].trim();
     row.score = Number(inner_html);
     console.log( "score: " + inner_html);
-/*     if (row.score>3.3){
+    if (row.score>3.3){
       if (row.id>10){
         await resetPwd(browser);
         row.fetcher = null;
         row.Invalid = 6;
       }
-    } */
+    } 
     //console.log('row.Invalid',row.Invalid);
     //invite 邀请码
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
@@ -212,7 +212,13 @@ async function v2raya() {
     await page.waitForSelector("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)",{timeout:15000});
     await page.click("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)");
     await myfuns.Sleep(2000);
-    await page.waitForSelector("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary",{timeout:15000});
+    await page.waitForSelector("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary",{timeout:15000})
+    .catch(async (error) => {
+      console.log('clickerror: ', error.message);
+      await page.click("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)")
+      .then(()=>{console.log('clickagain')});
+      await page.waitForSelector("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary",{timeout:15000});
+    });
     await page.click("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary")
     .catch(error => console.log('clickerror: ', error.message));
     await myfuns.Sleep(2000);
