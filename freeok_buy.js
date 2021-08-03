@@ -67,6 +67,7 @@ async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
   await page.goto('https://v2.freeyes.xyz/user',{timeout:30000});
+  console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
         if (document.querySelector(selecter)){
@@ -233,6 +234,7 @@ async function v2raya() {
     await myfuns.Sleep(2000);
     await page.close();
     await browser.close();
+    await myfuns.Sleep(2000);
 }
 async function  main () {
    await v2raya();
