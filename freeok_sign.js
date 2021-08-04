@@ -296,8 +296,10 @@ async function v2raya() {
       console.log('clickerror: ', error.message);
       await page.click("#app > nav > div.navbar-menu > div.navbar-end > a:nth-child(1)")
       .then(()=>{console.log('clickagain')});
+      await myfuns.Sleep(2000);
       await page.waitForSelector("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary",{timeout:15000});
     });
+    console.log('click保存')
     await page.click("body > div.modal.is-active > div.animation-content > div > footer > button.button.is-primary")
     .catch(error => console.log('clickerror: ', error.message));
     await myfuns.Sleep(2000);
