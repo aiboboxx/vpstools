@@ -60,7 +60,10 @@ async function login(usr, pwd, page) {
 async function main() {
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    args: ['--window-size=1920,1080'],
+    args: [
+      '--window-size=1920,1080',
+      '--proxy-server=socks5://127.0.0.1:10808'
+    ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
   });
