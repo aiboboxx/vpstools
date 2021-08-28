@@ -75,7 +75,7 @@ async function loginWithCookies(row,page){
             return false;
         }
     },
-    { timeout: 60000 },
+    { timeout: 3000 },
     'body'
 )      .then(async () => { console.log("无需验证"); await myfuns.Sleep(1000); });
   //await myfuns.Sleep(6000);
@@ -207,13 +207,13 @@ async function  freeokSign  (row,page) {
         //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
       }
     }
-    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>30&&row.id>10){
+    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>90&&row.id>10){
       if (needreset) await resetPwd(browser);
       await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
       needreset = true;
       row.fetcher = null;
       //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-      console.log('30天重置');
+      console.log('90天重置');
     }
       //今日已用
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
@@ -326,7 +326,7 @@ async function  main () {
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
     //let sql = "SELECT * FROM freeok where id = 9;"
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 20;"
+    let sql = "SELECT * FROM freeok where Invalid IS NULL order by sign_time asc limit 15;"
     //let sql = "SELECT * FROM freeok where Invalid IS NULL and fetcher is null order by sign_time asc limit 1;"
     let r =  await pool.query(sql, []);
     let i = 0;
