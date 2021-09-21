@@ -75,7 +75,7 @@ async function loginWithCookies(row,page){
             return false;
         }
     },
-    { timeout: 3000 },
+    { timeout: 5000 },
     'body'
 )      .then(async () => { console.log("无需验证"); await myfuns.Sleep(1000); });
   let selecter, inner_html;
