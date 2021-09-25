@@ -172,13 +172,13 @@ async function  freeokBuy (row,page) {
     inner_html = inner_html.split('=')[1].trim();
     row.score = Number(inner_html);
     console.log( "score: " + inner_html);
-    if (row.score>3.3){
-      if (row.id>10){
-        await resetPwd(browser);
-        row.fetcher = null;
-        row.Invalid = 6;
-      }
-    } 
+    // if (row.score>3.3){
+    //   if (row.id>10){
+    //     await resetPwd(browser);
+    //     row.fetcher = null;
+    //     row.Invalid = 6;
+    //   }
+    // } 
     //console.log('row.Invalid',row.Invalid);
     //invite 邀请码
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
