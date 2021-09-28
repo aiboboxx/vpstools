@@ -36,6 +36,8 @@ async function login(row,page){
   await myfuns.Sleep(1000);
   await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
+  await myfuns.Sleep(3000);
+  await freeok_sbyzm(page);
   await page.waitForFunction(
    (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
    {timeout:60000},
@@ -49,15 +51,15 @@ async function login(row,page){
   ])
   .then(async ()=>{
     console.log ('登录成功');
-    await pool.query("UPDATE freeok SET Invalid = null  WHERE id = ?", [row.id]);
+    await pool.query("UPDATE freeok SET level = null  WHERE id = ?", [row.id]);
   })
   .catch(async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
     if (msg == "账号在虚无之地，请尝试重新注册") {
-      await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+      await pool.query("UPDATE freeok SET level = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账号在虚无之地'));
     }else{
-      await pool.query("UPDATE freeok SET Invalid = 2  WHERE id = ?", [row.id]);
+      await pool.query("UPDATE freeok SET level = 2  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('登录失败'));
     }    
   });
@@ -90,7 +92,7 @@ async function loginWithCookies(row,page){
   async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
     if (msg == "账号在虚无之地，请尝试重新注册") {
-      await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+      await pool.query("UPDATE freeok SET level = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账号在虚无之地'));
     }else{
       return Promise.reject(new Error('登录失败'));
@@ -176,10 +178,10 @@ async function  freeokBuy (row,page) {
     //   if (row.id>10){
     //     await resetPwd(browser);
     //     row.fetcher = null;
-    //     row.Invalid = 6;
+    //     row.level = 6;
     //   }
     // } 
-    //console.log('row.Invalid',row.Invalid);
+    //console.log('row.level',row.level);
     //invite 邀请码
     inner_html = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
     row.invite = inner_html;
@@ -247,7 +249,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok invite ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok  where  Invalid is null order by invite_refresh_time asc limit 20;"
+    let sql = "SELECT * FROM freeok  where  level > 0 order by invite_refresh_time asc limit 20;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要invite`);
@@ -259,8 +261,8 @@ async function  main () {
       .then(async row => {
         //console.log(JSON.stringify(row));    
         let sql,arr;   
-        sql = 'UPDATE `freeok` SET  `cookies`=?, `Invalid`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.cookies,row.Invalid,row.fetcher,row.score,row.invite,row.id];
+        sql = 'UPDATE `freeok` SET  `cookies`=?, `level`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.cookies,row.level,row.fetcher,row.score,row.invite,row.id];
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
@@ -271,5 +273,135 @@ async function  main () {
      }
     await pool.end();
     if ( runId?true:false ) await browser.close();
+}
+async function freeok_sbyzm(page) {
+  const injectedScript = `
+    const getCanvasValue = (selector) => {
+        let canvas = document.querySelector(selector)
+        let ctx = canvas.getContext('2d')
+        let [width, height] = [canvas.width, canvas.height]
+        let rets = [...Array(height)].map(_ => [...Array(width)].map(_ => 0))
+        for (let i = 0; i < height; ++i) { 
+            for (let j = 0; j < width; ++j) { 
+                rets[i][j] = Object.values(ctx.getImageData(j,i,1,1).data)
+            }
+        }        
+        return rets
+    }
+`
+  await page.addScriptTag({ content: injectedScript });
+  async function getDistance() {
+    const THRESHOLD = 1
+    const _equals = (a, b) => {
+      if (a.length !== b.length) {
+        return false
+      }
+      for (let i = 0; i < a.length; ++i) {
+        let delta = Math.abs(a[i] - b[i])
+        if (delta > THRESHOLD) {
+          return false
+        }
+      }
+      return true
+    }
+    const differentSet = (a1, a2) => {
+      //console.log("a1", a1)
+      //console.log("a2", a2)
+      let rets = []
+      a1.forEach((el, y) => {
+        el.forEach((el2, x) => {
+          if (!_equals(el2, a2[y][x])) {
+            rets.push({
+              x,
+              y,
+              v: el2,
+              v2: a2[y][x]
+            })
+          }
+        })
+      })
+      return rets
+    }
+    const getLeftest = (array) => {
+      return array.sort((a, b) => {
+        if (a.x < b.x) {
+          return -1
+        }
+        else if (a.x == b.x) {
+          if (a.y <= b.y) {
+            return -1
+          }
+          return 1
+        }
+        return 1
+      }).shift()
+    }
+    let selecter = 'body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_widget > div > a > div.geetest_canvas_img.geetest_absolute > div > canvas.geetest_canvas_bg.geetest_absolute';
+    await page.waitForSelector(selecter);
+    let rets1 = await page.evaluate((selecter) => getCanvasValue(selecter), selecter);
+    //console.log("rets1",rets1);
+    selecter = 'body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_widget > div > a > div.geetest_canvas_img.geetest_absolute > canvas';
+    await page.waitForSelector(selecter);
+    let rets2 = await page.evaluate((selecter) => getCanvasValue(selecter), selecter);
+    //await page.evaluate(()=>dlbg(),);
+    //console.log("rets2",rets2);
+    let dest = getLeftest(differentSet(rets1, rets2));
+    //console.log('dest',dest);
+    return dest.x;
+  }
+  const distance = await getDistance();
+  const button = await page.waitForSelector("body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_slider.geetest_ready > div.geetest_slider_button");
+  const box = await button.boundingBox();
+  const axleX = Math.floor(box.x + box.width / 2);
+  const axleY = Math.floor(box.y + box.height / 2);
+  await btnSlider(distance);
+  async function btnSlider(distance) {
+    await page.mouse.move(axleX, axleY);
+    await page.mouse.down();
+    await myfuns.Sleep(getRndInteger(100, 200));
+    await page.mouse.move(box.x + distance / 4 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: +getRndInteger(60, 100) });
+    await myfuns.Sleep(getRndInteger(50, 200));
+    await page.mouse.move(box.x + distance / 2 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: getRndInteger(60, 100) });
+    await myfuns.Sleep(getRndInteger(50, 200));
+    await page.mouse.move(box.x + (distance / 4) * 3 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: getRndInteger(60, 100) });
+    await myfuns.Sleep(getRndInteger(50, 200));
+    await page.mouse.move(box.x + distance / 10 * 9 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: getRndInteger(60, 100) });
+    await myfuns.Sleep(getRndInteger(50, 200));
+    await page.mouse.move(box.x + distance + getRndInteger(10, 50), axleY + getRndInteger(-8, 10), { steps: getRndInteger(60, 100) });
+    await myfuns.Sleep(getRndInteger(50, 200));
+    await page.mouse.move(box.x + distance + 30 + getRndInteger(0, 4), axleY + getRndInteger(-8, 10), { steps: getRndInteger(60, 100) });
+    await myfuns.Sleep(getRndInteger(50, 200));
+    await page.mouse.up();
+    await myfuns.Sleep(2000);
+
+    let text = await page.evaluate(() => {
+      return document.querySelector("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip").innerText;
+    });
+    let text2 = await page.evaluate(() => {
+      return document.querySelector("#embed-captcha > div").innerText;
+    });
+    console.log(text, text2);
+    let step = 0;
+    if (text) {
+      // 如果失败重新获取滑块
+      if (
+        text.includes("怪物吃了拼图") ||
+        text.includes("拖动滑块将悬浮图像正确拼合") ||
+        text.includes("网络不给力请点击重试")
+      ) {
+        await page.waitFor(1000);
+        await page.click("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip");
+        await page.waitFor(2000);
+        step = await getDistance();
+        await btnSlider(step);
+      } else if (text.includes("请完成验证")) {
+        step = await getDistance();
+        await btnSlider(step);
+      }
+    }
+  }
+}
+function getRndInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 main();

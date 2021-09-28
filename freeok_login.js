@@ -50,15 +50,15 @@ async function login(row,page){
   ])
   .then(async ()=>{
     console.log ('登录成功');
-    await pool.query("UPDATE freeok SET Invalid = null  WHERE id = ?", [row.id]);
+    await pool.query("UPDATE freeok SET level = null  WHERE id = ?", [row.id]);
   })
   .catch(async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
     if (msg == "账号在虚无之地，请尝试重新注册") {
-      await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+      await pool.query("UPDATE freeok SET level = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账号在虚无之地'));
     }else{
-      await pool.query("UPDATE freeok SET Invalid = 2  WHERE id = ?", [row.id]);
+      await pool.query("UPDATE freeok SET level = 2  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('登录失败'));
     }    
   });
@@ -90,7 +90,7 @@ async function loginWithCookies(row,page){
   async (err)=>{
     let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
     if (msg == "账号在虚无之地，请尝试重新注册") {
-      await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+      await pool.query("UPDATE freeok SET level = 1  WHERE id = ?", [row.id]);
       return Promise.reject(new Error('账号在虚无之地'));
     }else{
       return Promise.reject(new Error('登录失败'));
@@ -146,9 +146,9 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok_login ${Date()}*******************\n`);  
-    //let sql = "SELECT * FROM freeok WHERE Invalid = 6;"
+    //let sql = "SELECT * FROM freeok WHERE level = 6;"
     //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
-    let sql = "SELECT * FROM freeok WHERE Invalid IS NULL  order by update_time asc limit 15;"
+    let sql = "SELECT * FROM freeok WHERE level > 0  order by update_time asc limit 15;"
     let r =  await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个账户要login`);

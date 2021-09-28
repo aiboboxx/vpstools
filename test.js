@@ -38,7 +38,7 @@ async function  freeokBuy (row,page) {
     .catch(async (err)=>{
       let msg = await page.evaluate(()=>document.querySelector('#msg').innerHTML);
       if (msg == "账号在虚无之地，请尝试重新注册") {
-        await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+        await pool.query("UPDATE freeok SET level = 1  WHERE id = ?", [row.id]);
         return Promise.reject(new Error('账号在虚无之地'));
       }else{
         return Promise.reject(new Error('登录失败'));
@@ -75,7 +75,7 @@ async function  freeokBuy (row,page) {
       })
       .catch(async (err) => {
         if (await page.$('#reactive',{timeout: 3000})) {
-            await pool.query("UPDATE freeok SET Invalid = 1  WHERE id = ?", [row.id]);
+            await pool.query("UPDATE freeok SET level = 1  WHERE id = ?", [row.id]);
           return Promise.reject(new Error('账户被限制'));
         }else{
           return Promise.reject(new Error('购买失败'));
@@ -117,7 +117,7 @@ async function  main () {
     });
 
     console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);  
-    //let sql = "SELECT * FROM freeok WHERE Invalid IS NULL  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 20;"
+    //let sql = "SELECT * FROM freeok WHERE level IS NULL  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 20;"
     let sql = "SELECT * FROM freeok WHERE id > 40 order by update_time asc limit 2;"
     let r =  await pool.query(sql, []);
     let i = 0;

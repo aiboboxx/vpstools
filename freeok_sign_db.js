@@ -69,7 +69,7 @@ async function  main () {
         await dialog.dismiss();
     });
     console.log(`*****************开始freeok签到 ${Date()}*******************\n`);  
-    let sql = "SELECT * FROM freeok where Invalid IS NULL order by update_time asc;"
+    let sql = "SELECT * FROM freeok where level IS NULL order by update_time asc;"
     let r = await sqlite.all(sql, []);
     let i = 0;
     for (let row of r) {
