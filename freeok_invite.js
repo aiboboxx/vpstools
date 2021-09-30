@@ -230,12 +230,12 @@ async function v2raya() {
     await browser.close();
 }
 async function  main () {
-   await v2raya();
+   //await v2raya();
    browser = await puppeteer.launch({ 
     headless: runId?true:false ,
     args: [
       '--window-size=1920,1080',
-      '--proxy-server=socks5://app.aiboboxx.ml:20170'
+      setup.proxy
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

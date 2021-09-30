@@ -142,7 +142,7 @@ async function  main () {
     headless: runId?true:false ,
     args: [
       '--window-size=1920,1080',
-      '--proxy-server=socks5://app.aiboboxx.ml:20170'
+      setup.proxy
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

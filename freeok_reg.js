@@ -33,7 +33,7 @@ async function main() {
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
-      '--proxy-server=socks5://127.0.0.1:10808'
+      setup.proxyL
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -45,13 +45,11 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  let devices = ['Galaxy Note 3', 'Galaxy Note II', 'iPhone 11', 'Galaxy S III', 'Galaxy S5', 'iPad Mini', 'iPad', 'iPhone 6', 'iPhone 6 Plus', 'iPhone 7', 'iPhone 7 Plus', 'iPhone XR'];
-  //await page.emulate(puppeteer.devices[randomOne(devices)]);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await myfuns.clearBrowser(page); //clear all cookies
   let usr = '', pwd = setup.pwd;
   let selecter, inner_html;
-  const aEmails = ['@126.com', '@163.com', '@qq.com', '@gmail.com'];
+  const aEmails = ['@126.com', '@163.com', '@qq.com'];
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   console.log(usr);
   await page.goto('https://v2.freeyes.xyz/auth/register?code=L8Dv', { timeout: 60000 });
@@ -86,7 +84,7 @@ async function main() {
   await page.waitForSelector('#embed-captcha > div')
     .catch((error) => { console.log(error.message); myfuns.Sleep(2000); });
   await page.click('#embed-captcha > div');
-  await myfuns.Sleep(2000);
+  await myfuns.Sleep(3500);
   await freeok_sbyzm(page);
   await page.waitForFunction(
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
@@ -110,7 +108,7 @@ async function main() {
   await myfuns.Sleep(1000);
   await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
-  await myfuns.Sleep(2000);
+  await myfuns.Sleep(3500);
   await freeok_sbyzm(page);
   await page.waitForFunction(
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),

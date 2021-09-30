@@ -1,6 +1,5 @@
 //专注于购买套餐
 const fs = require("fs");
-//const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -239,13 +238,13 @@ async function v2raya() {
   await myfuns.Sleep(2000);
 }
 async function main() {
-  await v2raya();
+  //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
-      '--proxy-server=socks5://app.aiboboxx.ml:20170'
-      //'--proxy-server=socks5://127.0.0.1:10808'
+      setup.proxy
+      //setup.proxyL
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

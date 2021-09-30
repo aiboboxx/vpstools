@@ -92,7 +92,7 @@ async function main() {
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
-      '--proxy-server=socks5://127.0.0.1:10808'
+      setup.proxyL
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
