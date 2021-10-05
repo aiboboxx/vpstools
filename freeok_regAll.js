@@ -6,9 +6,11 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const runId = github.context.runId;
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString,spawnLog } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
 //Date.prototype.format = tFormat;
+const { spawn } = require('child_process');
+let subprocess;
 let browser;
 let setup = {};
 if (!runId) {
@@ -157,16 +159,31 @@ async function main() {
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
   // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
+  subprocess = spawn('cmd.exe', ['/c', 'taskkill /F /IM v2rayn.exe']);
+  //const bat = spawn('cmd.exe', ['/c', 'my.bat']);
+    spawnLog(subprocess);
+    await sleep(2000);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
-  await regFreeok(page)
-  .catch(async (error) => { console.log('error: ', error.message); });
+  const fileArr = fs.readdirSync('D:/networks/v2rayN-Core/configs');
+  console.log(fileArr);
+  //changeProxy(fileArr[1]);
+   for(let configFile of fileArr){
+    console.log('-config=D:/networks/v2rayN-Core/configs/' + configFile);
+    subprocess = spawn('D:/networks/v2rayN-Core/v2ray.exe', ['-config=D:/networks/v2rayN-Core/configs/' + configFile]);
+    await regFreeok(page)
+    .catch(async (error) => { console.log('error: ', error.message); });
+    await sleep(90000);
+    subprocess.kill('SIGTERM');
+  }  
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
+  subprocess = spawn('cmd.exe', ['/c', 'startV2rayN.bat']);
+  spawnLog(subprocess);
+  await sleep(2000);
   await pool.end();
   if (runId ? true : false) await browser.close();
 }

@@ -3,9 +3,9 @@ const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
-const myfuns = require('./myfuns.js');
+const f = require('./myfuns.js');
 async function  freeokSign (row,page) {
-    await myfuns.clearBrowser(page); //clear all cookies
+    await clearBrowser(page); //clear all cookies
     await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
   //await page.waitForSelector("#email");
     await page.type('#email', row.usr, {delay: 20});
@@ -41,15 +41,15 @@ async function  freeokSign (row,page) {
       });
     await page.waitFor(1000);
     //获取余额
-    let inner_html = await page.evaluate(()=>document.querySelector( 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div' ).innerHTML.trim());
-    inner_html = inner_html.split(' ')[0];
-    console.log( "余额: " + inner_html);
-    row.balance = Number(inner_html);
+    let innerHtml = await page.evaluate(()=>document.querySelector( 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div' ).innerHTML.trim());
+    innerHtml = innerHtml.split(' ')[0];
+    console.log( "余额: " + innerHtml);
+    row.balance = Number(innerHtml);
     //等级过期时间
-    inner_html = await page.evaluate( () => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );
-    inner_html = inner_html.split(';')[1];
-    console.log( "等级过期时间: " +  inner_html);
-    row.level_end_time = inner_html;
+    innerHtml = await page.evaluate( () => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML );
+    innerHtml = innerHtml.split(';')[1];
+    console.log( "等级过期时间: " +  innerHtml);
+    row.level_end_time = innerHtml;
     return row;
 }  
 
@@ -75,12 +75,12 @@ async function  main () {
     for (let row of r) {
       i++;
       console.log("user:",i, row.id, row.usr);      
-      if (i % 3 == 0) await myfuns.Sleep(3000).then(() =>  console.log('暂停3秒！'));
+      if (i % 3 == 0) await sleep(3000).then(() =>  console.log('暂停3秒！'));
       if (row.usr&&row.pwd) await freeokSign(row,page)
       .then(row => {
         //console.log(row);
         sqlite.run("UPDATE freeok SET balance = ?, level_end_time = ?, update_time = datetime('now')  WHERE id = ?", [row.balance,row.level_end_time,row.id])
-        .then((reslut)=>{console.log(reslut);myfuns.Sleep(3000);})
+        .then((reslut)=>{console.log(reslut);f.sleep(3000);})
         })
       .catch(error => console.log('error: ', error.message));
      }

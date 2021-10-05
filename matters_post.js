@@ -3,18 +3,18 @@ const sqlite = require('./asqlite3.js')
 const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
-const myfuns = require('./myfuns.js');
+const f = require('./myfuns.js');
 //const puppeteer = require('puppeteer-extra')
 //const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 //puppeteer.use(StealthPlugin())
-Date.prototype.Format = myfuns.Format;
+Date.prototype.Format =Format;
 async function  mattersPost (rsss,page) {
     let selecter;
     await page.goto('https://matters.news/');
     selecter = '#__next > div > main > article > header > section > section > section > button.jsx-2415535273.container.isTransparent.centering-y.spacing-x-loose.bg-active-grey-lighter > div > div';
     await page.waitForSelector(selecter);
     await page.click(selecter);
-    await myfuns.Sleep(2000);
+    await sleep(2000);
     await page.waitForSelector('#field-email',{timeout:5000}).catch(async ()=>{        
         await page.click(selecter);
         await page.waitForSelector('#field-email',{timeout:5000})

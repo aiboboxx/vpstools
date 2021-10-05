@@ -7,8 +7,8 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const core = require('@actions/core');
 const github = require('@actions/github');
-const myfuns = require('./myfuns.js');
-Date.prototype.Format = myfuns.Format;
+const f = require('./myfuns.js');
+Date.prototype.Format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;
@@ -34,7 +34,7 @@ async function login(row,page){
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
-  await myfuns.Sleep(1000);
+  await sleep(1000);
   await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
   await page.waitForFunction(
@@ -42,7 +42,7 @@ async function login(row,page){
    {timeout:60000},
    '#embed-captcha > div'
  );
-  await myfuns.Sleep(1000);
+  await sleep(1000);
   await Promise.all([
     page.waitForNavigation({timeout: 10000}), 
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
@@ -77,8 +77,8 @@ async function loginWithCookies(row,page){
     },
     { timeout: 5000 },
     'body'
-)      .then(async () => { console.log("无需验证"); await myfuns.Sleep(1000); });
-  let selecter, inner_html;
+)      .then(async () => { console.log("无需验证"); await sleep(1000); });
+  let selecter, innerHtml;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter,{timeout:30000})
   .then(
@@ -101,7 +101,7 @@ async function loginWithCookies(row,page){
 async function  freeokBuy (row,page) {
   let needreset = false;
   let cookies = [];
-  await myfuns.clearBrowser(page); //clear all cookies
+  await clearBrowser(page); //clear all cookies
     if (row.cookies == null){
     await login(row,page);
   }else{
@@ -113,8 +113,8 @@ async function  freeokBuy (row,page) {
     console.log ('账户解除限制');
     await page.goto('https://v2.freeyes.xyz/user');
   }
-  await myfuns.Sleep(3000);
-  let selecter, inner_html;
+  await sleep(3000);
+  let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
@@ -155,7 +155,7 @@ async function  main () {
     for (let row of r[0]) {
       i++;
       console.log("user:",i, row.id, row.usr);
-      if (i % 3 == 0) await myfuns.Sleep(3000).then(()=>console.log('暂停3秒！'));
+      if (i % 3 == 0) await sleep(3000).then(()=>console.log('暂停3秒！'));
       if (row.usr&&row.pwd) await freeokBuy(row,page)
       .then(async row => {
         //console.log(JSON.stringify(row));    
@@ -165,8 +165,8 @@ async function  main () {
           sql = await pool.format(sql,arr);
           //console.log(sql);
           await pool.query(sql)
-          .then((reslut)=>{console.log('changedRows',reslut[0].changedRows);myfuns.Sleep(3000);})
-          .catch((error)=>{console.log('UPDATEerror: ', error.message);myfuns.Sleep(3000);});
+          .then((reslut)=>{console.log('changedRows',reslut[0].changedRows);f.sleep(3000);})
+          .catch((error)=>{console.log('UPDATEerror: ', error.message);f.sleep(3000);});
         })
       .catch(error => console.log('buyerror: ', error.message));
      }
