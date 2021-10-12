@@ -16,6 +16,7 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
+    "puppeteer": "^9.1.1",
     "canvas": "^2.8.0",
     "mysql2": "^2.2.5",
     "node": "16.10.0",
