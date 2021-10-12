@@ -34,7 +34,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq', { timeout: 6000 })
+  await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq', { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -81,7 +81,7 @@ async function regFreeok(page){
   await sleep(3000);
 
 
-  await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 6000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
   await sleep(3000);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
@@ -150,14 +150,16 @@ async function main() {
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
       setup.proxyL
     ],
-    defaultViewport: null,
-    ignoreHTTPSErrors: true
+    defaultViewport: null
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
+  //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
   // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);

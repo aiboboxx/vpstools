@@ -34,14 +34,10 @@ async function freeokBuy(row, page) {
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
-    if (!runId) await login(row, page);
+    if (!runId) await login(row, page, pool);
   } else {
-    await loginWithCookies(row, page).catch(async () => {
-      if (!runId) await login(row, page);
-      // await sleep(6000);
-      // console.log(
-      //   await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
-      //   );
+    await loginWithCookies(row, page, pool).catch(async () => {
+      if (!runId) await login(row, page, pool);
     });
   }
   if (await page.$('#reactive')) {
@@ -133,6 +129,9 @@ async function main() {
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
       setup.proxy
       //setup.proxyL
     ],

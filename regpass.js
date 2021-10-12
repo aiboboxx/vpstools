@@ -1,8 +1,8 @@
 const fs = require("fs");
-const request = require('request');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const mysql = require('mysql2/promise');
+//const puppeteer = require('puppeteer');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
@@ -38,7 +38,7 @@ async function regFreeok(page){
   await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq', { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
-/*   await page.waitForFunction(
+  await page.waitForFunction(
     (selecter) => {
       if (document.querySelector(selecter)) {
         return document.querySelector(selecter).innerText.includes("确认注册");
@@ -48,7 +48,7 @@ async function regFreeok(page){
     },
     { timeout: 60000 },
     'body'
-  ).then(async () => { console.log("无需验证"); await sleep(1000); }); */
+  ).then(async () => { console.log("无需验证"); await sleep(1000); });
   await page.waitForSelector('#name', { timeout: 60000 });
   //console.log("b");
   await page.type('#name', usr);
@@ -101,7 +101,7 @@ async function regFreeok(page){
   );
   await sleep(1000);
   await Promise.all([
-    page.waitForNavigation({ timeout: 5000 }),
+    page.waitForNavigation({ timeout: 30000 }),
     page.click('#login'),
   ])
     .then(
@@ -151,48 +151,23 @@ async function main() {
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
       setup.proxyL
     ],
-    defaultViewport: null,
-    ignoreHTTPSErrors: true
+    defaultViewport: null
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
+  //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
   // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  // 打开拦截请求
-await page.setRequestInterception(true);
-// 请求拦截器
-// 这里的作用是在所有js执行前都插入我们的js代码抹掉puppeteer的特征
-page.on("request", async (req, res2) => {
-    // 非js脚本返回
-    // 如果html中有inline的script检测html中也要改，一般没有
-    if (req.resourceType() !== "script") {
-        req.continue()
-        return
-    }
-    // 获取url
-    const url = req.url()
-    await new Promise((resolve, reject) => {
-        // 使用request/axios等请求库获取js文件
-        request.get(url, (err, _res) => {
-           // 删掉navigator.webdriver
-           // 这里不排除有其它特征检测，每个网站需要定制化修改
-            let newRes = "navigator.webdriver && delete Navigator.prototype.webdriver;" + _res.body
-            // 返回删掉了webdriver的js
-            req.respond({
-                body: newRes
-            })
-            resolve()
-        })
-    })
-
-})
-
+  //await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq');
+  //await page.goto('https://bot.sannysoft.com/');
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await regFreeok(page)
   .catch(async (error) => { console.log('error: ', error.message); });

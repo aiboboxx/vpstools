@@ -28,15 +28,15 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 
-async function freeokSign(row, page) {
+async function freeokSign(row, page, pool) {
   let needreset = false;
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
-    if (!runId) await login(row, page);
+    if (!runId) await login(row, page, pool);
   } else {
     await loginWithCookies(row, page).catch(async () => {
-      if (!runId) await login(row, page);
+      if (!runId) await login(row, page, pool);
       // await sleep(6000);
       // console.log(
       //   await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
@@ -167,6 +167,9 @@ async function main() {
     headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
       setup.proxy
       //setup.proxyL
     ],

@@ -72,7 +72,7 @@ exports.randomString =  function randomString(length, chars) {
     for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
   }
-exports.waitForString =  async function waitForString(page,selecter,string) {
+exports.waitForString =  async function waitForString(page,selecter,string,timeout = 30000) {
   await page.waitForFunction(
     (selecter,string) => {
         if (document.querySelector(selecter)){
@@ -82,7 +82,7 @@ exports.waitForString =  async function waitForString(page,selecter,string) {
             return false;
         }
     },
-    { timeout: 60000 },
+    { timeout: timeout },
     selecter,
     string
 ) 

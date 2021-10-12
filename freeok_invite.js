@@ -86,6 +86,9 @@ async function  main () {
     headless: runId?true:false ,
     args: [
       '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
       setup.proxy
     ],
     defaultViewport: null,
