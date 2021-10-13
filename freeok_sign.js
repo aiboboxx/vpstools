@@ -127,11 +127,11 @@ async function freeokSign(row, page) {
   }
   if (needreset) {
     await resetPwd(browser);
-    await sleep(500);
+    await sleep(2000);
     await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
     await page.waitForFunction(
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-      { timeout: 5000 }
+      { timeout: 10000 }
     ).then(async () => {
       console.log('订阅链接：', await page.evaluate(() => document.querySelector('#msg').innerHTML));
       await sleep(2000);
