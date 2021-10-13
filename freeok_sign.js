@@ -28,7 +28,7 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 
-async function freeokSign(row, page, pool) {
+async function freeokSign(row, page) {
   let needreset = false;
   let cookies = [];
   await clearBrowser(page); //clear all cookies
@@ -209,7 +209,7 @@ async function main() {
           .then((reslut) => { console.log('changedRows', reslut[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
-      .catch(error => console.log('signerror: ', error.message));
+      .catch(error => console. log('signerror: ', error.message));
   }
   //sqlite.close();
   await pool.end();
