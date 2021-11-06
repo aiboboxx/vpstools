@@ -34,7 +34,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq', { timeout: 30000 })
+  await page.goto('https://v2.freeyes.xyz/auth/register?code=L8Dv', { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(

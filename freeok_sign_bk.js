@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 const core = require('@actions/core');
 const github = require('@actions/github');
 const f = require('./myfuns.js');
-Date.prototype.Format =Format;
+Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;

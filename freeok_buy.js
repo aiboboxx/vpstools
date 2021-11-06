@@ -8,7 +8,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js');
-//Date.prototype.Format =Format;
+//Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;

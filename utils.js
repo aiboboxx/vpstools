@@ -75,6 +75,13 @@ exports.sbFreeok = async function sbFreeok(page) {
     //console.log('dest',dest);
     return dest.x;
   }
+/*   let selecter = 'body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_widget > div > a > div.geetest_canvas_img.geetest_absolute > div > canvas.geetest_canvas_bg.geetest_absolute';
+  let el;
+  while (el === undefined ) {
+    let el = await page.waitForSelector(selecter);
+    await sleep(500);
+  } */
+  await sleep(5000);
   const distance = await _getDistance();
   const button = await page.waitForSelector("body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_slider.geetest_ready > div.geetest_slider_button");
   const box = await button.boundingBox();
@@ -117,7 +124,7 @@ exports.sbFreeok = async function sbFreeok(page) {
       ) {
         await sleep(1000);
         await page.click("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip");
-        await sleep(2000);
+        await sleep(5000);
         step = await _getDistance();
         await btnSlider(step);
       } else if (text.includes("请完成验证")) {

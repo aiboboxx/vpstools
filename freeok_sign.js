@@ -7,7 +7,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js');
-//Date.prototype.Format =Format;
+Date.prototype.format =tFormat;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;
@@ -121,7 +121,7 @@ async function freeokSign(row, page) {
         needreset = true;
         await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
         row.fetcher = null;
-        row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
+        row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
       }
     }
   }
@@ -209,7 +209,7 @@ async function main() {
           .then((reslut) => { console.log('changedRows', reslut[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
-      .catch(error => console. log('signerror: ', error.message));
+      //.catch(error => console. log('signerror: ', error.message));
   }
   //sqlite.close();
   await pool.end();
