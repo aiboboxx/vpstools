@@ -148,7 +148,7 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = "SELECT * FROM freeok WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 10;"
+  let sql = "SELECT * FROM freeok WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 15;"
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql);
   let i = 0;

@@ -128,7 +128,7 @@ exports.sbFreeok = async function sbFreeok(page) {
         await sleep(2500);
         await page.click("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip");
         //await page.waitForResponse(response =>  response.url().match(encodeURIComponent('https://api.geetest.com/ajax.php')) && response.ok());
-        await sleep(500);
+        await sleep(2500);
         step = await _getDistance();
         await btnSlider(step);
       } else if (text.includes("请完成验证")) {
