@@ -63,11 +63,14 @@ exports.sbFreeok = async function sbFreeok(page) {
       }).shift()
     }
     let selecter = 'body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_widget > div > a > div.geetest_canvas_img.geetest_absolute > div > canvas.geetest_canvas_bg.geetest_absolute';
-    await page.waitForSelector(selecter);
+    let el = await page.waitForSelector(selecter);
+    await page.waitForTimeout(500);
+    //console.log(el);
     let rets1 = await page.evaluate((selecter) => getCanvasValue(selecter), selecter);
     //console.log("rets1",rets1);
     selecter = 'body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_widget > div > a > div.geetest_canvas_img.geetest_absolute > canvas';
     await page.waitForSelector(selecter);
+    //await page.waitForTimeout(500);
     let rets2 = await page.evaluate((selecter) => getCanvasValue(selecter), selecter);
     //await page.evaluate(()=>dlbg(),);
     //console.log("rets2",rets2);
@@ -81,7 +84,7 @@ exports.sbFreeok = async function sbFreeok(page) {
     let el = await page.waitForSelector(selecter);
     await sleep(500);
   } */
-  await sleep(5000);
+  //await sleep(5000);
   const distance = await _getDistance();
   const button = await page.waitForSelector("body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_slider.geetest_ready > div.geetest_slider_button");
   const box = await button.boundingBox();
@@ -122,9 +125,10 @@ exports.sbFreeok = async function sbFreeok(page) {
         text.includes("拖动滑块将悬浮图像正确拼合") ||
         text.includes("网络不给力请点击重试")
       ) {
-        await sleep(1000);
+        await sleep(2500);
         await page.click("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip");
-        await sleep(5000);
+        //await page.waitForResponse(response =>  response.url().match(encodeURIComponent('https://api.geetest.com/ajax.php')) && response.ok());
+        await sleep(500);
         step = await _getDistance();
         await btnSlider(step);
       } else if (text.includes("请完成验证")) {
@@ -145,6 +149,7 @@ exports.login = async function login(row, page, pool) {
   await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
   await sleep(2500);
+  //await page.waitForResponse(response =>  response.url().match(encodeURIComponent('https://api.geetest.com/ajax.php')) && response.ok());
   await exports.sbFreeok(page);
   await page.waitForFunction(
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),

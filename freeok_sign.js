@@ -48,8 +48,8 @@ async function freeokSign(row, page) {
     await page.click('#reactive');
     console.log('账户解除限制');
     await sleep(3000);
-    needreset = true;
     if (row.fetcher !== null) {
+      needreset = true;
       await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
       row.fetcher = null;
     }
@@ -209,7 +209,7 @@ async function main() {
           .then((reslut) => { console.log('changedRows', reslut[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
-      //.catch(error => console. log('signerror: ', error.message));
+      .catch(error => console. log('signerror: ', error.message));
   }
   //sqlite.close();
   await pool.end();
