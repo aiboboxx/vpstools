@@ -63,13 +63,13 @@ async function  freeokBuy (row,page) {
     innerHtml = innerHtml.split('=')[1].trim();
     row.score = Number(innerHtml);
     console.log( "score: " + innerHtml);
-    // if (row.score>3.3){
-    //   if (row.id>10){
-    //     await resetPwd(browser);
-    //     row.fetcher = null;
-    //     row.level = 0;
-    //   }
-    // } 
+    if (row.score>3.3){
+      if (row.id>10){
+        //await resetPwd(browser);
+        row.fetcher = null;
+        row.level = 0;
+      }
+    } 
     //console.log('row.level',row.level);
     //invite 邀请码
     innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input" ).value.trim());
