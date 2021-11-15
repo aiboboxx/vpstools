@@ -67,7 +67,7 @@ async function  freeokBuy (row,page) {
     //   if (row.id>10){
     //     await resetPwd(browser);
     //     row.fetcher = null;
-    //     row.level = 6;
+    //     row.level = 0;
     //   }
     // } 
     //console.log('row.level',row.level);
@@ -89,7 +89,7 @@ async function  main () {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      setup.proxy
+      setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -97,7 +97,7 @@ async function  main () {
     //console.log(await sqlite.open('./freeok.db'))
     const page = await browser.newPage();
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
-    // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
+    await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
     page.on('dialog', async dialog => {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
