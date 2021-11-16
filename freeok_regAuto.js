@@ -176,8 +176,8 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
-  await regFreeok(page,invite);
-  //.catch(async (error) => { console.log('error: ', error.message); });
+  await regFreeok(page,invite)
+  .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
   await pool.end();
   if (runId ? true : false) await browser.close();
