@@ -64,7 +64,7 @@ async function  freeokBuy (row,page) {
     row.score = Number(innerHtml);
     console.log( "score: " + innerHtml);
     if (row.score>3.3){
-      if (row.id>10){
+      if (row.balance<1 & row.level == 1){
         //await resetPwd(browser);
         row.fetcher = null;
         row.level = 0;
