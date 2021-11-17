@@ -135,6 +135,7 @@ async function main() {
       setup.proxy.normal
       //setup.proxyL
     ],
+    dumpio: false,
     defaultViewport: null,
     ignoreHTTPSErrors: true
   });
@@ -146,7 +147,21 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-
+        // WebGL设置
+        await page.evaluateOnNewDocument(() => {
+          const getParameter = WebGLRenderingContext.getParameter;
+          WebGLRenderingContext.prototype.getParameter = function (parameter) {
+              // UNMASKED_VENDOR_WEBGL
+              if (parameter === 37445) {
+                  return 'Intel Inc.';
+              }
+              // UNMASKED_RENDERER_WEBGL
+              if (parameter === 37446) {
+                  return 'Intel(R) Iris(TM) Graphics 6100';
+              }
+              return getParameter(parameter);
+          };
+      });
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
   let sql = "SELECT * FROM freeok WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 15;"
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"

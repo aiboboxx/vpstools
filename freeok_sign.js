@@ -173,9 +173,25 @@ async function main() {
       setup.proxy.normal
       //setup.proxyL
     ],
+    dumpio: false,
     defaultViewport: null,
     ignoreHTTPSErrors: true
   });
+          // WebGL设置
+await page.evaluateOnNewDocument(() => {
+  const getParameter = WebGLRenderingContext.getParameter;
+  WebGLRenderingContext.prototype.getParameter = function (parameter) {
+      // UNMASKED_VENDOR_WEBGL
+      if (parameter === 37445) {
+          return 'Intel Inc.';
+      }
+      // UNMASKED_RENDERER_WEBGL
+      if (parameter === 37446) {
+          return 'Intel(R) Iris(TM) Graphics 6100';
+      }
+      return getParameter(parameter);
+  };
+});
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
