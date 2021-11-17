@@ -28,6 +28,7 @@ const pool = mysql.createPool({
 });
 
 async function freeokBuy(row, page) {
+  //console.log(row.id,row.level);
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
     if (!runId) await login(row, page);
@@ -84,6 +85,7 @@ async function freeokBuy(row, page) {
   }
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
+  //console.log(row.id,row.level);
   return row;
 }
 
@@ -136,15 +138,26 @@ async function main() {
     if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
     if (row.usr && row.pwd) await freeokBuy(row, page)
       .then(async row => {
-        //console.log(JSON.stringify(row));    
+        //console.log(JSON.stringify(row)); 
+        console.log(row.id,row.level);   
         let sql, arr;
-        sql = 'UPDATE `freeok` SET  `cookies`=?, `level`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.cookies, row.level, row.fetcher, row.score, row.invite, row.id];
-        sql = await pool.format(sql, arr);
-        //console.log(sql);
-        await pool.query(sql)
-          .then((reslut) => { console.log('changedRows', reslut[0].changedRows); sleep(3000); })
+        if (row.level == 0) {
+          console.log("delete");
+          sql = 'DELETE FROM `freeok` WHERE `id` = ?';
+          arr = [row.id];
+          sql = await pool.format(sql, arr);
+          await pool.query(sql)
+          .then((result) => { console.log('result', result[0]); sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+        }else{
+          sql = 'UPDATE `freeok` SET  `cookies`=?, `level`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+          arr = [row.cookies, row.level, row.fetcher, row.score, row.invite, row.id];
+          sql = await pool.format(sql, arr);
+          await pool.query(sql)
+          .then((result) => { console.log('result', result[0]); sleep(3000); })
+          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+        }
+
       })
       .catch(error => console.log('buyerror: ', error.message));
   }

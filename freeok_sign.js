@@ -222,7 +222,7 @@ await page.evaluateOnNewDocument(() => {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((reslut) => { console.log('changedRows', reslut[0].changedRows);sleep(3000); })
+          .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
       .catch(error => console. log('signerror: ', error.message));

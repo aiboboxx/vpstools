@@ -186,7 +186,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         return false;
       }
     },
-    { timeout: 5000 },
+    { timeout: 20000 },
     'body'
   ).then(async () => { console.log("无需验证"); await sleep(1000); });
   //await sleep(6000);
