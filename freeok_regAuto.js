@@ -47,7 +47,7 @@ async function regFreeok(page,invite){
     },
     { timeout: 60000 },
     'body'
-  ).then(async () => { console.log("无需验证"); await sleep(1000); });
+  ).then(async () => { console.log("无5秒盾"); await sleep(1000); });
   await page.waitForSelector('#name', { timeout: 60000 });
   //console.log("b");
   await page.type('#name', usr);
@@ -157,7 +157,8 @@ async function main() {
   let invite = r[0][0].invite;
   console.log(invite);
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
+    headless: true,
+    //headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -165,6 +166,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       setup.proxy.changeip
     ],
+    dumpio: false,
     defaultViewport: null
   });
   //console.log(await sqlite.open('./freeok.db'))
@@ -175,6 +177,21 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
+      // WebGL设置
+await page.evaluateOnNewDocument(() => {
+  const getParameter = WebGLRenderingContext.getParameter;
+  WebGLRenderingContext.prototype.getParameter = function (parameter) {
+      // UNMASKED_VENDOR_WEBGL
+      if (parameter === 37445) {
+          return 'Intel Inc.';
+      }
+      // UNMASKED_RENDERER_WEBGL
+      if (parameter === 37446) {
+          return 'Intel(R) Iris(TM) Graphics 6100';
+      }
+      return getParameter(parameter);
+  };
+});
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await regFreeok(page,invite)
   .catch(async (error) => { console.log('error: ', error.message); });
