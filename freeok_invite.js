@@ -35,10 +35,6 @@ async function freeokBuy(row, page) {
   } else {
     await loginWithCookies(row, page).catch(async () => {
       if (!runId) await login(row, page);
-      // await sleep(6000);
-      // console.log(
-      //   await page.evaluate(()=> document.querySelector( 'body' ).innerText.trim())
-      //   );
     });
   }
   if (await page.$('#reactive', { timeout: 3000 })) {
