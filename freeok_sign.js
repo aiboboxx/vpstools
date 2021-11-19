@@ -103,13 +103,13 @@ async function freeokSign(row, page) {
       //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
     }
   }
-  if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 15 && row.level == 1) {
+  if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 10 && row.level == 1) {
     if (needreset) await resetPwd(browser);
     await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
     needreset = true;
     row.fetcher = null;
     //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-    console.log('15天重置');
+    console.log('10天重置');
   }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
@@ -173,9 +173,9 @@ async function main() {
       setup.proxy.normal
       //setup.proxyL
     ],
-    dumpio: false,
     defaultViewport: null,
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    dumpio: false
   });
 
   //console.log(await sqlite.open('./freeok.db'))

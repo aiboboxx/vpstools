@@ -96,9 +96,9 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       setup.proxy.normal
     ],
-    dumpio: false,
     defaultViewport: null,
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    dumpio: false
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();

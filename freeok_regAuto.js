@@ -47,7 +47,7 @@ async function regFreeok(page,invite){
     },
     { timeout: 60000 },
     'body'
-  ).then(async () => { console.log("无5秒盾"); await sleep(1000); });
+  ).then(async () => { console.log("过5秒盾"); await sleep(1000); });
   await page.waitForSelector('#name', { timeout: 60000 });
   //console.log("b");
   await page.type('#name', usr);
@@ -166,8 +166,8 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       setup.proxy.changeip
     ],
-    dumpio: false,
-    defaultViewport: null
+    defaultViewport: null,
+    dumpio: false
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
@@ -177,6 +177,14 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
+// permissions设置
+await page.evaluateOnNewDocument(() => {
+  const originalQuery = window.navigator.permissions.query; //notification伪装
+  window.navigator.permissions.query = (parameters) =>
+      parameters.name === 'notifications'
+      ? Promise.resolve({ state: Notification.permission })
+      : originalQuery(parameters);
+});
       // WebGL设置
 await page.evaluateOnNewDocument(() => {
   const getParameter = WebGLRenderingContext.getParameter;
