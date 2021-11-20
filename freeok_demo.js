@@ -28,7 +28,7 @@ const pool = mysql.createPool({
   queueLimit: 0 //可以等待的连接的个数
 });
 async function login(row,page){
-  await page.goto('https://v2.freeyes.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+  await page.goto('https://ggme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
   await page.waitForSelector("#email",{timeout:30000});
   await page.type('#email', row.usr, {delay: 20});
   await page.type('#passwd', row.pwd, {delay: 20});
@@ -65,7 +65,7 @@ async function login(row,page){
 async function loginWithCookies(row,page){
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user',{timeout:30000});
+  await page.goto('https://ggme.xyz/user',{timeout:30000});
   await page.waitForFunction(
     (selecter) => {
         if (document.querySelector(selecter)){
@@ -83,7 +83,7 @@ async function loginWithCookies(row,page){
   .then(
     async ()=>{
     console.log('登录成功');
-    //await page.goto('https://v2.freeyes.xyz/user');
+    //await page.goto('https://ggme.xyz/user');
     return true;
   },
   async (err)=>{
@@ -113,14 +113,14 @@ async function  freeokBuy (row,page) {
     await page.click('#reactive');
     console.log ('账户解除限制');
   }
-  await page.goto('https://v2.freeyes.xyz/user/invite');
+  await page.goto('https://ggme.xyz/user/invite');
   await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter,{timeout:10000})
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-    //await page.goto('https://v2.freeyes.xyz/user');
+    //await page.goto('https://ggme.xyz/user');
   });
   console.log('do something');
   selecter = "body > main > div.content-header.ui-content-header > div > h1" ;

@@ -10,7 +10,7 @@ async function name(params) {
 
 
     }) 
-    await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq');
+    await page.goto('https://ggme.xyz/auth/register?code=wsOq');
     await page.goto('https://bot.sannysoft.com/');
 
 }

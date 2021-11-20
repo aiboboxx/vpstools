@@ -42,14 +42,14 @@ async function freeokBuy(row, page) {
     await page.click('#reactive');
     console.log('账户解除限制');
   }
-  await page.goto('https://v2.freeyes.xyz/user/invite');
+  await page.goto('https://ggme.xyz/user/invite');
   await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
       console.log('进入页面：invite');
-      //await page.goto('https://v2.freeyes.xyz/user');
+      //await page.goto('https://ggme.xyz/user');
     });
   selecter = "body > main > div.content-header.ui-content-header > div > h1";
   //////////do something
@@ -73,7 +73,7 @@ async function freeokBuy(row, page) {
   //剩余要请
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > p:nth-child(2) > code").innerText.trim());
   let times = Number(innerHtml);
-  if (times < 10 && row.level == 1 && row.balance > 1) {
+  if (times < 20 && row.level == 1 && row.balance > 2) {
     selecter = '#buy-invite-num';
     await page.type(selecter, '10');
     await page.click('#buy-invite > span')

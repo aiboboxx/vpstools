@@ -140,7 +140,7 @@ exports.sbFreeok = async function sbFreeok(page) {
 }
 
 exports.login = async function login(row, page, pool) {
-  await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
   await page.waitForSelector("#email", { timeout: 30000 });
   await page.type('#email', row.usr, { delay: 20 });
   await page.type('#passwd', row.pwd, { delay: 20 });
@@ -176,7 +176,7 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://v2.freeyes.xyz/user', { timeout: 30000 });
+  await page.goto('https://ggme.xyz/user', { timeout: 30000 });
   console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
@@ -196,7 +196,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
     .then(
       async () => {
         console.log('登录成功');
-        //await page.goto('https://v2.freeyes.xyz/user');
+        //await page.goto('https://ggme.xyz/user');
         return true;
       },
       async (err) => {
@@ -215,14 +215,14 @@ exports.resetPwd = async function resetPwd(browser) {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://v2.freeyes.xyz/user/edit');
+  await page.goto('https://ggme.xyz/user/edit');
   await sleep(1000);
   let selecter, innerHtml;
   selecter = '#sspwd';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
       console.log('进入页面：修改资料');
-      //await page.goto('https://v2.freeyes.xyz/user');
+      //await page.goto('https://ggme.xyz/user');
     });
   //innerHtml = await page.$eval(selecter, el => el.value);
   await page.type(selecter, Math.random().toString(36).slice(-8));
@@ -231,7 +231,7 @@ exports.resetPwd = async function resetPwd(browser) {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 3000 })
         .then(async () => {
           console.log('修改v2ray密码成功');
-          //await page.goto('https://v2.freeyes.xyz/user');
+          //await page.goto('https://ggme.xyz/user');
         })
         .catch((err) => console.log('修改v2ray密码失败'));
     });

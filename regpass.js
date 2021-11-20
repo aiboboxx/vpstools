@@ -35,7 +35,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq', { timeout: 30000 })
+  await page.goto('https://ggme.xyz/auth/register?code=wsOq', { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -82,7 +82,7 @@ async function regFreeok(page){
   await sleep(3000);
 
 
-  await page.goto('https://v2.freeyes.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
   await sleep(3000);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
@@ -166,7 +166,7 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  //await page.goto('https://v2.freeyes.xyz/auth/register?code=wsOq');
+  //await page.goto('https://ggme.xyz/auth/register?code=wsOq');
   //await page.goto('https://bot.sannysoft.com/');
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await regFreeok(page)
