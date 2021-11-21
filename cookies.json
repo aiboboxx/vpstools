@@ -1,0 +1,30 @@
+[
+	{
+		"name": "PHPSESSID",
+		"value": "2llmttecmit0230fqnj0uv1de8",
+		"domain": "ggme.xyz",
+		"path": "/",
+		"expires": -1,
+		"size": 35,
+		"httpOnly": false,
+		"secure": false,
+		"session": true,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
+	},
+	{
+		"name": "code",
+		"value": "5iED",
+		"domain": "ggme.xyz",
+		"path": "/auth",
+		"expires": 1640079652,
+		"size": 8,
+		"httpOnly": false,
+		"secure": false,
+		"session": false,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
+	}
+]

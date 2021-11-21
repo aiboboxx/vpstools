@@ -174,8 +174,7 @@ async function main() {
       //setup.proxyL
     ],
     defaultViewport: null,
-    ignoreHTTPSErrors: true,
-    dumpio: false
+    ignoreHTTPSErrors: true
   });
 
   //console.log(await sqlite.open('./freeok.db'))
@@ -187,21 +186,6 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-          // WebGL设置
-          await page.evaluateOnNewDocument(() => {
-            const getParameter = WebGLRenderingContext.getParameter;
-            WebGLRenderingContext.prototype.getParameter = function (parameter) {
-                // UNMASKED_VENDOR_WEBGL
-                if (parameter === 37445) {
-                    return 'Intel Inc.';
-                }
-                // UNMASKED_RENDERER_WEBGL
-                if (parameter === 37446) {
-                    return 'Intel(R) Iris(TM) Graphics 6100';
-                }
-                return getParameter(parameter);
-            };
-          });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   //let sql = "SELECT * FROM freeok where id = 9;"
   let sql = "SELECT * FROM freeok where level > 0 order by sign_time asc limit 15;"

@@ -97,8 +97,7 @@ async function main() {
       setup.proxy.normal
     ],
     defaultViewport: null,
-    ignoreHTTPSErrors: true,
-    dumpio: false
+    ignoreHTTPSErrors: true
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
@@ -108,21 +107,7 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  // WebGL设置
-  await page.evaluateOnNewDocument(() => {
-    const getParameter = WebGLRenderingContext.getParameter;
-    WebGLRenderingContext.prototype.getParameter = function (parameter) {
-      // UNMASKED_VENDOR_WEBGL
-      if (parameter === 37445) {
-        return 'Intel Inc.';
-      }
-      // UNMASKED_RENDERER_WEBGL
-      if (parameter === 37446) {
-        return 'Intel(R) Iris(TM) Graphics 6100';
-      }
-      return getParameter(parameter);
-    };
-  });
+
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
   let sql = "SELECT * FROM freeok  where  level > 0 order by invite_refresh_time asc limit 15;"
   let r = await pool.query(sql);
