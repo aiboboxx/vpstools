@@ -74,6 +74,7 @@ async function regFreeok(page,invite){
     .catch((error) => { console.log(error.message); sleep(2000); });
   await page.click('#embed-captcha > div');
   await sleep(2500);
+  console.log("识别验证码");
   await sbFreeok(page);
   await page.waitForFunction(
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
@@ -163,8 +164,8 @@ async function main() {
   let invite = r[0][0].invite;
   console.log(invite);
   browser = await puppeteer.launch({
-    //headless: true,
-    headless: runId ? true : false,
+    headless: true,
+    //headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
