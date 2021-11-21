@@ -95,17 +95,17 @@ exports.sbFreeok = async function sbFreeok(page) {
     await page.mouse.move(axleX, axleY);
     await page.mouse.down();
     await sleep(getRndInteger(50, 90));
-    await page.mouse.move(box.x + distance / 4 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: +getRndInteger(50, 90) });
+    await page.mouse.move(box.x + distance / 4 + getRndInteger(-18, 18), axleY + getRndInteger(-18, 18), { steps: +getRndInteger(50, 90) });
+    await sleep (getRndInteger(50, 200));
+    await page.mouse.move(box.x + distance / 2 + getRndInteger(-18, 20), axleY + getRndInteger(-18, 20), { steps: getRndInteger(50, 90) });
+    await sleep (getRndInteger(50, 200));
+    await page.mouse.move(box.x + (distance / 8) * 7 + getRndInteger(-18, 18), axleY + getRndInteger(-18, 18), { steps: getRndInteger(50, 90) });
+    await sleep (getRndInteger(50, 200));
+    await page.mouse.move(box.x + distance + getRndInteger(-18, 20), axleY + getRndInteger(-18, 20), { steps: getRndInteger(50, 90) });
+    await sleep (getRndInteger(50, 200));
+    //await page.mouse.move(box.x + distance + getRndInteger(20, 40), axleY + getRndInteger(-18, 18), { steps: getRndInteger(50, 90) });
     //await sleep (getRndInteger(50, 200));
-    await page.mouse.move(box.x + distance / 2 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: getRndInteger(50, 90) });
-    //await sleep (getRndInteger(50, 200));
-    await page.mouse.move(box.x + (distance / 8) * 7 + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: getRndInteger(50, 90) });
-    //await sleep (getRndInteger(50, 200));
-    await page.mouse.move(box.x + distance + getRndInteger(-8, 10), axleY + getRndInteger(-8, 10), { steps: getRndInteger(50, 90) });
-    //await sleep (getRndInteger(50, 200));
-    await page.mouse.move(box.x + distance + getRndInteger(20, 40), axleY + getRndInteger(-8, 10), { steps: getRndInteger(50, 90) });
-    //await sleep (getRndInteger(50, 200));
-    await page.mouse.move(box.x + distance + 30 + getRndInteger(-1, 3), axleY + getRndInteger(-8, 10), { steps: getRndInteger(50, 90) });
+    await page.mouse.move(box.x + distance + 30 + getRndInteger(-1, 1), axleY + getRndInteger(-18, 20), { steps: getRndInteger(50, 90) });
     await sleep(getRndInteger(50, 200));
     await page.mouse.up();
     await sleep(2000);
@@ -113,10 +113,10 @@ exports.sbFreeok = async function sbFreeok(page) {
     let text = await page.evaluate(() => {
       return document.querySelector("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip").innerText;
     });
-    let text2 = await page.evaluate(() => {
-      return document.querySelector("#embed-captcha > div").innerText;
-    });
-    //console.log(text, text2);
+    // let text2 = await page.evaluate(() => {
+    //   return document.querySelector("#embed-captcha > div").innerText;
+    // });
+    console.log(text);
     let step = 0;
     if (text) {
       // 如果失败重新获取滑块

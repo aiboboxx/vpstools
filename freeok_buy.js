@@ -93,7 +93,7 @@ async function freeokBuy(row, page) {
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
       });
-    await sleep(2000);
+    await sleep(3500);
     await page.click('#coupon_input', { delay: 200 });
     await sleep(2000);
     //await page.waitForSelector("#order_input");

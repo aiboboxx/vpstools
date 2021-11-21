@@ -75,7 +75,7 @@ async function freeokBuy(row, page) {
   let times = Number(innerHtml);
   if (times < 20 && row.level == 1 && row.balance > 2) {
     selecter = '#buy-invite-num';
-    await page.type(selecter, '10');
+    await page.type(selecter, '20');
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
