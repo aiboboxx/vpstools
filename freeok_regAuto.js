@@ -88,7 +88,7 @@ async function regFreeok(page,invite){
   await sleep(3000);
 
 
-  await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://ggme.xyz/auth/login', { timeout: 25000 }).catch((err) => console.log('首页超时'));
   await sleep(3000);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
