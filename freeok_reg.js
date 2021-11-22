@@ -32,7 +32,7 @@ async function regFreeok(page){
   let selecter, innerHtml;
   const aEmails = ['@126.com', '@163.com', '@qq.com'];
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  //usr = '437385458@qq.com';
+  usr = 'aiboboxx1@126.com';
   console.log(usr);
   await page.goto('https://ggme.xyz/auth/register?code=5iED', { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
