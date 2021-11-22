@@ -164,8 +164,8 @@ async function main() {
   let invite = r[0][0].invite;
   console.log(invite);
   browser = await puppeteer.launch({
-    //headless: true,
-    headless: runId ? true : false,
+    headless: true,
+    //headless: runId ? true : false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -174,7 +174,8 @@ async function main() {
       setup.proxy.changeip
     ],
     defaultViewport: null,
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    dumpio: false
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
@@ -184,6 +185,14 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
+  // permissions设置
+await page.evaluateOnNewDocument(() => {
+  const originalQuery = window.navigator.permissions.query; //notification伪装
+  window.navigator.permissions.query = (parameters) =>
+      parameters.name === 'notifications'
+      ? Promise.resolve({ state: Notification.permission })
+      : originalQuery(parameters);
+});
     // WebGL设置
   await page.evaluateOnNewDocument(() => {
       const getParameter = WebGLRenderingContext.getParameter;
@@ -199,6 +208,7 @@ async function main() {
           return getParameter(parameter);
       };
   });
+
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await regFreeok(page,invite)
   .catch(async (error) => { console.log('error: ', error.message); });

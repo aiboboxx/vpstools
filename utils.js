@@ -105,7 +105,7 @@ exports.sbFreeok = async function sbFreeok(page) {
     await sleep (getRndInteger(50, 200));
     //await page.mouse.move(box.x + distance + getRndInteger(20, 40), axleY + getRndInteger(-18, 18), { steps: getRndInteger(1, 3)});
     //await sleep (getRndInteger(50, 200));
-    await page.mouse.move(box.x + distance + 30 + getRndInteger(-1, 1), axleY + getRndInteger(-18, 20), { steps: getRndInteger(3, 10) });
+    await page.mouse.move(box.x + distance + 30 + getRndInteger(-1, 1), axleY + getRndInteger(-18, 20), { steps: getRndInteger(10, 30) });
     await sleep(getRndInteger(50, 200));
     await page.mouse.up();
     await sleep(2000);
