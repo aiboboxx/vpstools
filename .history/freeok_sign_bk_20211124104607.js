@@ -31,7 +31,6 @@ const pool = mysql.createPool({
 
 async function  freeokSign  (row,page) {
   let needreset = false;
-  let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
     if (!runId) await login(row, page, pool);
@@ -163,30 +162,20 @@ async function  freeokSign  (row,page) {
       })
     .catch((err)=>console.log('今日已签到'));
     await sleep(2000);
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
 
 async function  main () {
-
+    let runId = github.context.runId;
     //console.log(await sqlite.open('./freeok.db'))
-    browser = await puppeteer.launch({ 
+    const browser = await puppeteer.launch({ 
         headless: runId?true:false ,
-    args: [
-      '--window-size=1920,1080',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-blink-features=AutomationControlled',
-      setup.proxy.normal
-      //setup.proxyL
-    ],
+        args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true
     });
     const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
-  await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
+    // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
     page.on('dialog', async dialog => {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();

@@ -31,7 +31,6 @@ const pool = mysql.createPool({
 
 async function  freeokSign  (row,page) {
   let needreset = false;
-  let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
     if (!runId) await login(row, page, pool);
@@ -104,22 +103,23 @@ async function  freeokSign  (row,page) {
           console.log('三小时内未使用');
           needreset = true;
         }
-        if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>10){
-          await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-          await page.waitForFunction(
-            'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-            {timeout:5000}
-          ).then(async ()=>{
-            //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-            await sleep(3000);        
-          });     
-          row.fetcher = null;
-          //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-          console.log('10天重置');
-          needreset = true;
-        }  
+      }else{
+        //console.log(row.fetcher,row.regtime,row.last_used_time,row.fetch_time);
+      }
     }
-  }
+    if ((Date.now()-Math.max(unixtimes[0],unixtimes[2]))/(24*60*60*1000)>10){
+      await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+      await page.waitForFunction(
+        'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+        {timeout:5000}
+      ).then(async ()=>{
+        //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+        await sleep(3000);        
+      });     
+      row.fetcher = null;
+      //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
+      console.log('10天重置');
+    }
       //今日已用
       selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
       innerHtml =await page.evaluate((selecter)=>document.querySelector(selecter).innerText,selecter);
@@ -137,15 +137,11 @@ async function  freeokSign  (row,page) {
               console.log('超流量重置：',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
               await sleep(3000); 
             });  
-            await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]); //屏蔽email
+            await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
             row.fetcher = null;   
             row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
-            needreset = true;
           }
         }
-      }
-      if (needreset) {
-        await resetPwd(browser);
       }
       //rss
       innerHtml = await page.evaluate(() => document.querySelector( '#all_v2ray_windows > div.float-clear > input' ).value.trim());
@@ -163,30 +159,20 @@ async function  freeokSign  (row,page) {
       })
     .catch((err)=>console.log('今日已签到'));
     await sleep(2000);
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
 }  
 
 async function  main () {
-
+    let runId = github.context.runId;
     //console.log(await sqlite.open('./freeok.db'))
-    browser = await puppeteer.launch({ 
+    const browser = await puppeteer.launch({ 
         headless: runId?true:false ,
-    args: [
-      '--window-size=1920,1080',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-blink-features=AutomationControlled',
-      setup.proxy.normal
-      //setup.proxyL
-    ],
+        args: ['--window-size=1920,1080'],
         defaultViewport: null,
         ignoreHTTPSErrors: true
     });
     const page = await browser.newPage();
-  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
-  await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
+    // 当页面中的脚本使用“alert”、“prompt”、“confirm”或“beforeunload”时发出
     page.on('dialog', async dialog => {
         //console.info(`➞ ${dialog.message()}`);
         await dialog.dismiss();
@@ -221,3 +207,4 @@ async function  main () {
     if ( runId?true:false ) await browser.close();
 }
 main();
+
