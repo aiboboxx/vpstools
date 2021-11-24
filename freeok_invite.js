@@ -73,7 +73,7 @@ async function freeokBuy(row, page) {
   //剩余要请
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > p:nth-child(2) > code").innerText.trim());
   let times = Number(innerHtml);
-  if (times < 20 && row.level == 1 && row.balance > 2) {
+  if (times < 10 && row.level == 1 && row.balance > 2) {
     selecter = '#buy-invite-num';
     await page.type(selecter, '20');
     await page.click('#buy-invite > span')
