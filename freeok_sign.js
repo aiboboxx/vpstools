@@ -194,7 +194,7 @@ async function main() {
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   //let sql = "SELECT * FROM freeok where id = 9;"
-  let sql = "SELECT * FROM freeok where level > 0  order by sign_time asc limit 20;"
+  let sql = "SELECT * FROM freeok where level > 0  order by sign_time asc limit 15;"
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
   let r = await pool.query(sql, []);
   let i = 0;

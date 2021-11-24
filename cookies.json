@@ -15,10 +15,10 @@
 	},
 	{
 		"name": "code",
-		"value": "5iED",
+		"value": "qvzo",
 		"domain": "ggme.xyz",
 		"path": "/auth",
-		"expires": 1640133979,
+		"expires": 1640321815,
 		"size": 8,
 		"httpOnly": false,
 		"secure": false,
