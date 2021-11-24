@@ -104,5 +104,6 @@ dist
 .tern-port
 
 #customize
-.vscode
+.vscode/
 setup.json
+.history/
