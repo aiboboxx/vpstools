@@ -120,25 +120,14 @@ async function main() {
     if (row.usr && row.pwd) await freeokBuy(row, page)
       .then(async row => {
         //console.log(JSON.stringify(row)); 
-        console.log(row.id,row.level);   
+        //console.log(row.id,row.level);   
         let sql, arr;
-        if (row.level == 0) {
-          console.log("delete");
-          sql = 'DELETE FROM `freeok` WHERE `id` = ?';
-          arr = [row.id];
-          sql = await pool.format(sql, arr);
-          await pool.query(sql)
-          .then((result) => { console.log('result', result[0]); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
-        }else{
-          sql = 'UPDATE `freeok` SET  `cookies`=?, `level`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-          arr = [row.cookies, row.level, row.fetcher, row.score, row.invite, row.id];
-          sql = await pool.format(sql, arr);
-          await pool.query(sql)
-          .then((result) => { console.log('result', result[0]); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
-        }
-
+        sql = 'UPDATE `freeok` SET  `cookies`=?, `level`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.cookies, row.level, row.fetcher, row.score, row.invite, row.id];
+        sql = await pool.format(sql, arr);
+        await pool.query(sql)
+        .then((result) => { console.log('result', result[0]); sleep(3000); })
+        .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
       })
       .catch(error => console.log('buyerror: ', error.message));
   }
