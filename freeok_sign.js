@@ -53,7 +53,7 @@ async function freeokSign(row, page) {
       reset.pwd = true;
       reset.rss = true;
       reset.fetcher = true;
-      reset.block = true;
+      //reset.block = true;
     }
     await page.goto('https://ggme.xyz/user');
   }
