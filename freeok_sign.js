@@ -84,11 +84,6 @@ async function freeokSign(row, page) {
     row.last_used_time = null;
   else
     row.last_used_time = innerHtml;
-  //rss
-  innerHtml = await page.evaluate(() => document.querySelector('#all_v2ray_windows > div.float-clear > input').value.trim());
-  //console.log( "rss: " + innerHtml);
-  row.rss = innerHtml;
-
   //是否reset
 
   let unixtimes = [
@@ -153,6 +148,10 @@ async function freeokSign(row, page) {
   if (reset.fetcher) {
     row.fetcher = null;
   }
+    //rss 必须放最后，因为前面有rss重置
+    innerHtml = await page.evaluate(() => document.querySelector('#all_v2ray_windows > div.float-clear > input').value.trim());
+    //console.log( "rss: " + innerHtml);
+    row.rss = innerHtml;
   await page.click('#checkin', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
