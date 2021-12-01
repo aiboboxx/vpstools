@@ -103,7 +103,7 @@ async function freeokSign(row, page) {
         console.log('三小时内未使用');
         reset.block = true;
       }
-      if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 10) {
+      if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 30) {
         reset.fetcher = true;
         reset.pwd = true;
         reset.rss = true;

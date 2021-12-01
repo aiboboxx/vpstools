@@ -73,9 +73,9 @@ async function freeokBuy(row, page) {
   //剩余要请
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > p:nth-child(2) > code").innerText.trim());
   let times = Number(innerHtml);
-  if (times < 10 && row.level == 1 && row.balance > 2) {
+  if (times < 40 && row.level == 1 && row.balance > 4) {
     selecter = '#buy-invite-num';
-    await page.type(selecter, '20');
+    await page.type(selecter, '40');
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
@@ -109,7 +109,7 @@ async function main() {
   });
 
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
-  let sql = "SELECT * FROM freeok  where  level > 0 order by invite_refresh_time asc limit 20;"
+  let sql = "SELECT * FROM freeok  where  level > 1 order by invite_refresh_time asc limit 20;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);
