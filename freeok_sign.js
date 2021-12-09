@@ -103,7 +103,7 @@ async function freeokSign(row, page) {
         console.log('三小时内未使用');
         reset.block = true;
       }
-      if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 30) {
+      if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 15) {
         reset.fetcher = true;
         reset.pwd = true;
         reset.rss = true;
@@ -131,6 +131,7 @@ async function freeokSign(row, page) {
   }
   if (reset.pwd) {
     await resetPwd(browser);
+    console.log("reset.pwd");
   }
   if (reset.rss) {
     await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
@@ -141,9 +142,11 @@ async function freeokSign(row, page) {
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
       await sleep(3000);
     });
+    console.log("reset.rss");
   }
   if (reset.block) {
     await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]); //屏蔽email
+    console.log("reset.block");
   }
   if (reset.fetcher) {
     row.fetcher = null;
@@ -192,7 +195,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  //let sql = "SELECT * FROM freeok where id = 9;"
+  //let sql = "SELECT * FROM freeok where id = 303;"
   let sql = "SELECT * FROM freeok where level > 0  order by sign_time asc limit 15;"
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
   let r = await pool.query(sql, []);
