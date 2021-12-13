@@ -28,11 +28,15 @@ const pool = mysql.createPool({
 });
 async function regFreeok(page){
   await clearBrowser(page); //clear all cookies
+  let cookies = [], ck = '', msg = '';
   let usr = '', pwd = setup.pwd;
   let selecter, innerHtml;
   const aEmails = ['@126.com', '@163.com', '@qq.com'];
+  cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
+  await page.setCookie(...cookies);
+  console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  usr = 'aiboboxx1@126.com';
+  //usr = 'aiboboxx1@126.com';
   console.log(usr);
   await page.goto('https://ggme.xyz/auth/register?code=5iED', { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
@@ -47,9 +51,11 @@ async function regFreeok(page){
     },
     { timeout: 60000 },
     'body'
-  ).then(async () => { console.log("无需验证"); await sleep(1000); });
+  ).then(async () => { console.log("过5秒盾"); await sleep(1000); });
   await page.waitForSelector('#name', { timeout: 60000 });
-  //console.log("b");
+  cookies = await page.cookies();
+  fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'))
+  console.log("保存cookies");
   await page.type('#name', usr);
   //await sleep (100);
   await page.type('#email', usr);
@@ -68,6 +74,7 @@ async function regFreeok(page){
     .catch((error) => { console.log(error.message); sleep(2000); });
   await page.click('#embed-captcha > div');
   await sleep(2500);
+  console.log("识别验证码");
   await sbFreeok(page);
   await page.waitForFunction(
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
@@ -115,7 +122,6 @@ async function regFreeok(page){
           return Promise.reject(new Error('登录失败'));
         }
       });
-  let cookies = [], ck = '', msg = '';
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter, { timeout: 15000 });
   await sleep(1000);
@@ -155,7 +161,9 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       setup.proxy.changeip
     ],
-    defaultViewport: null
+    defaultViewport: null,
+    ignoreHTTPSErrors: true,
+    dumpio: false
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
@@ -165,9 +173,33 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
+  // permissions设置
+await page.evaluateOnNewDocument(() => {
+  const originalQuery = window.navigator.permissions.query; //notification伪装
+  window.navigator.permissions.query = (parameters) =>
+      parameters.name === 'notifications'
+      ? Promise.resolve({ state: Notification.permission })
+      : originalQuery(parameters);
+});
+    // WebGL设置
+  await page.evaluateOnNewDocument(() => {
+      const getParameter = WebGLRenderingContext.getParameter;
+      WebGLRenderingContext.prototype.getParameter = function (parameter) {
+          // UNMASKED_VENDOR_WEBGL
+          if (parameter === 37445) {
+              return 'Intel Inc.';
+          }
+          // UNMASKED_RENDERER_WEBGL
+          if (parameter === 37446) {
+              return 'Intel(R) Iris(TM) Graphics 6100';
+          }
+          return getParameter(parameter);
+      };
+  });
+
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
-  await regFreeok(page);
-  //.catch(async (error) => { console.log('error: ', error.message); });
+  await regFreeok(page)
+  .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
   await pool.end();
   if (runId ? true : false) await browser.close();
