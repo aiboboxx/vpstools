@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { sleep, getRndInteger, randomOne, randomString } = require('./common.js');
 exports.sbFreeok = async function sbFreeok(page) {
   const injectedScript = `
