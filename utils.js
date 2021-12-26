@@ -140,6 +140,9 @@ exports.sbFreeok = async function sbFreeok(page) {
 }
 
 exports.login = async function login(row, page, pool) {
+  let cookies = []
+  cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
+  await page.setCookie(...cookies);
   await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
   await page.waitForSelector("#email", { timeout: 30000 });
   await page.type('#email', row.usr, { delay: 20 });
