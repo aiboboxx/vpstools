@@ -108,7 +108,7 @@ async function freeokSign(row, page) {
         reset.pwd = true;
         reset.rss = true;
         //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-        console.log('10天重置');
+        console.log('15天重置');
       }
     }
   }

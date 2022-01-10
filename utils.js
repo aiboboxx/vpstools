@@ -145,7 +145,11 @@ exports.login = async function login(row, page, pool) {
   cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   await page.setCookie(...cookies);
   await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 30000 });
+  await page.waitForSelector("#email", { timeout: 30000 })
+  .then(async () => {
+    cookies = await page.cookies();
+    fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
+  });
   await page.type('#email', row.usr, { delay: 20 });
   await page.type('#passwd', row.pwd, { delay: 20 });
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
