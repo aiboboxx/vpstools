@@ -57,7 +57,7 @@ async function freeokSign(row, page) {
     }
     await page.goto('https://ggme.xyz/user');
   }
-  await sleep(3000);
+  //await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter, { timeout: 15000 })

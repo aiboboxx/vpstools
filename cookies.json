@@ -28,20 +28,6 @@
 		"sourcePort": 443
 	},
 	{
-		"name": "expire_in",
-		"value": "1643074511",
-		"domain": "ggme.xyz",
-		"path": "/",
-		"expires": 1643074479.504813,
-		"size": 19,
-		"httpOnly": false,
-		"secure": true,
-		"session": false,
-		"sameParty": false,
-		"sourceScheme": "Secure",
-		"sourcePort": 443
-	},
-	{
 		"name": "PHPSESSID",
 		"value": "2llmttecmit0230fqnj0uv1de8",
 		"domain": "ggme.xyz",
@@ -51,6 +37,20 @@
 		"httpOnly": false,
 		"secure": true,
 		"session": true,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
+	},
+	{
+		"name": "expire_in",
+		"value": "1643074511",
+		"domain": "ggme.xyz",
+		"path": "/",
+		"expires": 1643074479.504813,
+		"size": 19,
+		"httpOnly": false,
+		"secure": true,
+		"session": false,
 		"sameParty": false,
 		"sourceScheme": "Secure",
 		"sourcePort": 443
@@ -91,7 +91,7 @@
 		"expires": 1644976788,
 		"size": 8,
 		"httpOnly": false,
-		"secure": false,
+		"secure": true,
 		"session": false,
 		"sameParty": false,
 		"sourceScheme": "Secure",
