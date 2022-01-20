@@ -181,9 +181,8 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      '--proxy-server=socks5://app.aiboboxx.ml:7891',
       //setup.proxy.changeip
-      //setup.proxy.normal
+      setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

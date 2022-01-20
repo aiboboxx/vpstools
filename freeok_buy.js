@@ -127,8 +127,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      '--proxy-server=socks5://192.168.1.100:7891',
-      //setup.proxy.changeip
+      setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
