@@ -127,8 +127,8 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      //setup.proxy.changeip
-      setup.proxy.normal
+      setup.proxy.changeip
+      //setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
