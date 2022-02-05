@@ -165,8 +165,8 @@ async function main() {
   let invite = r[0][0].invite;
   console.log(invite);
   browser = await puppeteer.launch({
-    //headless: true,
     headless: runId ? true : false,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

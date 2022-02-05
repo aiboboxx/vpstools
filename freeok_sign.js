@@ -176,6 +176,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -201,6 +202,7 @@ async function main() {
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
+  //console.log(JSON.stringify(r));
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);

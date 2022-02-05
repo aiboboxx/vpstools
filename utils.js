@@ -171,7 +171,7 @@ exports.login = async function login(row, page, pool) {
     page.click('#login'),
   ])
     .then(async () => {
-      console.log('登录成功');
+      console.log('模拟登录成功');
     })
     .catch(async (err) => {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
@@ -203,7 +203,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   await page.waitForSelector(selecter, { timeout: 30000 })
     .then(
       async () => {
-        console.log('登录成功');
+        console.log('cookie登录成功');
         //await page.goto('https://ggme.xyz/user');
         return true;
       },
