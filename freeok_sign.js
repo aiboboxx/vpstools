@@ -152,7 +152,7 @@ async function freeokSign(row, page) {
     row.fetcher = null;
   }
     //rss 必须放最后，因为前面有rss重置
-    innerHtml = await page.evaluate(() => document.querySelector('#all_v2ray_windows > div.float-clear > input').value.trim());
+    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
     //console.log( "rss: " + innerHtml);
     row.rss = innerHtml;
   await page.click('#checkin', { delay: 200 })
@@ -176,7 +176,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

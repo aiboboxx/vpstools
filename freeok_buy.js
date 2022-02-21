@@ -74,8 +74,8 @@ async function freeokBuy(row, page) {
   else
     row.last_used_time = innerHtml;
   //rss
-  innerHtml = await page.evaluate(() => document.querySelector('#all_v2ray_windows > div.float-clear > input').value.trim());
-  //console.log( "rss: " + innerHtml);
+  innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+  console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
   //购买套餐
   date = new Date(row.level_end_time);
