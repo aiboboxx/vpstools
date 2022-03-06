@@ -125,7 +125,7 @@ async function freeokSign(row, page) {
         reset.pwd = true;
         reset.rss = true;
         reset.block = true;
-        row.rss_refresh_time = (new Date).Format('yyyy-MM-dd hh:mm:ss');
+        row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
       }
     }
   }
@@ -145,8 +145,9 @@ async function freeokSign(row, page) {
     console.log("reset.rss");
   }
   if (reset.block) {
-    await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]); //屏蔽email
-    console.log("reset.block");
+    let bindtime = (new Date).format('yyyy-MM-dd hh:mm:ss')
+    await pool.query("UPDATE email SET bindtime = ?  WHERE email = ?", [bindtime,row.fetcher]); //屏蔽email
+    console.log("reset.block",bindtime);
   }
   if (reset.fetcher) {
     row.fetcher = null;
@@ -197,7 +198,7 @@ async function main() {
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   //let sql = "SELECT * FROM freeok where id = 303;"
-  let sql = "SELECT * FROM freeok where level > 0  order by sign_time asc limit 15;"
+  let sql = "SELECT * FROM freeok where level > 0 and sign_time < date_sub(now(), interval 4 hour) order by sign_time asc limit 15;"
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
   let r = await pool.query(sql, []);
   let i = 0;
