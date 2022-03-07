@@ -110,7 +110,11 @@ async function main() {
   });
 
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
-  let sql = "SELECT * FROM freeok  where  level > 0 order by invite_refresh_time asc limit 20;"
+  let sql = `SELECT id,usr,pwd,cookies,balance,level,fetcher,score,invite 
+             FROM freeok  
+             where  level > 0 
+             order by invite_refresh_time asc 
+             limit 1;`
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);
@@ -123,14 +127,23 @@ async function main() {
         //console.log(JSON.stringify(row)); 
         //console.log(row.id,row.level);   
         let sql, arr;
-        sql = 'UPDATE `freeok` SET  `cookies`=?, `level`=?, `fetcher`=?, `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.cookies, row.level, row.fetcher, row.score, row.invite, row.id];
+        sql = 'UPDATE `freeok` SET  `cookies`=?,  `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.cookies, row.score, row.invite, row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
         .then((result) => { console.log('result', result[0]); sleep(3000); })
         .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
       })
-      .catch(error => console.log('buyerror: ', error.message));
+      .catch(async (error,row) => {
+        let sql, arr;
+        sql = 'UPDATE `freeok` SET  `invite_refresh_time` = NOW()  WHERE `id` = ?';
+        arr = [row.id];
+        sql = await pool.format(sql, arr);
+        await pool.query(sql)
+        .then((result) => { console.log('result', result[0]); sleep(3000); })
+        .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+        console.log('buyerror: ', error.message)
+      });
   }
   await pool.end();
   if (runId ? true : false) await browser.close();

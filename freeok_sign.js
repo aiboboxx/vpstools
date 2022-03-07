@@ -198,7 +198,11 @@ async function main() {
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   //let sql = "SELECT * FROM freeok where id = 303;"
-  let sql = "SELECT * FROM freeok where level > 0 and sign_time < date_sub(now(), interval 4 hour) order by sign_time asc limit 15;"
+  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,fetcher,sign_time,rss_refresh_time
+             FROM freeok 
+             where level > 0 and sign_time < date_sub(now(), interval 4 hour) 
+             order by sign_time asc 
+             limit 15;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
   let r = await pool.query(sql, []);
   let i = 0;

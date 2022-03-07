@@ -75,7 +75,7 @@ async function freeokBuy(row, page) {
     row.last_used_time = innerHtml;
   //rss
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-  console.log( "rss: " + innerHtml);
+  //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
   //购买套餐
   date = new Date(row.level_end_time);
@@ -143,7 +143,11 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = "SELECT * FROM freeok WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) order by update_time asc limit 15;"
+  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,update_time 
+             FROM freeok 
+             WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) 
+             order by update_time asc 
+             limit 15;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql);
   let i = 0;
@@ -164,7 +168,17 @@ async function main() {
           .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
-      .catch(error => console.log('buyerror: ', error.message));
+      .catch(async (error,row) => {
+        console.log('buyerror: ', error.message)
+        let sql, arr;
+        sql = 'UPDATE `freeok` `update_time` = NOW() WHERE `id` = ?';
+        arr = [row.id];
+        sql = await pool.format(sql, arr);
+        //console.log(sql);
+        await pool.query(sql)
+          .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
+          .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
+      });
   }
   await pool.end();
   if (runId ? true : false) await browser.close();
