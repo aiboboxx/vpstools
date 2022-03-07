@@ -176,7 +176,9 @@ exports.login = async function login(row, page, pool) {
     .catch(async (err) => {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
       if (msg == "账号在虚无之地，请尝试重新注册") {
-        await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
+        if ([row.level]==1 && (Date.now()-new Date(row.sign_time).getTime())/(24 * 60 * 60 * 1000)>3){
+          await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
+        }
         return Promise.reject(new Error('账号在虚无之地'));
       }
     });
@@ -210,7 +212,9 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
       async (err) => {
         let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
         if (msg == "账号在虚无之地，请尝试重新注册") {
-          await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
+          if ([row.level]==1 && (Date.now()-new Date(row.sign_time).getTime())/(24 * 60 * 60 * 1000)>2){
+            await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
+          }
           return Promise.reject(new Error('账号在虚无之地'));
         } else {
           return Promise.reject(new Error('登录失败'));

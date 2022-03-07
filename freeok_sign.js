@@ -103,12 +103,12 @@ async function freeokSign(row, page) {
         console.log('三小时内未使用');
         reset.block = true;
       }
-      if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 15) {
+      if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 10) {
         reset.fetcher = true;
         reset.pwd = true;
         reset.rss = true;
         //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-        console.log('15天重置');
+        console.log('10天重置');
       }
     }
   }
@@ -220,7 +220,17 @@ async function main() {
           .then((reslut) => { console.log('changedRows', reslut[0].changedRows); sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
       })
-      .catch(error => console.log('signerror: ', error.message));
+      .catch(async (error,row) => {
+        console.log('signerror: ', error.message)
+        let sql, arr;
+        sql = 'UPDATE `freeok` SET `sign_time`=NOW() WHERE `id`=?';
+        arr = [row.id];
+        sql = await pool.format(sql, arr);
+        //console.log(sql);
+        await pool.query(sql)
+          .then((reslut) => { console.log('changedRows', reslut[0].changedRows); sleep(3000); })
+          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+      } );
   }
   //sqlite.close();
   await pool.end();
