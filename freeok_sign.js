@@ -97,7 +97,7 @@ async function freeokSign(row, page) {
       reset.fetcher = true;
       reset.pwd = true;
       reset.rss = true;
-      //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
+      console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
       if (unixtimes[1] < unixtimes[2]) {
         //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
         console.log('三小时内未使用');
@@ -197,13 +197,13 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  //let sql = "SELECT * FROM freeok where id = 303;"
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,fetcher,sign_time,rss_refresh_time
              FROM freeok 
-             where level > 0 and sign_time < date_sub(now(), interval 4 hour) 
+             where level > 0 
              order by sign_time asc 
              limit 15;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
+  //sql = "SELECT * FROM freeok where id = 523;" and sign_time < date_sub(now(), interval 4 hour) 
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
@@ -232,8 +232,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((reslut) => { console.log('changedRows', reslut[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+          .then((reslut) => { console.log('changedRows2', reslut[0].changedRows); sleep(3000); })
+          .catch((error) => { console.log('UPDATEerror2: ', error.message); sleep(3000); });
       } );
   }
   //sqlite.close();
