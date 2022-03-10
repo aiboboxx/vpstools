@@ -92,7 +92,7 @@ async function freeokSign(row, page) {
     new Date(row.fetch_time).getTime()
   ];
   if (row.fetcher !== null) {
-    console.log(unixtimes,(Date.now()-Math.max(...unixtimes))/60*60*1000,unixtimes[1]<unixtimes[2]?3:24);
+    //console.log(unixtimes,(Date.now()-Math.max(...unixtimes))/60*60*1000,unixtimes[1]<unixtimes[2]?3:24);
     if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 3 : 24)) {
       reset.fetcher = true;
       reset.pwd = true;
@@ -199,8 +199,8 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,fetcher,sign_time,rss_refresh_time,regtime,fetch_time
              FROM freeok 
-             where level > 0 
-             order by last_used_time asc 
+             where level > 0 and sign_time < date_sub(now(), interval 4 hour)
+             order by sign_time asc 
              limit 15;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
   //sql = "SELECT * FROM freeok where id = 523;" and sign_time < date_sub(now(), interval 4 hour) 
