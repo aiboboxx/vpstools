@@ -79,13 +79,7 @@ exports.sbFreeok = async function sbFreeok(page) {
     //console.log('dest',dest);
     return dest.x;
   }
-/*   let selecter = 'body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_widget > div > a > div.geetest_canvas_img.geetest_absolute > div > canvas.geetest_canvas_bg.geetest_absolute';
-  let el;
-  while (el === undefined ) {
-    let el = await page.waitForSelector(selecter);
-    await sleep(500);
-  } */
-  //await sleep(5000);
+
   const distance = await _getDistance();
   const button = await page.waitForSelector("body > div.geetest_fullpage_click.geetest_float.geetest_wind.geetest_slide3 > div.geetest_fullpage_click_wrap > div.geetest_fullpage_click_box > div > div.geetest_wrap > div.geetest_slider.geetest_ready > div.geetest_slider_button");
   const box = await button.boundingBox();
@@ -144,7 +138,7 @@ exports.login = async function login(row, page, pool) {
   let cookies = []
   cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   await page.setCookie(...cookies);
-  await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://ggme.xyz/auth/login', { timeout: 20000 }).catch((err) => console.log('首页超时'));
   await page.waitForSelector("#email", { timeout: 30000 })
   .then(async () => {
     cookies = await page.cookies();
@@ -154,7 +148,7 @@ exports.login = async function login(row, page, pool) {
   await page.type('#passwd', row.pwd, { delay: 20 });
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
   await sleep(1000);
-  await page.waitForSelector('#embed-captcha > div');
+  /*await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
   await sleep(2500);
   //await page.waitForResponse(response =>  response.url().match(encodeURIComponent('https://api.geetest.com/ajax.php')) && response.ok());
@@ -165,6 +159,7 @@ exports.login = async function login(row, page, pool) {
     '#embed-captcha > div'
   );
   await sleep(1000);
+  */
   await Promise.all([
     page.waitForNavigation({ timeout: 10000 }),
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
