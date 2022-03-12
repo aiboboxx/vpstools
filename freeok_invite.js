@@ -123,7 +123,7 @@ async function main() {
     console.log("user:", i, row.id, row.usr);
     if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
     if (row.usr && row.pwd) await freeokBuy(row, page)
-      .then(async row => {
+      .then(async () => {
         //console.log(JSON.stringify(row)); 
         //console.log(row.id,row.level);   
         let sql, arr;
@@ -134,7 +134,7 @@ async function main() {
         .then((result) => { console.log('result', result[0]); sleep(3000); })
         .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
       })
-      .catch(async (error,row) => {
+      .catch(async (error) => {
         let sql, arr;
         sql = 'UPDATE `freeok` SET  `invite_refresh_time` = NOW()  WHERE `id` = ?';
         arr = [row.id];

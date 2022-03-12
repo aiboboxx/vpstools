@@ -157,7 +157,7 @@ async function main() {
     console.log("user:", i, row.id, row.usr);
     if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
     if (row.usr && row.pwd) await freeokBuy(row, page)
-      .then(async row => {
+      .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
         sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
@@ -168,7 +168,7 @@ async function main() {
           .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
           .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
-      .catch(async (error,row) => {
+      .catch(async (error) => {
         console.log('buyerror: ', error.message)
         let sql, arr;
         sql = 'UPDATE `freeok` `update_time` = NOW() WHERE `id` = ?';

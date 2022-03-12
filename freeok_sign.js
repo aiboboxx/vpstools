@@ -213,7 +213,7 @@ async function main() {
     console.log("user:", i, row.id, row.usr);
     if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
     if (row.usr && row.pwd) await freeokSign(row, page)
-      .then(async row => {
+      .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
         sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW(),`rss_refresh_time`=? WHERE `id`=?';
