@@ -36,9 +36,9 @@ async function regFreeok(page){
   await page.setCookie(...cookies);
   console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  //usr = 'aiboboxx1@126.com';
+  usr = 'aiboboxx1@126.com';
   console.log(usr);
-  await page.goto('https://ggme.xyz/auth/register?code=5iED', { timeout: 30000 })
+  await page.goto('https://ggme.xyz/auth/register?code=5iED', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -80,7 +80,7 @@ async function regFreeok(page){
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
     { timeout: 60000 },
     '#embed-captcha > div'
-  );
+  ); 
   await sleep(1000);
   await page.click('#tos');
   await sleep(500);
@@ -96,7 +96,7 @@ async function regFreeok(page){
   await sleep(200);
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
   await sleep(1000);
-  await page.waitForSelector('#embed-captcha > div');
+/*   await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
   await sleep(2500);
   await sbFreeok(page);
@@ -104,7 +104,7 @@ async function regFreeok(page){
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
     { timeout: 60000 },
     '#embed-captcha > div'
-  );
+  ); */
   await sleep(1000);
   await Promise.all([
     page.waitForNavigation({ timeout: 5000 }),
