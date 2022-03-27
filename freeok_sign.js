@@ -43,9 +43,10 @@ async function freeokSign(row, page) {
   }
   //cookies = await page.cookies();
   //row.cookies = JSON.stringify(cookies, null, '\t');
-  if (await page.$('#reactive')) {
+  while (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
+    await sleep(1000);
     console.log('账户解除限制');
     if (row.fetcher !== null) {
       //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);

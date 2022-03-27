@@ -39,9 +39,10 @@ async function freeokBuy(row, page) {
       if (!runId) await login(row, page, pool);
     });
   }
-  if (await page.$('#reactive')) {
+  while (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
+    await sleep(1000);
     console.log('账户解除限制');
     await page.goto('https://ggme.xyz/user');
   }

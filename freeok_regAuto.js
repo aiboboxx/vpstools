@@ -96,7 +96,7 @@ async function regFreeok(page,invite){
   await sleep(200);
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
   await sleep(1000);
-  await page.waitForSelector('#embed-captcha > div');
+/*   await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
   await sleep(2500);
   await sbFreeok(page);
@@ -104,7 +104,7 @@ async function regFreeok(page,invite){
     (selecter) => document.querySelector(selecter).innerHTML.includes("验证成功"),
     { timeout: 60000 },
     '#embed-captcha > div'
-  );
+  ); */
   await sleep(1000);
   await Promise.all([
     page.waitForNavigation({ timeout: 5000 }),
