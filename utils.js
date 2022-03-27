@@ -138,7 +138,7 @@ exports.login = async function login(row, page, pool) {
   let cookies = []
   cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   await page.setCookie(...cookies);
-  await page.goto('https://ggme.xyz/auth/login', { timeout: 20000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://ggme.xyz/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
   await page.waitForSelector("#email", { timeout: 30000 })
   .then(async () => {
     cookies = await page.cookies();
@@ -171,7 +171,8 @@ exports.login = async function login(row, page, pool) {
     .catch(async (err) => {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
       if (msg == "账号在虚无之地，请尝试重新注册") {
-        if ([row.level]==1 && (Date.now()-new Date(row.sign_time).getTime())/(24 * 60 * 60 * 1000)>3){
+        console.log('虚无之地',row.id,(Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000));
+        if (row.level==1 && (Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>0){
           await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
         }
         return Promise.reject(new Error('账号在虚无之地'));
@@ -181,7 +182,7 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://ggme.xyz/user', { timeout: 30000 });
+  await page.goto('https://ggme.xyz/user', { timeout: 15000 });
   console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {

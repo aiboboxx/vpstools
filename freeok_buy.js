@@ -171,7 +171,7 @@ async function main() {
       .catch(async (error) => {
         console.log('buyerror: ', error.message)
         let sql, arr;
-        sql = 'UPDATE `freeok` `update_time` = NOW() WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET `update_time` = NOW() WHERE `id` = ?';
         arr = [row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
