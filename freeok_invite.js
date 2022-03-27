@@ -37,9 +37,10 @@ async function freeokBuy(row, page) {
       if (!runId) await login(row, page);
     });
   }
-  if (await page.$('#reactive', { timeout: 3000 })) {
+  while (await page.$('#reactive', { timeout: 3000 })) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
+    await sleep(1000);
     console.log('账户解除限制');
   }
   await page.goto('https://ggme.xyz/user/invite');
@@ -114,7 +115,7 @@ async function main() {
              FROM freeok  
              where  level > 0 
              order by invite_refresh_time asc 
-             limit 1;`
+             limit 20;`
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);
@@ -127,8 +128,8 @@ async function main() {
         //console.log(JSON.stringify(row)); 
         //console.log(row.id,row.level);   
         let sql, arr;
-        sql = 'UPDATE `freeok` SET  `cookies`=?,  `score` = ?, `invite` = ?, `invite_refresh_time` = NOW()  WHERE `id` = ?';
-        arr = [row.cookies, row.score, row.invite, row.id];
+        sql = 'UPDATE `freeok` SET  `cookies`=?,  `score` = ?, `invite` = ?, `invite_refresh_time` = NOW(), `level` = ?  WHERE `id` = ?';
+        arr = [row.cookies, row.score, row.invite, row.level, row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
         .then((result) => { console.log('result', result[0]); sleep(3000); })
