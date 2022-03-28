@@ -132,7 +132,7 @@ async function main() {
         arr = [row.cookies, row.score, row.invite, row.level, row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
-        .then((result) => { console.log('result', result[0]); sleep(3000); })
+        .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
         .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
       })
       .catch(async (error) => {
@@ -141,7 +141,7 @@ async function main() {
         arr = [row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
-        .then((result) => { console.log('result', result[0]); sleep(3000); })
+        .then((result) => { console.log('changedRows2', result[0].changedRows); sleep(3000); })
         .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
         console.log('buyerror: ', error.message)
       });
