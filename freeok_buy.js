@@ -84,7 +84,7 @@ async function freeokBuy(row, page) {
     //await page.waitFor(1500);
     await page.goto('https://ggme.xyz/user/shop');
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
-      delay: 200
+      delay: 500
     })
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
@@ -100,6 +100,7 @@ async function freeokBuy(row, page) {
       console.log("购买成功！");
     else
       console.log("购买套餐结果: " + innerHtml);
+    await sleep(2000);
     await page.goto('https://ggme.xyz/user');
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
     await page.waitForSelector(selecter, { timeout: 10000 })
@@ -146,7 +147,7 @@ async function main() {
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,update_time 
              FROM freeok 
-             WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL)
+             WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) 
              order by update_time asc 
              limit 15;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
