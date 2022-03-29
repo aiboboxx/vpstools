@@ -26,7 +26,9 @@ const pool = mysql.createPool({
   database: setup.mysql.database,
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
-  queueLimit: 0 //可以等待的连接的个数
+  queueLimit: 0, //可以等待的连接的个数
+  timezone: '+08:00',//时区配置
+  charset:'utf8' //字符集设置
 });
 async function login(row,page){
   await page.goto('https://ggme.xyz/auth/login',{timeout: 12000}).catch((err)=>console.log('首页超时'));
