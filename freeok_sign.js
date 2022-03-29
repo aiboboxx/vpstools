@@ -25,7 +25,9 @@ const pool = mysql.createPool({
   database: setup.mysql.database,
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
-  queueLimit: 0 //可以等待的连接的个数
+  queueLimit: 0, //可以等待的连接的个数
+  timezone: '08:00',//时区配置
+  charset:'utf8' //字符集设置
 });
 
 
@@ -200,7 +202,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,fetcher,sign_time,rss_refresh_time,regtime,fetch_time
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 1 hour) or sign_time is null)
              order by sign_time asc 
              limit 15;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"

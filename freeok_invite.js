@@ -24,7 +24,9 @@ const pool = mysql.createPool({
   database: setup.mysql.database,
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
-  queueLimit: 0 //可以等待的连接的个数
+  queueLimit: 0, //可以等待的连接的个数
+  timezone: '08:00',//时区配置
+  charset:'utf8' //字符集设置
 });
 
 async function freeokBuy(row, page) {
@@ -113,7 +115,7 @@ async function main() {
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level,fetcher,score,invite 
              FROM freeok  
-             where  level > 0 
+             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 16 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 20;`
   let r = await pool.query(sql);
@@ -128,7 +130,7 @@ async function main() {
         //console.log(JSON.stringify(row)); 
         //console.log(row.id,row.level);   
         let sql, arr;
-        sql = 'UPDATE `freeok` SET  `cookies`=?,  `score` = ?, `invite` = ?, `invite_refresh_time` = NOW(), `level` = ?  WHERE `id` = ?';
+        sql = `UPDATE freeok  SET  cookies = ?,  score = ?, invite = ?, invite_refresh_time = NOW(), level = ?  WHERE id = ?`;
         arr = [row.cookies, row.score, row.invite, row.level, row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
