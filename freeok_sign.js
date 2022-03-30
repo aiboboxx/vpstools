@@ -96,14 +96,14 @@ async function freeokSign(row, page) {
   ];
   if (row.fetcher !== null) {
     //console.log(unixtimes,(Date.now()-Math.max(...unixtimes))/60*60*1000,unixtimes[1]<unixtimes[2]?3:24);
-    if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 8 : 24)) {
+    if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24)) {
       reset.fetcher = true;
       reset.pwd = true;
       reset.rss = true;
       console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
       if (unixtimes[1] < unixtimes[2]) {
         //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-        console.log('8小时内未使用');
+        console.log('4小时内未使用');
         reset.block = true;
       }
       if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 15) {
@@ -180,7 +180,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -202,7 +202,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,fetcher,sign_time,rss_refresh_time,regtime,fetch_time
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
              limit 15;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
