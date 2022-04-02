@@ -82,7 +82,7 @@ async function freeokBuy(row, page) {
   row.rss = innerHtml;
   //购买套餐
   date = new Date(row.level_end_time);
-  if (date.getTime() < Date.now()) {
+  if ((date.getTime() < Date.now()) || row['balance' == 0.99]) {
     //await page.waitFor(1500);
     await page.goto('https://ggme.xyz/user/shop');
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
@@ -134,7 +134,7 @@ async function main() {
       setup.proxy.changeip
       //setup.proxy.normal
     ],
-    defaultViewport: null,
+    defaultViewport: null, 
     ignoreHTTPSErrors: true
   });
   //console.log(await sqlite.open('./freeok.db'))
@@ -149,7 +149,7 @@ async function main() {
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,update_time 
              FROM freeok 
-             WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL) 
+             WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
              limit 15;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"

@@ -143,15 +143,32 @@ async function regFreeok(page,invite){
       .then((reslut) => { msg = '添加成功:' + usr; console.log('添加成功:', reslut[0].insertId); sleep(2000); })
       .catch((error) => { msg = '添加失败:' + error.message; console.log('添加失败:', error.message); sleep(2000); });
     //console.log(sql);
-    /*   await pool.query(sql)
-        .then((reslut) => { msg = 'update成功:' + usr; console.log('添加成功:', reslut[0].changedRows); sleep (2000); })
-        .catch((error) => { msg = 'update失败:' + error.message; console.log('添加失败:', error.message); sleep (2000); }); */
+    //购买套餐
+    await page.goto('https://ggme.xyz/user/shop');
+    await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
+      delay: 500
+    })
+      .catch(async (err) => {
+        console.log("购买失败");
+      });
+    await sleep(3500);
+    await page.click('#coupon_input', { delay: 200 });
+    await sleep(2000);
+    //await page.waitForSelector("#order_input");
+    await page.click('#order_input', { delay: 200 });
+    await sleep(2000);
+    innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
+    if (innerHtml == '')
+      console.log("购买成功！");
+    else
+      console.log("购买套餐结果: " + innerHtml);
+    await sleep(1000);
   } else {
     msg = '不添加数据库：' + usr;
   }
   console.log(msg);
   await page.evaluate((selecter, text) => document.querySelector(selecter).innerText = text, selecter, msg);
-  
+
 }
 async function main() {
   let sql = "SELECT id FROM freeok where level = 1;"
