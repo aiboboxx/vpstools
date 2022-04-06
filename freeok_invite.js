@@ -118,7 +118,7 @@ async function main() {
              FROM freeok  
              where  level > 0  and (invite_refresh_time < date_sub(now(), interval 24 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
-             limit 20;`
+             limit 25;`
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);
