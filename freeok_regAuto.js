@@ -84,14 +84,17 @@ async function regFreeok(page,invite){
     '#embed-captcha > div'
   );
   await sleep(1000);
+  await page.waitForSelector( '#tos',{visible: true} )
+  await sleep(1000);
   await page.click('#tos');
-  await sleep(500);
+  await sleep(1000);
+  await page.waitForSelector( '#reg',{visible: true} )
+  await sleep(1000);
   await page.click('#reg');
   await sleep(3000);
 
-
   await page.goto('https://ggme.xyz/auth/login', { timeout: 25000 }).catch((err) => console.log('首页超时'));
-  await sleep(3000);
+  await sleep(1500);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
   await page.type('#passwd', pwd);
