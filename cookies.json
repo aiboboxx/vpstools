@@ -1,5 +1,19 @@
 [
 	{
+		"name": "PHPSESSID",
+		"value": "2llmttecmit0230fqnj0uv1de8",
+		"domain": "ggme.xyz",
+		"path": "/",
+		"expires": -1,
+		"size": 35,
+		"httpOnly": false,
+		"secure": true,
+		"session": true,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
+	},
+	{
 		"name": "cf_clearance",
 		"value": "LI2atSN31KDfLPcWprSRnCtAIUnFg4B3Pwtlo6j7Jis-1645668271-0-150",
 		"domain": ".ggme.xyz",
@@ -15,25 +29,11 @@
 		"sourcePort": 443
 	},
 	{
-		"name": "PHPSESSID",
-		"value": "2llmttecmit0230fqnj0uv1de8",
-		"domain": "ggme.xyz",
-		"path": "/",
-		"expires": -1,
-		"size": 35,
-		"httpOnly": false,
-		"secure": true,
-		"session": true,
-		"sameParty": false,
-		"sourceScheme": "Secure",
-		"sourcePort": 443
-	},
-	{
 		"name": "code",
 		"value": "2NFS",
 		"domain": "ggme.xyz",
 		"path": "/auth",
-		"expires": 1651989206,
+		"expires": 1652228351,
 		"size": 8,
 		"httpOnly": false,
 		"secure": false,
