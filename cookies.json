@@ -36,7 +36,7 @@
 		"expires": 1652228351,
 		"size": 8,
 		"httpOnly": false,
-		"secure": false,
+		"secure": true,
 		"session": false,
 		"sameParty": false,
 		"sourceScheme": "Secure",

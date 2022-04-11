@@ -112,7 +112,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `reset_time` = NOW() WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `count` = 0, `reset_time` = NOW() WHERE `id` = ?';
         arr = [row.cookies, row.rss, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
