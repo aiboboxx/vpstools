@@ -53,7 +53,7 @@ async function freeokBuy(row, page) {
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
     await page.waitForSelector(selecter, { timeout: 15000 })
         .then(async () => {
-            console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
+            //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
             //await page.goto('https://ggme.xyz/user');
         });
     //////////do something
@@ -70,7 +70,7 @@ async function freeokBuy(row, page) {
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
     innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
     console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
-    await sleep(10000);
+    await sleep(6000);
     cookies = await page.cookies();
     row.cookies = JSON.stringify(cookies, null, '\t');
     return row;
@@ -79,7 +79,7 @@ async function main() {
     //await v2raya();
     browser = await puppeteer.launch({
         headless: runId ? true : false,
-        //headless: true,
+        headless: true,
         args: [
             '--window-size=1920,1080',
             '--no-sandbox',

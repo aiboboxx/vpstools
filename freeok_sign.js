@@ -204,7 +204,7 @@ async function main() {
              FROM freeok 
              where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
-             limit 25;`
+             limit 30;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
   //sql = "SELECT * FROM freeok where id = 523;" and sign_time < date_sub(now(), interval 4 hour) 
   let r = await pool.query(sql, []);

@@ -38,9 +38,9 @@ async function regFreeok(page){
   await page.setCookie(...cookies);
   console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  usr = 'aiboboxx1@126.com';
+  usr = 'v2rayfree@gmail.com';
   console.log(usr);
-  await page.goto('https://ggme.xyz/auth/register?code=5iED', { timeout: 15000 })
+  await page.goto('https://ggme.xyz/auth/register?code=2NFS', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -143,9 +143,26 @@ async function regFreeok(page){
       .then((reslut) => { msg = '添加成功:' + usr; console.log('添加成功:', reslut[0].insertId); sleep(2000); })
       .catch((error) => { msg = '添加失败:' + error.message; console.log('添加失败:', error.message); sleep(2000); });
     //console.log(sql);
-    /*   await pool.query(sql)
-        .then((reslut) => { msg = 'update成功:' + usr; console.log('添加成功:', reslut[0].changedRows); sleep (2000); })
-        .catch((error) => { msg = 'update失败:' + error.message; console.log('添加失败:', error.message); sleep (2000); }); */
+    //购买套餐
+    await page.goto('https://ggme.xyz/user/shop');
+    await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
+      delay: 500
+    })
+      .catch(async (err) => {
+        console.log("购买失败");
+      });
+    await sleep(3500);
+    await page.click('#coupon_input', { delay: 200 });
+    await sleep(2000);
+    //await page.waitForSelector("#order_input");
+    await page.click('#order_input', { delay: 200 });
+    await sleep(2000);
+    innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
+    if (innerHtml == '')
+      console.log("购买成功！");
+    else
+      console.log("购买套餐结果: " + innerHtml);
+    await sleep(1000);
   } else {
     msg = '不添加数据库：' + usr;
   }
