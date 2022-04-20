@@ -103,7 +103,7 @@
 		"value": "2NFS",
 		"domain": "ggme.xyz",
 		"path": "/auth",
-		"expires": 1652744247,
+		"expires": 1653011724,
 		"size": 8,
 		"httpOnly": false,
 		"secure": false,

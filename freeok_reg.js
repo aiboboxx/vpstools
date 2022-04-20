@@ -38,7 +38,7 @@ async function regFreeok(page){
   await page.setCookie(...cookies);
   console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  usr = 'aiboboxx@gmail.com';
+  usr = 'coolliubo@gmail.com';
   console.log(usr);
   await page.goto('https://ggme.xyz/auth/register?code=2NFS', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
