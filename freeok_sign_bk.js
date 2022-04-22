@@ -50,7 +50,7 @@ async function  freeokSign  (row,page) {
       await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
       await pool.query("UPDATE freeok SET fetcher = null  WHERE id = ?", [row.id]);
     }
-    await page.goto('https://ggme.xyz/user');
+    await page.goto('https://okgg.xyz/user');
   }
   await sleep(3000);
   let selecter, innerHtml;
@@ -58,7 +58,7 @@ async function  freeokSign  (row,page) {
   await page.waitForSelector(selecter, { timeout: 15000 })
   .then(async ()=>{
     console.log('进入页面：',await page.evaluate((selecter)=>document.querySelector(selecter).innerHTML,selecter));
-    //await page.goto('https://ggme.xyz/user');
+    //await page.goto('https://okgg.xyz/user');
   });
 //////////do something
   
@@ -157,7 +157,7 @@ async function  freeokSign  (row,page) {
         await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")',{timeout:3000})
         .then(async ()=>{
           console.log('签到成功',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-          //await page.goto('https://ggme.xyz/user');
+          //await page.goto('https://okgg.xyz/user');
         })
         .catch((err)=>console.log('签到超时'));
       })

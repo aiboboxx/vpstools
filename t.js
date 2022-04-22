@@ -12,7 +12,7 @@ puppeteer.launch({ headless: false }).then(async browser => {
   const page = await browser.newPage()
   //await page.goto('https://bot.sannysoft.com')
   //await page.waitForTimeout(5000)
-  await page.goto('https://ggme.xyz/auth/register?code=wsOq');
+  await page.goto('https://okgg.xyz/auth/register?code=wsOq');
   await page.waitForTimeout(30000)
   await page.screenshot({ path: 'testresult.png', fullPage: true })
   await browser.close()

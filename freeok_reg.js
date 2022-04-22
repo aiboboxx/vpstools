@@ -40,7 +40,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   usr = 'coolliubo@gmail.com';
   console.log(usr);
-  await page.goto('https://ggme.xyz/auth/register?code=2NFS', { timeout: 15000 })
+  await page.goto('https://okgg.xyz/auth/register?code=2NFS', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -90,7 +90,7 @@ async function regFreeok(page){
   await sleep(3000);
 
 
-  await page.goto('https://ggme.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://okgg.xyz/auth/login', { timeout: 30000 }).catch((err) => console.log('首页超时'));
   await sleep(3000);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
@@ -144,7 +144,7 @@ async function regFreeok(page){
       .catch((error) => { msg = '添加失败:' + error.message; console.log('添加失败:', error.message); sleep(2000); });
     //console.log(sql);
     //购买套餐
-    await page.goto('https://ggme.xyz/user/shop');
+    await page.goto('https://okgg.xyz/user/shop');
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
       delay: 500
     })

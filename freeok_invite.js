@@ -45,14 +45,14 @@ async function freeokBuy(row, page) {
     await sleep(1000);
     console.log('账户解除限制');
   }
-  await page.goto('https://ggme.xyz/user/invite');
+  await page.goto('https://okgg.xyz/user/invite');
   await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
       console.log('进入页面：invite');
-      //await page.goto('https://ggme.xyz/user');
+      //await page.goto('https://okgg.xyz/user');
     });
   selecter = "body > main > div.content-header.ui-content-header > div > h1";
   //////////do something

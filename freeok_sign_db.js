@@ -6,7 +6,7 @@ const github = require('@actions/github');
 const f = require('./myfuns.js');
 async function  freeokSign (row,page) {
     await clearBrowser(page); //clear all cookies
-    await page.goto('https://ggme.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
+    await page.goto('https://okgg.xyz/auth/login',{timeout: 10000}).catch((err)=>console.log('首页超时'));
   //await page.waitForSelector("#email");
     await page.type('#email', row.usr, {delay: 20});
     await page.type('#passwd', row.pwd, {delay: 20});

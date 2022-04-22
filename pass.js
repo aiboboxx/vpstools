@@ -33,5 +33,5 @@ async function createPage (browser,url) {
     await page.goto(url, { waitUntil: 'networkidle2',timeout: 0 } );
     return page;
 }
-createPage(browser,'https://ggme.xyz/auth/register?code=wsOq')
+createPage(browser,'https://okgg.xyz/auth/register?code=wsOq')
 //createPage(browser,'https://bot.sannysoft.com/')

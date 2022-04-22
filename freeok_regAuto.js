@@ -40,7 +40,7 @@ async function regFreeok(page,invite){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto(`https://ggme.xyz/auth/register?code=${invite}`, { timeout: 30000 })
+  await page.goto(`https://okgg.xyz/auth/register?code=${invite}`, { timeout: 30000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -93,7 +93,7 @@ async function regFreeok(page,invite){
   await page.click('#reg');
   await sleep(3000);
 
-  await page.goto('https://ggme.xyz/auth/login', { timeout: 25000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://okgg.xyz/auth/login', { timeout: 25000 }).catch((err) => console.log('首页超时'));
   await sleep(1500);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
@@ -147,7 +147,7 @@ async function regFreeok(page,invite){
       .catch((error) => { msg = '添加失败:' + error.message; console.log('添加失败:', error.message); sleep(2000); });
     //console.log(sql);
     //购买套餐
-    await page.goto('https://ggme.xyz/user/shop');
+    await page.goto('https://okgg.xyz/user/shop');
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
       delay: 500
     })
@@ -176,8 +176,8 @@ async function regFreeok(page,invite){
 async function main() {
   let sql = "SELECT id FROM freeok where level = 1;"
   let r = await pool.query(sql);
-  if ( r[0].length > 90 ) {
-    console.log('已有80个level=1账户');
+  if ( r[0].length > 120 ) {
+    console.log('已有120个level=1账户');
     return;
   }
   console.log('已有账户：',r[0].length);
