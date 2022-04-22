@@ -201,7 +201,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,rss,last_used_time,fetcher,sign_time,rss_refresh_time,regtime,fetch_time
+  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,last_used_time,fetcher,sign_time,rss_refresh_time,regtime,fetch_time
              FROM freeok 
              where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
