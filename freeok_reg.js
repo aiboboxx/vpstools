@@ -38,9 +38,9 @@ async function regFreeok(page){
   await page.setCookie(...cookies);
   console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  usr = 'coolliubo@gmail.com';
+  usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto('https://okgg.xyz/auth/register?code=2NFS', { timeout: 15000 })
+  await page.goto('https://okgg.xyz/auth/register?code=vJ9W', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -173,6 +173,7 @@ async function regFreeok(page){
 async function main() {
   browser = await puppeteer.launch({
     headless: runId ? true : false,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

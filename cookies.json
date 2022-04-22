@@ -1,1 +1,30 @@
-[]
+[
+	{
+		"name": "PHPSESSID",
+		"value": "51sq9j0sq7hh05843a5slmkoeu",
+		"domain": "okgg.xyz",
+		"path": "/",
+		"expires": -1,
+		"size": 35,
+		"httpOnly": false,
+		"secure": false,
+		"session": true,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
+	},
+	{
+		"name": "code",
+		"value": "vJ9W",
+		"domain": "okgg.xyz",
+		"path": "/auth",
+		"expires": 1653207185,
+		"size": 8,
+		"httpOnly": false,
+		"secure": false,
+		"session": false,
+		"sameParty": false,
+		"sourceScheme": "Secure",
+		"sourcePort": 443
+	}
+]
