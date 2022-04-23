@@ -236,6 +236,7 @@ exports.resetPwd = async function resetPwd(browser) {
     });
   //innerHtml = await page.$eval(selecter, el => el.value);
   await page.type(selecter, Math.random().toString(36).slice(-8));
+  await sleep(500);
   await page.click('#ss-pwd-update')
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 3000 })
@@ -245,6 +246,6 @@ exports.resetPwd = async function resetPwd(browser) {
         })
         .catch((err) => console.log('修改v2ray密码失败'));
     });
-  await sleep(1000);
+  await sleep(2000);
   await page.close();
 }
