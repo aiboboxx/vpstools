@@ -97,12 +97,12 @@ async function freeokSign(row, page) {
   if (row.fetcher !== null) {
     //console.log(unixtimes,(Date.now()-Math.max(...unixtimes))/60*60*1000,unixtimes[1]<unixtimes[2]?3:24);
     //console.log('时间',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
-    if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 2) {
+    if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 3) {
       reset.fetcher = true;
       reset.pwd = true;
       reset.rss = true;
       //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-      console.log('2天重置');
+      console.log('3天重置');
     }
     if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24)) {
       reset.fetcher = true;

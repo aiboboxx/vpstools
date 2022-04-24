@@ -93,7 +93,7 @@ async function regFreeok(page,invite){
   await page.click('#reg');
   await sleep(3000);
 
-  await page.goto('https://okgg.xyz/auth/login', { timeout: 25000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://okgg.xyz/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
   await sleep(1500);
   await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
   await page.type('#email', usr);
@@ -128,7 +128,7 @@ async function regFreeok(page,invite){
         }
       });
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 15000 });
+  await page.waitForSelector(selecter, { timeout: 10000 });
   await sleep(1000);
   selecter = 'body > main > div.content-header.ui-content-header > div > h1';
   await page.waitForSelector(selecter);
