@@ -119,7 +119,7 @@ async function main() {
   });
 
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies
+  let sql = `SELECT id,usr,pwd,cookies,level
              FROM freeok  
              where  level > 0  and (invite_refresh_time < date_sub(now(), interval 12 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
