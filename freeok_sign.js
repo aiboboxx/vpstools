@@ -50,14 +50,6 @@ async function freeokSign(row, page) {
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
-    if (row.fetcher !== null) {
-      //await pool.query("UPDATE email SET getrss = 1  WHERE email = ?", [row.fetcher]);
-      //await pool.query("UPDATE freeok SET fetcher = null  WHERE id = ?", [row.id]);
-      reset.pwd = true;
-      reset.rss = true;
-      reset.fetcher = true;
-      //reset.block = true;
-    }
     await page.goto('https://okgg.xyz/user');
   }
   //await sleep(3000);
@@ -68,54 +60,6 @@ async function freeokSign(row, page) {
       console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
       //await page.goto('https://okgg.xyz/user');
     });
-
-  //余额
-  innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
-  innerHtml = innerHtml.split(' ')[0];
-  //console.log( "余额: " + innerHtml);
-  row.balance = Number(innerHtml);
-  //等级过期时间 xpath
-  innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
-  innerHtml = innerHtml.split(';')[1];
-  //console.log( "等级过期时间: " +  innerHtml);
-  row.level_end_time = innerHtml;
-  //上次使用时间
-  innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
-  innerHtml = innerHtml.split(';')[1];
-  console.log("上次使用时间: " + innerHtml);
-  if (innerHtml == '从未使用')
-    row.last_used_time = null;
-  else
-    row.last_used_time = innerHtml;
-  //是否reset
-
-  let unixtimes = [
-    new Date(row.regtime).getTime(),
-    new Date(row.last_used_time).getTime(),
-    new Date(row.fetch_time).getTime()
-  ];
-  if (row.fetcher !== null) {
-    //console.log(unixtimes,(Date.now()-Math.max(...unixtimes))/60*60*1000,unixtimes[1]<unixtimes[2]?3:24);
-    //console.log('时间',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
-    if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 3) {
-      reset.fetcher = true;
-      reset.pwd = true;
-      reset.rss = true;
-      //console.log('清空fetcher',new Date(row.regtime).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).Format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).Format('yyyy-MM-dd hh:mm:ss'));
-      console.log('3天重置');
-    }
-    if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24)) {
-      reset.fetcher = true;
-      reset.pwd = true;
-      reset.rss = true;
-      //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
-      if (unixtimes[1] < unixtimes[2]) {
-        //console.log('4小时内未使用');
-        reset.block = true;
-      }
-
-    }
-  }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
@@ -124,11 +68,9 @@ async function freeokSign(row, page) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
       //console.log(new Date().setHours(0,0,0,0),new Date(row.rss_refresh_time).getTime(),new Date(new Date().setHours(0,0,0,0)),new Date(row.rss_refresh_time));
       //console.log((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0);
-      if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.fetcher != null && row.level == 1) {
-        reset.fetcher = true;
+      if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
         reset.pwd = true;
         reset.rss = true;
-        reset.block = true;
         row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
       }
     }
@@ -138,28 +80,8 @@ async function freeokSign(row, page) {
     console.log("reset.pwd");
   }
   if (reset.rss) {
-    await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-    await page.waitForFunction(
-      'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-      { timeout: 5000 }
-    ).then(async () => {
-      //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-      await sleep(3000);
-    });
-    console.log("reset.rss");
+    await resetRss(browser);
   }
-  if (reset.block) {
-    let bindtime = (new Date).format('yyyy-MM-dd hh:mm:ss')
-    await pool.query("UPDATE email SET bindtime = ?  WHERE email = ?", [bindtime,row.fetcher]); //屏蔽email
-    console.log("reset.block",bindtime);
-  }
-  if (reset.fetcher) {
-    row.fetcher = null;
-  }
-    //rss 必须放最后，因为前面有rss重置
-    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-    //console.log( "rss: " + innerHtml);
-    row.rss = innerHtml;
   await page.click('#checkin', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
@@ -170,7 +92,18 @@ async function freeokSign(row, page) {
         .catch((err) => console.log('签到超时'));
     })
     .catch((err) => console.log('今日已签到'));
-  await sleep(2000);
+  await sleep(1000);
+  await page.goto('https://okgg.xyz/user');
+  selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
+    //余额
+    innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
+    innerHtml = innerHtml.split(' ')[0];
+    //console.log( "余额: " + innerHtml);
+    row.balance = Number(innerHtml)  
+  //rss 必须放最后，因为前面有rss重置
+    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+    //console.log( "rss: " + innerHtml);
+    row.rss = innerHtml;
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
@@ -201,9 +134,9 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,last_used_time,fetcher,sign_time,rss_refresh_time,regtime,fetch_time
+  let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 8 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
@@ -220,8 +153,8 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`level_end_time`=?,`rss`=?,`last_used_time`=?,`fetcher`=?,`sign_time`=NOW(),`rss_refresh_time`=? WHERE `id`=?';
-        arr = [row.cookies, row.balance, row.level_end_time, row.rss, row.last_used_time, row.fetcher, row.rss_refresh_time, row.id];
+        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`rss`=?,`sign_time`=NOW(),`rss_refresh_time`=? WHERE `id`=?';
+        arr = [row.cookies, row.balance, row.rss, row.rss_refresh_time, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)

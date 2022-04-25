@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
-const { sbFreeok, login, loginWithCookies, resetPwd } = require('./utils.js');
+const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
@@ -28,7 +28,7 @@ const pool = mysql.createPool({
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0, //可以等待的连接的个数
   timezone: '+08:00',//时区配置
-  charset: 'utf8' //字符集设置
+  charset:'utf8' //字符集设置
 });
 
 async function freeokBuy(row, page) {
@@ -68,6 +68,18 @@ async function freeokBuy(row, page) {
   innerHtml = innerHtml.split(';')[1];
   //console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
+  //上次使用时间
+  innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
+  innerHtml = innerHtml.split(';')[1];
+  console.log("上次使用时间: " + innerHtml);
+  if (innerHtml == '从未使用')
+    row.last_used_time = null;
+  else
+    row.last_used_time = innerHtml;
+  //rss
+  innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+  //console.log( "rss: " + innerHtml);
+  row.rss = innerHtml;
   //购买套餐
   date = new Date(row.level_end_time);
   if ((date.getTime() < Date.now()) || row['balance' == 0.99]) {
@@ -86,14 +98,11 @@ async function freeokBuy(row, page) {
     await page.click('#order_input', { delay: 200 });
     await sleep(2000);
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
-    if (innerHtml == '') {
+    if (innerHtml == '')
       console.log("购买成功！");
-      await resetPwd(browser);
-      await resetRss(browser);
-    } else {
+    else
       console.log("购买套餐结果: " + innerHtml);
-    }
-    await sleep(1000);
+    await sleep(2000);
     await page.goto('https://okgg.xyz/user');
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
     await page.waitForSelector(selecter, { timeout: 10000 })
@@ -101,10 +110,6 @@ async function freeokBuy(row, page) {
         console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
         //await page.goto('https://okgg.xyz/user');
       });
-    //rss
-    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-    //console.log( "rss: " + innerHtml);
-    row.rss = innerHtml;
     //等级过期时间 xpath
     innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
     innerHtml = innerHtml.split(';')[1];
@@ -130,20 +135,20 @@ async function main() {
       runId ? '' : setup.proxy.changeip
       //setup.proxy.normal
     ],
-    defaultViewport: null,
+    defaultViewport: null, 
     ignoreHTTPSErrors: true
   });
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
-  await page.authenticate({ username: setup.proxy.usr, password: setup.proxy.pwd });
+  await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time 
+  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,last_used_time,update_time 
              FROM freeok 
              WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
@@ -160,13 +165,13 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?,  `update_time` = NOW() WHERE `id` = ?';
-        arr = [row.cookies, row.balance, row.level_end_time, row.rss, row.id];
+        sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `last_used_time` = ?, `update_time` = NOW() WHERE `id` = ?';
+        arr = [row.cookies, row.balance, row.level_end_time, row.rss, row.last_used_time, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+          .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
+          .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       })
       .catch(async (error) => {
         console.log('buyerror: ', error.message)
@@ -176,8 +181,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+          .then((result) => { console.log('changedRows', result[0].changedRows);sleep(3000); })
+          .catch((error) => { console.log('UPDATEerror: ', error.message);sleep(3000); });
       });
   }
   await pool.end();

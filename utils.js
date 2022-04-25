@@ -184,7 +184,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
   await page.goto('https://okgg.xyz/user', { timeout: 15000 });
-  console.log('开始cookie登录');
+  //console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
       if (document.querySelector(selecter)) {
@@ -231,7 +231,7 @@ exports.resetPwd = async function resetPwd(browser) {
   selecter = '#sspwd';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
-      console.log('进入页面：修改资料');
+      //console.log('进入页面：修改资料');
       //await page.goto('https://okgg.xyz/user');
     });
   //innerHtml = await page.$eval(selecter, el => el.value);
@@ -248,4 +248,24 @@ exports.resetPwd = async function resetPwd(browser) {
     });
   await sleep(2000);
   await page.close();
+}
+exports.resetRss = async function resetRss(browser){
+  const page = await browser.newPage();
+  page.on('dialog', async dialog => {
+    //console.info(`➞ ${dialog.message()}`);
+    await dialog.dismiss();
+  });
+  await page.goto('https://okgg.xyz/user');
+  await sleep(1000);
+  let selecter, innerHtml;
+  selecter = "body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a";
+  await page.waitForSelector(selecter, { timeout: 10000 })
+    await page.click(selecter)
+    await page.waitForFunction(
+      'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+      { timeout: 5000 }
+    ).then(async () => {
+      console.log('重置订阅链接成功');
+      await sleep(2000);
+    })
 }
