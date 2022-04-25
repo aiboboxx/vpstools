@@ -147,7 +147,7 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time
+  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,level
              FROM freeok 
              WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
@@ -169,8 +169,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
+          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
       })
       .catch(async (error) => {
         console.log('buyerror: ', error.message)
@@ -180,8 +180,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
+          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
       });
   }
   await pool.end();

@@ -148,7 +148,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time,level
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"
@@ -170,8 +170,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((reslut) => { console.log('changedRows', reslut[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+          .then(async(reslut) => { console.log('changedRows', reslut[0].changedRows);await sleep(3000); })
+          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
       })
       .catch(async (error) => {
         console.log('signerror: ', error.message)
@@ -181,8 +181,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then((reslut) => { console.log('changedRows2', reslut[0].changedRows); sleep(3000); })
-          .catch((error) => { console.log('UPDATEerror2: ', error.message); sleep(3000); });
+          .then(async(reslut) => { console.log('changedRows2', reslut[0].changedRows);await sleep(3000); })
+          .catch(async(error) => { console.log('UPDATEerror2: ', error.message);await sleep(3000); });
       } );
   }
   //sqlite.close();

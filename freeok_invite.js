@@ -123,7 +123,8 @@ async function main() {
              FROM freeok  
              where  level > 0  and (invite_refresh_time < date_sub(now(), interval 12 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
-             limit 20;`
+             limit 20;` //必须要有level，不然level置0
+             //sql = "SELECT id,usr,pwd,cookies,level from freeok where id=658";
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);
@@ -140,8 +141,8 @@ async function main() {
         arr = [row.cookies, row.score, row.invite, row.level, row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
-        .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-        .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+        .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
+        .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
       })
       .catch(async (error) => {
         let sql, arr;
@@ -149,8 +150,8 @@ async function main() {
         arr = [row.id];
         sql = await pool.format(sql, arr);
         await pool.query(sql)
-        .then((result) => { console.log('changedRows2', result[0].changedRows); sleep(3000); })
-        .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+        .then(async(result) => { console.log('changedRows2', result[0].changedRows);await sleep(3000); })
+        .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
         console.log('buyerror: ', error.message)
       });
   }
