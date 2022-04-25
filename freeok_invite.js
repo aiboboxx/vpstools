@@ -1,3 +1,6 @@
+/*
+  主要功能：更新level=0、score、invite，购买邀请次数
+*/
 const fs = require("fs");
 const core = require('@actions/core');
 const github = require('@actions/github');
@@ -63,9 +66,7 @@ async function freeokBuy(row, page) {
   row.score = Number(innerHtml);
   console.log("score: " + innerHtml);
   if (row.score > 3.3) {
-    if (row.balance < 1 & row.level == 1 & row.id > 20) {
-      //await resetPwd(browser);
-      row.fetcher = null;
+    if (row.balance < 1 & row.level === 1 & row.id > 50) {
       row.level = 0;
     }
   }
@@ -114,9 +115,9 @@ async function main() {
   });
 
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level,fetcher,score,invite 
+  let sql = `SELECT id,usr,pwd,cookies
              FROM freeok  
-             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 24 hour) or invite_refresh_time is null) 
+             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 12 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 20;`
   let r = await pool.query(sql);

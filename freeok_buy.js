@@ -88,8 +88,9 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
-      await resetPwd(browser);
+      await resetPwd(row.id,browser,pool);
       await resetRss(browser);
+      row.count = 0;
     } else {
       console.log("购买套餐结果: " + innerHtml);
     }
@@ -143,7 +144,7 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time 
+  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time
              FROM freeok 
              WHERE level = 1  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
@@ -160,7 +161,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?,  `update_time` = NOW() WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `update_time` = NOW() WHERE `id` = ?';
         arr = [row.cookies, row.balance, row.level_end_time, row.rss, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);

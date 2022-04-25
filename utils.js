@@ -173,7 +173,7 @@ exports.login = async function login(row, page, pool) {
       if (msg == "账号在虚无之地，请尝试重新注册") {
         console.log('虚无之地',row.id,(Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000));
         if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>1){
-          await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
+          await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
         }
         return Promise.reject(new Error('账号在虚无之地'));
@@ -211,7 +211,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
         if (msg == "账号在虚无之地，请尝试重新注册") {
           if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>1){
-            await pool.query("UPDATE freeok SET level = 0, fetcher = null  WHERE id = ?", [row.id]);
+            await pool.query("UPDATE freeok SET level = 0 WHERE id = ?", [row.id]);
           }
           return Promise.reject(new Error('账号在虚无之地'));
         } else {
@@ -219,7 +219,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         }
       });
 }
-exports.resetPwd = async function resetPwd(browser) {
+exports.resetPwd = async function resetPwd(id,browser,pool) {
   const page = await browser.newPage();
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
@@ -242,6 +242,7 @@ exports.resetPwd = async function resetPwd(browser) {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 3000 })
         .then(async () => {
           console.log('修改v2ray密码成功');
+          await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [id]);
           //await page.goto('https://okgg.xyz/user');
         })
         .catch((err) => console.log('修改v2ray密码失败'));
