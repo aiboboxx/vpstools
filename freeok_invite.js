@@ -46,6 +46,10 @@ async function freeokBuy(row, page) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
     await sleep(1000);
+    if (row.level === 1) {
+      await resetPwd(row,browser,pool);
+      await resetRss(browser);
+    }
     console.log('账户解除限制');
   }
   await page.goto('https://okgg.xyz/user/invite');

@@ -46,6 +46,10 @@ async function freeokBuy(row, page) {
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
+    if (row.level === 1) {
+      await resetPwd(row,browser,pool);
+      await resetRss(browser);
+    }
     await page.goto('https://okgg.xyz/user');
   }
   await sleep(3000);
@@ -88,9 +92,8 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
-      await resetPwd(row.id,browser,pool);
+      await resetPwd(row,browser,pool);
       await resetRss(browser);
-      row.count = 0;
     } else {
       console.log("购买套餐结果: " + innerHtml);
     }

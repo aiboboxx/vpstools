@@ -50,6 +50,11 @@ async function freeokSign(row, page) {
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
+    if (row.level === 1) {
+      await resetPwd(row,browser,pool);
+      await resetRss(browser);
+    }
+
     await page.goto('https://okgg.xyz/user');
   }
   //await sleep(3000);
@@ -76,12 +81,30 @@ async function freeokSign(row, page) {
     }
   }
   if (reset.pwd) {
-    await resetPwd(row.id,browser,pool);
+    await resetPwd(row,browser,pool);
     console.log("reset.pwd");
   }
   if (reset.rss) {
-    await resetRss(browser);
+    await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+    await page.waitForFunction(
+      'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+      { timeout: 5000 }
+    ).then(async () => {
+      //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+      await sleep(3000);
+      console.log("reset.rss");
+    });
   }
+    //余额
+    innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
+    innerHtml = innerHtml.split(' ')[0];
+    //console.log( "余额: " + innerHtml);
+    row.balance = Number(innerHtml)  
+  //rss 必须放最后，因为前面有rss重置
+    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+    //console.log( "rss: " + innerHtml);
+    row.rss = innerHtml;
+
   await page.click('#checkin', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
@@ -93,17 +116,6 @@ async function freeokSign(row, page) {
     })
     .catch((err) => console.log('今日已签到'));
   await sleep(1000);
-  await page.goto('https://okgg.xyz/user');
-  selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-    //余额
-    innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
-    innerHtml = innerHtml.split(' ')[0];
-    //console.log( "余额: " + innerHtml);
-    row.balance = Number(innerHtml)  
-  //rss 必须放最后，因为前面有rss重置
-    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-    //console.log( "rss: " + innerHtml);
-    row.rss = innerHtml;
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
@@ -134,9 +146,9 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time
+  let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time,level
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 8 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //let sql = "SELECT * FROM freeok where level IS NULL and fetcher is null order by sign_time asc limit 1;"

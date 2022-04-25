@@ -134,7 +134,7 @@ async function freeokSign(row, page) {
     }
   }
   if (reset.pwd) {
-    await resetPwd(row.id,browser,pool);
+    await resetPwd(row,browser,pool);
     console.log("reset.pwd");
   }
   if (reset.rss) {

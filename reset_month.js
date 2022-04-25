@@ -50,7 +50,7 @@ async function freeokBuy(row, page) {
   }
   await sleep(3000);
   let selecter, innerHtml;
-  await resetPwd(row.id,browser,pool);
+  await resetPwd(row,browser,pool);
     console.log("reset.pwd");
     await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
     await page.waitForFunction(

@@ -219,7 +219,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         }
       });
 }
-exports.resetPwd = async function resetPwd(id,browser,pool) {
+exports.resetPwd = async function resetPwd(row,browser,pool) {
   const page = await browser.newPage();
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
@@ -242,7 +242,7 @@ exports.resetPwd = async function resetPwd(id,browser,pool) {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 3000 })
         .then(async () => {
           console.log('修改v2ray密码成功');
-          await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [id]);
+          if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
           //await page.goto('https://okgg.xyz/user');
         })
         .catch((err) => console.log('修改v2ray密码失败'));
