@@ -1,4 +1,4 @@
-//3天运行一次,10天重置
+//专注于购买套餐
 const fs = require("fs");
 const core = require('@actions/core');
 const github = require('@actions/github');
@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
-const { sbFreeok, login, loginWithCookies, resetPwd } = require('./utils.js');
+const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
@@ -28,10 +28,11 @@ const pool = mysql.createPool({
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0, //可以等待的连接的个数
   timezone: '+08:00',//时区配置
-  charset: 'utf8' //字符集设置
+  charset:'utf8' //字符集设置
 });
 
 async function freeokBuy(row, page) {
+  let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
     if (!runId) await login(row, page, pool);
@@ -49,21 +50,23 @@ async function freeokBuy(row, page) {
   }
   await sleep(3000);
   let selecter, innerHtml;
-  await resetPwd(row, browser, pool);
-  console.log("reset.pwd");
-  await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-  await page.waitForFunction(
-    'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-    { timeout: 5000 }
-  ).then(async () => {
-    //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-    await sleep(3000);
-    console.log("reset.rss");
-  });
-  //rss
+    await resetPwd(row,browser,pool);
+    console.log("reset.pwd");
+    await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+    await page.waitForFunction(
+      'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+      { timeout: 5000 }
+    ).then(async () => {
+      //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+      await sleep(3000);
+      console.log("reset.rss");
+    });
+      //rss
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
   //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
+  //cookies = await page.cookies();
+  //row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
 }
 async function main() {
@@ -85,26 +88,25 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
-  await page.authenticate({ username: setup.proxy.usr, password: setup.proxy.pwd });
+  await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
 
-  console.log(`*****************开始monthlyReset ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
+  console.log(`*****************开始dailyReset ${Date()}*******************\n`);
+  let sql = `SELECT id,usr,pwd,cookies,rss 
              FROM freeok 
-             WHERE level = 5  and (reset_time < date_sub(now(), interval 10 day) or reset_time IS NULL) 
-             order by reset_time asc 
-             limit 15;`
+             WHERE usr = 
+            ;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql);
   let i = 0;
-  console.log(`共有${r[0].length}个账户要monthlyReset`);
+  console.log(`共有${r[0].length}个账户要dailyReset`);
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);
-    if (i % 3 == 0) await sleep(3000)
+    if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
     if (row.usr && row.pwd) await freeokBuy(row, page)
       .then(async () => {
         //console.log(JSON.stringify(row));    
@@ -114,8 +116,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async (result) => { console.log('changedRows', result[0].changedRows); await sleep(3000); })
-          .catch(async (error) => { console.log('UPDATEerror: ', error.message); await sleep(3000); });
+          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
+          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
       })
       .catch(async (error) => {
         console.log('dailyReset error: ', error.message)
