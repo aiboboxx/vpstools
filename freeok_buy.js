@@ -92,40 +92,39 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
-      await resetPwd(row,browser,pool);
-      await resetRss(browser);
+      await resetPwd(row,browser,pool)
+      await resetRss(browser)
     } else {
-      console.log("购买套餐结果: " + innerHtml);
+      console.log("购买套餐结果: " + innerHtml)
     }
     await sleep(1000);
-    await page.goto('https://okgg.xyz/user');
-    selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-    await page.waitForSelector(selecter, { timeout: 10000 })
-      .then(async () => {
-        console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-        //await page.goto('https://okgg.xyz/user');
-      });
-    //rss
-    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-    //console.log( "rss: " + innerHtml);
-    row.rss = innerHtml;
-    //等级过期时间 xpath
-    innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
-    innerHtml = innerHtml.split(';')[1];
-    //console.log( "等级过期时间: " +  innerHtml);
-    row.level_end_time = innerHtml;
-
   }
+  await page.goto('https://okgg.xyz/user')
+  selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
+  await page.waitForSelector(selecter, { timeout: 10000 })
+    .then(async () => {
+      console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
+      //await page.goto('https://okgg.xyz/user');
+    })
+  //rss
+  innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+  //console.log( "rss: " + innerHtml);
+  row.rss = innerHtml;
+  //等级过期时间 xpath
+  innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
+  innerHtml = innerHtml.split(';')[1];
+  //console.log( "等级过期时间: " +  innerHtml);
+  row.level_end_time = innerHtml;
   await sleep(2000);
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
+  //cookies = await page.cookies();
+  //row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
 }
 async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

@@ -87,8 +87,6 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
   //console.log(row.id,row.level);
   return row;
 }

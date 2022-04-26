@@ -65,8 +65,8 @@ async function freeokBuy(row, page) {
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
   //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
-  cookies = await page.cookies();
-  row.cookies = JSON.stringify(cookies, null, '\t');
+  //cookies = await page.cookies();
+  //row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
 }
 async function main() {

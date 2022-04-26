@@ -32,7 +32,7 @@ const pool = mysql.createPool({
 });
 
 async function freeokBuy(row, page) {
-    let cookies = [];
+    //let cookies = [];
     await clearBrowser(page); //clear all cookies
     if (row.cookies == null) {
         if (!runId) await login(row, page, pool);
@@ -57,22 +57,22 @@ async function freeokBuy(row, page) {
             //await page.goto('https://okgg.xyz/user');
         });
     //////////do something
-
+    let vip,balance,used
     //vip等级
     selecter = "body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div > dd"
-    console.log(await page.$eval(selecter, el => el.innerText))
-
+    vip = await page.$eval(selecter, el => el.innerText)
+    //console.log(vip)
     //余额
     innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
-    innerHtml = innerHtml.split(' ')[0];
-    console.log("余额: " + innerHtml);
+    balance = innerHtml.split(' ')[0];
+    //console.log("余额: " + innerHtml);
     //今日已用
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
     innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
-    console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
-    await sleep(6000);
-    cookies = await page.cookies();
-    row.cookies = JSON.stringify(cookies, null, '\t');
+    used = innerHtml
+    //console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
+    console.log(vip,"余额: " + balance,"今日已用: " + used)
+    await sleep(5000);
     return row;
 }
 async function main() {
@@ -112,19 +112,19 @@ async function main() {
     for (let row of r[0]) {
         i++;
         console.log("user:", i, row.id, row.usr);
-        if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
+        if (i % 3 === 0) await sleep(3000)
         if (row.usr && row.pwd) await freeokBuy(row, page)
             .then(async () => {
                 console.log("成功");
                 //console.log(JSON.stringify(row));    
-                let sql, arr;
+/*                 let sql, arr;
                 sql = 'UPDATE `freeok` SET `cookies`=? WHERE `id` = ?';
                 arr = [row.cookies, row.id];
                 sql = await pool.format(sql, arr);
                 //console.log(sql);
                 await pool.query(sql)
                     .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-                    .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); });
+                    .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); }); */
             })
             .catch(async (error) => {
                 console.log('buyerror: ', error.message)

@@ -172,8 +172,8 @@ exports.login = async function login(row, page, pool) {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
       if (msg == "账号在虚无之地，请尝试重新注册") {
         console.log('虚无之地',row.id,(Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000));
-        if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>1){
-          //await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
+        if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>2){
+          await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
         }
         return Promise.reject(new Error('账号在虚无之地'));
@@ -203,15 +203,15 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   await page.waitForSelector(selecter, { timeout: 30000 })
     .then(
       async () => {
-        console.log('cookie登录成功');
+        //console.log('cookie登录成功');
         //await page.goto('https://okgg.xyz/user');
         return true;
       },
       async (err) => {
         let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
         if (msg == "账号在虚无之地，请尝试重新注册") {
-          if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>1){
-            //await pool.query("UPDATE freeok SET level = 0 WHERE id = ?", [row.id]);
+          if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>2){
+            await pool.query("UPDATE freeok SET level = 0 WHERE id = ?", [row.id]);
           }
           return Promise.reject(new Error('账号在虚无之地'));
         } else {

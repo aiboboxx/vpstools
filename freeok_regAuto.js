@@ -34,9 +34,9 @@ async function regFreeok(page,invite){
   let usr = '', pwd = setup.pwd;
   let selecter, innerHtml;
   const aEmails = ['@126.com', '@163.com', '@qq.com'];
-  cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
-  await page.setCookie(...cookies);
-  console.log("写入cookies");
+  //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
+  //await page.setCookie(...cookies);
+  //console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
