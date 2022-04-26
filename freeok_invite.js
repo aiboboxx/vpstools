@@ -63,6 +63,7 @@ async function freeokBuy(row, page) {
     });
   selecter = "body > main > div.content-header.ui-content-header > div > h1";
   //////////do something
+
   //score
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)').innerText.trim());
   //console.log( innerHtml);
@@ -74,16 +75,19 @@ async function freeokBuy(row, page) {
       row.level = 0;
     }
   }
-  //console.log('row.level',row.level);
+  //console.log('row.level',row.level,row.balance);
   //invite 邀请码
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input").value.trim());
   row.invite = innerHtml;
   //剩余要请
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > p:nth-child(2) > code").innerText.trim());
+  //console.log( "剩余要请:",innerHtml);
   let times = Number(innerHtml);
-  if (times < 50 && row.level > 0 && row.balance > 5) {
-    selecter = '#buy-invite-num';
-    await page.type(selecter, '50');
+  //console.log('row.level',row.level,row.balance,times);
+  if (times < 30 && row.level > 0 && row.balance > 3) {
+    selecter = '#buy-invite-num'
+    await page.waitForSelector(selecter)
+    await page.type(selecter, '30')
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
@@ -95,7 +99,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -117,12 +121,13 @@ async function main() {
   });
 
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,level
+  //level,balance必须有
+  let sql = `SELECT id,usr,pwd,cookies,level,balance
              FROM freeok  
              where  level > 0  and (invite_refresh_time < date_sub(now(), interval 12 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 20;` //必须要有level，不然level置0
-             //sql = "SELECT id,usr,pwd,cookies,level from freeok where id=658";
+             //sql = "SELECT id,usr,pwd,cookies,level,balance from freeok where id=6";
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);

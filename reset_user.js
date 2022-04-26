@@ -65,8 +65,6 @@ async function freeokBuy(row, page) {
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
   //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
-  //cookies = await page.cookies();
-  //row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
 }
 async function main() {
@@ -94,19 +92,19 @@ async function main() {
     await dialog.dismiss();
   });
 
-  console.log(`*****************开始dailyReset ${Date()}*******************\n`);
+  console.log(`*****************开始Reset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss 
              FROM freeok 
-             WHERE usr = 
+             WHERE usr = "eroslp99@gmail.com"
             ;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql);
   let i = 0;
-  console.log(`共有${r[0].length}个账户要dailyReset`);
+  console.log(`共有${r[0].length}个账户要Reset`);
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);
-    if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
+    if (i % 3 == 0) await sleep(3000)
     if (row.usr && row.pwd) await freeokBuy(row, page)
       .then(async () => {
         //console.log(JSON.stringify(row));    
@@ -120,7 +118,7 @@ async function main() {
           .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
       })
       .catch(async (error) => {
-        console.log('dailyReset error: ', error.message)
+        console.log('Reset error: ', error.message)
       });
   }
   await pool.end();

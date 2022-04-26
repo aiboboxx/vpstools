@@ -40,7 +40,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   usr = 'v2ray-free@outlook.com';
   console.log(usr);
-  await page.goto('https://okgg.xyz/auth/register?code=vJ9W', { timeout: 15000 })
+  await page.goto('https://okgg.xyz/auth/register?code=qRWI', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(

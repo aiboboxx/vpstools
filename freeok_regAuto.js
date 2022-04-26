@@ -186,6 +186,7 @@ async function main() {
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);
   let invite = r[0][0].invite;
+  //invite = "uygQ"
   console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
