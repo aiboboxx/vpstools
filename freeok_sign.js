@@ -153,7 +153,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time,level
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //sql = "SELECT * FROM freeok where rss IS NULL  order by sign_time asc;"
