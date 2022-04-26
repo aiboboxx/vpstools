@@ -70,8 +70,13 @@ async function freeokBuy(row, page) {
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
     innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
     used = innerHtml
+    row.used = used
     //console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
     console.log(vip,"余额: " + balance,"今日已用: " + used)
+      //上次使用时间
+    innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
+    row.last_used_time = innerHtml.split(';')[1];
+  //console.log("上次使用时间: " + innerHtml);
     await sleep(5000);
     return row;
 }
@@ -117,14 +122,14 @@ async function main() {
             .then(async () => {
                 console.log("成功");
                 //console.log(JSON.stringify(row));    
-/*                 let sql, arr;
-                sql = 'UPDATE `freeok` SET `cookies`=? WHERE `id` = ?';
-                arr = [row.cookies, row.id];
+              let sql, arr;
+                sql = 'UPDATE `freeok` SET `cookies`=?,`used`=?,`last_used_time`=? WHERE `id` = ?';
+                arr = [row.cookies,row.used,row.last_used_time,row.id];
                 sql = await pool.format(sql, arr);
                 //console.log(sql);
                 await pool.query(sql)
                     .then((result) => { console.log('changedRows', result[0].changedRows); sleep(3000); })
-                    .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); }); */
+                    .catch((error) => { console.log('UPDATEerror: ', error.message); sleep(3000); })
             })
             .catch(async (error) => {
                 console.log('buyerror: ', error.message)
