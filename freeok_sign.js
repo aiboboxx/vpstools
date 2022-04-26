@@ -157,7 +157,7 @@ async function main() {
              order by sign_time asc 
              limit 20;`
   //sql = "SELECT * FROM freeok where rss IS NULL  order by sign_time asc;"
-  //sql = "SELECT * FROM freeok where id = 523;" and sign_time < date_sub(now(), interval 4 hour) 
+  sql = "SELECT * FROM freeok where err=0"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
@@ -170,7 +170,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`rss`=?,`sign_time`=NOW(),`rss_refresh_time`=?,`used`=?,`last_used_time`=?,`err`=0 WHERE `id`=?';
+        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`rss`=?,`sign_time`=NOW(),`rss_refresh_time`=?,`used`=?,`last_used_time`=?,`err`= null WHERE `id`=?';
         arr = [row.cookies, row.balance, row.rss, row.rss_refresh_time, row.used, row.last_used_time, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);

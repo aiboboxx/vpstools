@@ -1,4 +1,4 @@
-//专注于购买套餐
+//10天运行一次
 const fs = require("fs");
 const core = require('@actions/core');
 const github = require('@actions/github');

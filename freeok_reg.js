@@ -38,7 +38,7 @@ async function regFreeok(page){
   //await page.setCookie(...cookies);
   //console.log("写入cookies");
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
-  usr = '437385458@qq.com';
+  usr = 'v2ray-free@outlook.com';
   console.log(usr);
   await page.goto('https://okgg.xyz/auth/register?code=vJ9W', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
@@ -55,9 +55,9 @@ async function regFreeok(page){
     'body'
   ).then(async () => { console.log("过5秒盾"); await sleep(1000); });
   await page.waitForSelector('#name', { timeout: 60000 });
-  cookies = await page.cookies();
-  fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'))
-  console.log("保存cookies");
+  //cookies = await page.cookies();
+  //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'))
+  //console.log("保存cookies");
   await page.type('#name', usr);
   //await sleep (100);
   await page.type('#email', usr);

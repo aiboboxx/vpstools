@@ -1,7 +1,7 @@
 [
 	{
 		"name": "PHPSESSID",
-		"value": "fu66s8ghh3n3nfare8aok49egf",
+		"value": "amsud83ku63a23dvfhg1ovv368",
 		"domain": "okgg.xyz",
 		"path": "/",
 		"expires": -1,
@@ -15,10 +15,10 @@
 	},
 	{
 		"name": "code",
-		"value": "qRWI",
+		"value": "vJ9W",
 		"domain": "okgg.xyz",
 		"path": "/auth",
-		"expires": 1653548249,
+		"expires": 1653571753,
 		"size": 8,
 		"httpOnly": false,
 		"secure": false,

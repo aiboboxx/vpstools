@@ -55,9 +55,9 @@ async function regFreeok(page,invite){
     'body'
   ).then(async () => { console.log("过5秒盾"); await sleep(1000); });
   await page.waitForSelector('#name', { timeout: 60000 });
-  cookies = await page.cookies();
-  fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
-  console.log("保存cookies");
+  //cookies = await page.cookies();
+  //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
+  //console.log("保存cookies");
   await page.type('#name', usr);
   //await sleep (100);
   await page.type('#email', usr);
