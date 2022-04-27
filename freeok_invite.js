@@ -58,7 +58,7 @@ async function freeokBuy(row, page) {
   selecter = 'body > main > div.container > section > div > div:nth-child(1) > div > div > div > div > p:nth-child(8) > small:nth-child(5)';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
-      console.log('进入页面：invite');
+      //console.log('进入页面：invite');
       //await page.goto('https://okgg.xyz/user');
     });
   selecter = "body > main > div.content-header.ui-content-header > div > h1";
@@ -91,6 +91,9 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
+  let cookies = [];
+  cookies = await page.cookies();
+  row.cookies = JSON.stringify(cookies, null, '\t');
   //console.log(row.id,row.level);
   return row;
 }
@@ -99,7 +102,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -124,7 +127,7 @@ async function main() {
   //level,balance必须有
   let sql = `SELECT id,usr,pwd,cookies,level,balance
              FROM freeok  
-             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 12 hour) or invite_refresh_time is null) 
+             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 6 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 20;` //必须要有level，不然level置0
              //sql = "SELECT id,usr,pwd,cookies,level,balance from freeok where id=6";
@@ -134,7 +137,7 @@ async function main() {
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);
-    if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
+    if (i % 3 == 0) await sleep(3000)
     if (row.usr && row.pwd) await freeokBuy(row, page)
       .then(async () => {
         //console.log(JSON.stringify(row)); 

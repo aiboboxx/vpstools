@@ -197,14 +197,13 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
     'body'
   )
   //.then(async () => { console.log("无需验证"); await sleep(1000); });
-  //await sleep(6000);
+
   let selecter, innerHtml;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
   await page.waitForSelector(selecter, { timeout: 30000 })
     .then(
       async () => {
         //console.log('cookie登录成功');
-        //await page.goto('https://okgg.xyz/user');
         return true;
       },
       async (err) => {

@@ -121,8 +121,8 @@ async function freeokSign(row, page) {
     })
     .catch((err) => console.log('今日已签到'));
   await sleep(1000);
-  //cookies = await page.cookies();
-  //row.cookies = JSON.stringify(cookies, null, '\t');
+  cookies = await page.cookies();
+  row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
 }
 
