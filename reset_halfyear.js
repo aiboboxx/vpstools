@@ -31,7 +31,7 @@ const pool = mysql.createPool({
   charset:'utf8' //字符集设置
 })
 async function getCount() {
-  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE type = 7 and regtime > date_sub(now(), interval 180 day) and id = '+row.id)
+  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE type = 7 and regtime > date_sub(now(), interval 180 day) and fid = '+row.id)
   //console.log(JSON.stringify(result))
 /*   if (result[0].length < 1) {
     return 0;
@@ -39,7 +39,7 @@ async function getCount() {
   return result[0][0].Number
 }
 async function getDelCount() {
-  const result = await pool.query('delete from paylog WHERE type = 7 and regtime < date_sub(now(), interval 180 day) and id = '+row.id)
+  const result = await pool.query('delete from paylog WHERE type = 7 and regtime < date_sub(now(), interval 180 day) and fid = '+row.id)
   //console.log(JSON.stringify(result))
   return result[0].affectedRows
 }
