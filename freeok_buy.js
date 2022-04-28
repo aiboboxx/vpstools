@@ -113,7 +113,7 @@ async function freeokBuy(row, page) {
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
-  //console.log( "等级过期时间: " +  innerHtml);
+  console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
   await sleep(2000);
   cookies = await page.cookies();
@@ -130,7 +130,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.normal
+      runId ? '' : setup.proxy.normal 
       //setup.proxy.normal
     ],
     defaultViewport: null,
@@ -146,12 +146,12 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,level
+  let sql = `SELECT id,usr,pwd,cookies,balance,level
              FROM freeok 
              WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
              limit 20;`
-  //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
+  //sql = "SELECT * FROM freeok WHERE id =661 order by update_time asc limit 2;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要购买套餐`);

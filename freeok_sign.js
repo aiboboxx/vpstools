@@ -61,6 +61,26 @@ async function freeokSign(row, page) {
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter, { timeout: 15000 })
+  //上次使用时间
+  innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
+  innerHtml = innerHtml.split(';')[1];
+  console.log("上次使用时间: " + innerHtml);
+  if (innerHtml == '从未使用')
+    row.last_used_time = null;
+  else
+    row.last_used_time = innerHtml;
+  //等级过期时间 xpath
+  innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
+  innerHtml = innerHtml.split(';')[1];
+  //console.log( "等级过期时间: " +  innerHtml);
+  row.level_end_time = innerHtml;
+  if ((Date.now() - new Date(row.last_used_time).getTime()) / (24 * 60 * 60 * 1000) > 1 && (new Date(row.level_end_time).getTime() - Date.now()) / (24 * 60 * 60 * 1000) > 1) { //24小时未使用且等级过期时间>一天
+    if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
+      if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
+      row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
+      console.log("count置0")
+    }
+  }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
@@ -68,8 +88,6 @@ async function freeokSign(row, page) {
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (innerHtml.slice(-2) == 'GB') {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
-      //console.log(new Date().setHours(0,0,0,0),new Date(row.rss_refresh_time).getTime(),new Date(new Date().setHours(0,0,0,0)),new Date(row.rss_refresh_time));
-      //console.log((new Date().setHours(0,0,0,0)-new Date(row.rss_refresh_time).getTime())>0);
       if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
         reset.pwd = true;
         reset.rss = true;
@@ -77,6 +95,7 @@ async function freeokSign(row, page) {
       }
     }
   }
+
   if (reset.pwd) {
     await resetPwd(row, browser, pool);
     console.log("reset.pwd");
@@ -92,14 +111,6 @@ async function freeokSign(row, page) {
       console.log("reset.rss");
     });
   }
-    //上次使用时间
-    innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
-    innerHtml = innerHtml.split(';')[1];
-    console.log("上次使用时间: " + innerHtml);
-  if (innerHtml == '从未使用')
-    row.last_used_time = null;
-  else
-    row.last_used_time = innerHtml;
   //余额
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
   innerHtml = innerHtml.split(' ')[0];
@@ -157,7 +168,7 @@ async function main() {
              order by sign_time asc 
              limit 20;`
   //sql = "SELECT * FROM freeok where rss IS NULL  order by sign_time asc;"
-  //sql = "SELECT * FROM freeok where err=0"
+  sql = "SELECT * FROM freeok where id=595"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
