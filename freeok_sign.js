@@ -168,7 +168,7 @@ async function main() {
              order by sign_time asc 
              limit 20;`
   //sql = "SELECT * FROM freeok where rss IS NULL  order by sign_time asc;"
-  sql = "SELECT * FROM freeok where id=595"
+  //sql = "SELECT * FROM freeok where id=595"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
