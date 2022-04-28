@@ -124,7 +124,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -148,7 +148,7 @@ async function main() {
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level_end_time,level
              FROM freeok 
-             WHERE level in(1,2)  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
+             WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
              limit 20;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
