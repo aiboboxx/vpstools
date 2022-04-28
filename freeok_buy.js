@@ -124,13 +124,13 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip
+      runId ? '' : setup.proxy.normal
       //setup.proxy.normal
     ],
     defaultViewport: null,

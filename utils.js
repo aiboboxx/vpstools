@@ -234,11 +234,11 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
       //await page.goto('https://okgg.xyz/user');
     });
   //innerHtml = await page.$eval(selecter, el => el.value);
-  await page.type(selecter, Math.random().toString(36).slice(-8));
-  await sleep(500);
+  await page.type(selecter, Math.random().toString(36).slice(-12));
+  await sleep(1500);
   await page.click('#ss-pwd-update')
     .then(async () => {
-      await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 3000 })
+      await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 13000 })
         .then(async () => {
           console.log('修改v2ray密码成功');
           if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
@@ -250,7 +250,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
   await page.close();
 }
 exports.resetRss = async function resetRss(browser){
-  const page = await browser.newPage();
+  const page = await browser.newPage()
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
@@ -265,7 +265,8 @@ exports.resetRss = async function resetRss(browser){
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
       { timeout: 5000 }
     ).then(async () => {
-      console.log('重置订阅链接成功');
-      await sleep(2000);
+      console.log('重置订阅链接成功')
+      await sleep(2000)
     })
+    await page.close()
 }
