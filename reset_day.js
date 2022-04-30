@@ -30,27 +30,27 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset:'utf8' //字符集设置
 });
-async function getCount() {
-  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE type = 4 and regtime > date_sub(now(), interval 1 day) and fid = '+row.id)
+async function getCount(id) {
+  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE type = 4 and regtime > date_sub(now(), interval 1 day) and fid = '+id)
   //console.log(JSON.stringify(result))
 /*   if (result[0].length < 1) {
     return 0;
   } */
   return result[0][0].Number
 }
-async function getDelCount() {
-  const result = await pool.query('delete from paylog WHERE type = 4 and regtime < date_sub(now(), interval 1 day) and fid = '+row.id)
+async function getDelCount(id) {
+  const result = await pool.query('delete from paylog WHERE type = 4 and regtime < date_sub(now(), interval 1 day) and fid = '+id)
   //console.log(JSON.stringify(result))
   return result[0].affectedRows
 }
 async function freeokBuy(row, page) {
-  let delCount = await getDelCount()
+  let delCount = await getDelCount(row.id)
   console.log("删除：",delCount)
   if (delCount == 0) {
     console.log("无过期记录")
     return
   }else{
-    let count = await getCount()
+    let count = await getCount(row.id)
     //console.log(count)
     await clearBrowser(page) //clear all cookies
     if (row.cookies == null) {
