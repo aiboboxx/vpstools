@@ -74,12 +74,14 @@ async function freeokSign(row, page) {
   innerHtml = innerHtml.split(';')[1];
   //console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
-  if ((Date.now() - new Date(row.last_used_time).getTime()) / (24 * 60 * 60 * 1000) > 1 && (new Date(row.level_end_time).getTime() - Date.now()) / (24 * 60 * 60 * 1000) > 1) { //24小时未使用且等级过期时间>一天
-    if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
-      if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
-      row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
+  if ((Date.now() - new Date(row.last_used_time).getTime()) / ( 60 * 60 * 1000) > 4 && (new Date(row.level_end_time).getTime() - Date.now()) / (60 * 60 * 1000) > 12) { //24小时未使用且等级过期时间>一天
+    if (row.level === 1) {
+      await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       console.log("count置0")
     }
+/*     if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
+      //row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
+    } */
   }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
