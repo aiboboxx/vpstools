@@ -74,7 +74,7 @@ async function freeokSign(row, page) {
   innerHtml = innerHtml.split(';')[1];
   //console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
-  if ((Date.now() - new Date(row.last_used_time).getTime()) / ( 60 * 60 * 1000) > 4 && (new Date(row.level_end_time).getTime() - Date.now()) / (60 * 60 * 1000) > 12) { //24小时未使用且等级过期时间>一天
+  if ((Date.now() - new Date(row.last_used_time).getTime()) / ( 60 * 60 * 1000) > 12 && (new Date(row.level_end_time).getTime() - Date.now()) / (60 * 60 * 1000) > 12) { //24小时未使用且等级过期时间>一天
     if (row.level === 1) {
       await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       console.log("count置0")
