@@ -89,7 +89,7 @@ async function freeokSign(row, page) {
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (innerHtml.slice(-2) == 'GB') {
-    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
+    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 6) {
       if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
         reset.pwd = true;
         reset.rss = true;
