@@ -130,7 +130,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.normal 
+      runId ? '' : setup.proxy.changeip 
       //setup.proxy.normal
     ],
     defaultViewport: null,

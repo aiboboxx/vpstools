@@ -95,7 +95,7 @@ async function main() {
   console.log(`*****************开始Reset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss 
              FROM freeok 
-             WHERE usr = "MMaUqM798@qq.com"
+             WHERE usr = "kxyz.eu.org@gmail.com"
             ;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql);
@@ -109,7 +109,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `count` = 0, `rss_refresh_time` = NOW() WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `count` = 0, `reset_time` = NOW() WHERE `id` = ?';
         arr = [row.cookies, row.rss, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
