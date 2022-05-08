@@ -92,8 +92,8 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
-      await resetPwd(row,browser,pool)
-      await resetRss(browser)
+      //await resetPwd(row,browser,pool)
+      //await resetRss(browser)
     } else {
       console.log("购买套餐结果: " + innerHtml)
     }

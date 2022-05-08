@@ -87,7 +87,7 @@ async function freeokSign(row, page) {
     row.last_used_time = null;
   else
     row.last_used_time = innerHtml;
-  //是否reset
+
 
   let unixtimes = [
     new Date(row.regtime).getTime(),

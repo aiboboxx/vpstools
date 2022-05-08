@@ -69,28 +69,39 @@ async function freeokSign(row, page) {
     row.last_used_time = null;
   else
     row.last_used_time = innerHtml;
+
+
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
   //console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
-  if ((Date.now() - new Date(row.last_used_time).getTime()) / ( 60 * 60 * 1000) > 24 && (new Date(row.level_end_time).getTime() - Date.now()) / (60 * 60 * 1000) > 24) { //24小时未使用且等级过期时间>一天
-    if (row.level === 1) {
-      await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
-      console.log("count置0")
+  
+  let unixtimes = [
+    new Date(row.regtime).getTime(),
+    new Date(row.last_used_time).getTime(),
+    new Date(row.fetch_time).getTime()
+  ];
+  if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 6 && row.level === 1) {
+     // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
+      reset.pwd = true;
+      reset.rss = true;
+      row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
+      console.log("6天重置")
     }
-/*     if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
-      //row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
-    } */
+  if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24) && row.level === 1) {
+      reset.pwd = true;
+      reset.rss = true;
+      //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
   }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
-  if (innerHtml.slice(-2) == 'GB') {
+  if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
-      if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 && row.level == 1) {
+      if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 ) {
         reset.pwd = true;
         reset.rss = true;
         row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
@@ -164,7 +175,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time,level
+  let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time,level,fetch_time,regtime
              FROM freeok 
              where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
