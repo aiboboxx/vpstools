@@ -86,7 +86,6 @@ async function freeokSign(row, page) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
       console.log("6天重置")
     }
   if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24) && row.level === 1) {
