@@ -82,13 +82,13 @@ async function freeokSign(row, page) {
     new Date(row.last_used_time).getTime(),
     new Date(row.fetch_time).getTime()
   ];
-  if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 6 && row.level === 1) {
+  if ((Date.now() - Math.max(unixtimes[0], unixtimes[2])) / (24 * 60 * 60 * 1000) > 6 && row.level === 1 && row.count == 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
       console.log("6天重置")
     }
-  if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24) && row.level === 1) {
+  if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24) && row.level === 1 && row.count == 0) {
       reset.pwd = true;
       reset.rss = true;
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
@@ -174,7 +174,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,sign_time,rss_refresh_time,level,fetch_time,regtime
+  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,regtime,count
              FROM freeok 
              where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
              order by sign_time asc 
