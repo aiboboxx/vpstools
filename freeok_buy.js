@@ -150,7 +150,7 @@ async function main() {
              FROM freeok 
              WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
-             limit 20;`
+             limit 30;`
   //sql = "SELECT * FROM freeok WHERE id =661 order by update_time asc limit 2;"
   let r = await pool.query(sql);
   let i = 0;
