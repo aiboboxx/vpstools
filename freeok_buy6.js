@@ -67,19 +67,12 @@ async function freeokBuy(row, page) {
   innerHtml = innerHtml.split(' ')[0];
   //console.log( "余额: " + innerHtml);
   row.balance = Number(innerHtml);
-  //等级过期时间 xpath
-  innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
-  innerHtml = innerHtml.split(';')[1];
-  //console.log( "等级过期时间: " +  innerHtml);
-  row.level_end_time = innerHtml;
   //购买套餐
-  date = new Date(row.level_end_time);
-  if ((date.getTime() < Date.now()) || row['balance'] == 0.99) {
+  if ( row['balance'] > 156) {
     //await page.waitFor(1500);
-    await page.goto('https://okgg.xyz/user/shop');
-    await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
-      delay: 500
-    })
+    await page.goto('https://okgg.xyz/user/shop')
+    await page.waitForSelector('.content-inner > .shop-flex > .card:nth-child(8) > .card-main > .btn')
+    await page.click('.content-inner > .shop-flex > .card:nth-child(8) > .card-main > .btn')
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
       });
@@ -92,8 +85,8 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
-      //await resetPwd(row,browser,pool)
-      //await resetRss(browser)
+      await resetPwd(row,browser,pool)
+      await resetRss(browser)
     } else {
       console.log("购买套餐结果: " + innerHtml)
     }
@@ -148,7 +141,7 @@ async function main() {
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level
              FROM freeok 
-             WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
+             WHERE level = 1  and  balance > 156
              order by update_time asc 
              limit 30;`
   //sql = "SELECT * FROM freeok WHERE id =661 order by update_time asc limit 2;"
@@ -163,7 +156,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `update_time` = NOW() WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`level_end_time`=?,`rss`=?,`level`=6,`update_time`=NOW(),`reset_time`=NOW() WHERE `id`=?';
         arr = [row.cookies, row.balance, row.level_end_time, row.rss, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
