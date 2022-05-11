@@ -88,7 +88,7 @@ async function freeokSign(row, page) {
       reset.rss = true;
       console.log("4天重置")
     }
-  if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 24) && row.level === 1 && row.count !== 0) {
+  if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[1] < unixtimes[2] ? 4 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
@@ -176,7 +176,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,regtime,fetch_time,count
              FROM freeok 
-             where level > 0 and (sign_time < date_sub(now(), interval 4 hour) or sign_time is null)
+             where level > 0 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
              limit 30;`
   //sql = "SELECT * FROM freeok where err=1 order by sign_time asc;"
