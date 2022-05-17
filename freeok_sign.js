@@ -160,7 +160,7 @@ async function main() {
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       runId ? '' : setup.proxy.changeip,
-      setup.proxy.normal
+      //runId ? '' :setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -179,7 +179,7 @@ async function main() {
              order by sign_time asc 
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by sign_time asc;"
-  sql = "SELECT * FROM freeok where id=605"
+  //sql = "SELECT * FROM freeok where id=605"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
