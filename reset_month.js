@@ -101,7 +101,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -125,7 +125,7 @@ async function main() {
   console.log(`*****************开始monthlyReset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
              FROM freeok 
-             WHERE level = 5  and (reset_time < date_sub(now(), interval 10 day) or reset_time IS NULL) 
+             WHERE level = 5  and (reset_time < date_sub(now(), interval 6 day) or reset_time IS NULL) 
              order by reset_time asc 
              limit 20;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"

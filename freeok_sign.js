@@ -81,7 +81,7 @@ async function freeokSign(row, page) {
     new Date(row.last_used_time).getTime(),
     new Date(row.fetch_time).getTime()
   ];
-  if ((Date.now() -  unixtimes[2]) / (24 * 60 * 60 * 1000) > 4 && row.level === 1 && row.count !== 0) {
+  if ((Date.now() -  unixtimes[1]) / (24 * 60 * 60 * 1000) > 4 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
@@ -159,8 +159,8 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip
-      //setup.proxy.normal
+      runId ? '' : setup.proxy.changeip,
+      setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -179,7 +179,7 @@ async function main() {
              order by sign_time asc 
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by sign_time asc;"
-  //sql = "SELECT * FROM freeok where id=595"
+  sql = "SELECT * FROM freeok where id=605"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
