@@ -153,14 +153,14 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip,
-      //runId ? '' :setup.proxy.normal
+      //runId ? '' : setup.proxy.changeip,
+      runId ? '' :setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -178,7 +178,8 @@ async function main() {
              where level > 0 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
              limit 25;`
-  //sql = "SELECT * FROM freeok where err=1 order by sign_time asc;"
+  //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
+  //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=605"
   let r = await pool.query(sql, []);
   let i = 0;
