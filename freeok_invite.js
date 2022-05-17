@@ -72,7 +72,9 @@ async function freeokBuy(row, page) {
   console.log("score: " + innerHtml);
   if (row.score > 3.3) {
     if (row.balance < 1 & row.level === 1 & row.id > 50) {
-      row.level = 0;
+      row.level = 2;
+      await resetPwd(row,browser,pool);
+      await resetRss(browser);
     }
   }
   //console.log('row.level',row.level,row.balance);
