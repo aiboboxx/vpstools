@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
-const { sbFreeok, login, loginWithCookies, resetPwd } = require('./utils.js');
+const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
@@ -71,11 +71,14 @@ async function freeokBuy(row, page) {
   row.score = Number(innerHtml);
   console.log("score: " + innerHtml);
   if (row.score > 3.3) {
-    if (row.balance < 1 & row.level === 1 & row.id > 50) {
-      row.level = 2;
+    if (row.balance < 1 && row.level === 1 && row.id > 200) {
       await resetPwd(row,browser,pool);
       await resetRss(browser);
+      row.level = 2;
     }
+  }
+  if (row.level === 2 && row.balance < 0.05){
+    row.level = 0 
   }
   //console.log('row.level',row.level,row.balance);
   //invite 邀请码
