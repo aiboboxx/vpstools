@@ -74,6 +74,7 @@ async function freeokBuy(row, page) {
     if (row.balance < 1 && row.level === 1 && row.id > 200) {
       await resetPwd(row,browser,pool);
       await resetRss(browser);
+      await pool.query("UPDATE freeok SET reset_time = NOW()  WHERE id = ?", [row.id]);
       row.level = 2;
     }
   }
