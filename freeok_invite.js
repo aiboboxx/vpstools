@@ -72,13 +72,13 @@ async function freeokBuy(row, page) {
   console.log("score: " + innerHtml);
   if (row.score > 3.3) {
     if (row.balance < 1 && row.level === 1 && row.id > 200) {
-      await resetPwd(row,browser,pool);
-      await resetRss(browser);
-      await pool.query("UPDATE freeok SET reset_time = NOW()  WHERE id = ?", [row.id]);
-      row.level = 2;
+      //await resetPwd(row,browser,pool);
+      //await resetRss(browser);
+      //await pool.query("UPDATE freeok SET reset_time = NOW()  WHERE id = ?", [row.id]);
+      row.level = 0;
     }
   }
-  if (row.level === 2 && row.balance < 0.05){
+  if ((row.level === 2 || row.level === 3 || row.level === 8) && row.balance < 30){
     row.level = 0 
   }
   //console.log('row.level',row.level,row.balance);
