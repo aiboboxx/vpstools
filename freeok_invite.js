@@ -133,7 +133,7 @@ async function main() {
   //level,balance必须有
   let sql = `SELECT id,usr,pwd,cookies,level,balance
              FROM freeok  
-             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 6 hour) or invite_refresh_time is null) 
+             where  level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 30;` //必须要有level，不然level置0
              //sql = "SELECT id,usr,pwd,cookies,level,balance from freeok where id=6";

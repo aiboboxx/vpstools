@@ -135,53 +135,49 @@ async function regFreeok(page,invite){
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
   innerHtml = innerHtml.split(' ')[0];
   //console.log( "余额: " + innerHtml);
-  if (innerHtml == '0.99') {
-    cookies = await page.cookies();
-    ck = JSON.stringify(cookies, null, '\t');
-    let sql, arr;
-    sql = 'insert into  freeok (usr,pwd,fetch_time,cookies) values (?,?,NOW(),?);';
-    arr = [usr, pwd, ck];
-    sql = await pool.format(sql, arr);
-    await pool.query(sql)
-      .then((reslut) => { msg = '添加成功:' + usr; console.log('添加成功:', reslut[0].insertId); sleep(2000); })
-      .catch((error) => { msg = '添加失败:' + error.message; console.log('添加失败:', error.message); sleep(2000); });
-    //console.log(sql);
-    //购买套餐
-    await page.goto('https://okgg.xyz/user/shop');
-    await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
-      delay: 500
-    })
-      .catch(async (err) => {
-        console.log("购买失败");
-      });
-    await sleep(3500);
-    await page.click('#coupon_input', { delay: 200 });
-    await sleep(2000);
-    //await page.waitForSelector("#order_input");
-    await page.click('#order_input', { delay: 200 });
-    await sleep(2000);
-    innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
-    if (innerHtml == '')
-      console.log("购买成功！");
-    else
-      console.log("购买套餐结果: " + innerHtml);
-    await sleep(1000);
-  } else {
-    msg = '不添加数据库：' + usr;
-  }
+  cookies = await page.cookies();
+  ck = JSON.stringify(cookies, null, '\t');
+  let sql, arr;
+  sql = 'insert into  freeok (usr,pwd,cookies,level,reset_time) values (?,?,?,8,now());';
+  arr = [usr, pwd, ck];
+  sql = await pool.format(sql, arr);
+  await pool.query(sql)
+    .then((reslut) => { msg = '添加成功:' + usr; console.log('添加成功:', reslut[0].insertId); sleep(2000); })
+    .catch((error) => { msg = '添加失败:' + error.message; console.log('添加失败:', error.message); sleep(2000); });
+  //console.log(sql);
+  //购买套餐
+  await page.goto('https://okgg.xyz/user/shop');
+  await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
+    delay: 500
+  })
+    .catch(async (err) => {
+      console.log("购买失败");
+    });
+  await sleep(3500);
+  await page.click('#coupon_input', { delay: 200 });
+  await sleep(2000);
+  //await page.waitForSelector("#order_input");
+  await page.click('#order_input', { delay: 200 });
+  await sleep(2000);
+  innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
+  if (innerHtml == '')
+    console.log("购买成功！");
+  else
+    console.log("购买套餐结果: " + innerHtml);
+  await sleep(1000);
   console.log(msg);
   await page.evaluate((selecter, text) => document.querySelector(selecter).innerText = text, selecter, msg);
 
 }
 async function main() {
-  let sql = "SELECT id FROM freeok where level = 1;"
+  let sql = "SELECT id FROM freeok where level = 8 and count < 2;"
   let r = await pool.query(sql);
-  if ( r[0].length > 160 ) {
-    console.log('已有160个level=1账户');
+  if ( r[0].length > 5 ) {
+    console.log('已有5个level=8空闲账户');
     return;
   }
   console.log('已有账户：',r[0].length);
-  sql =  "SELECT invite FROM freeok where level = 1 and balance < 160 order by id asc limit 1;"
+  sql =  "SELECT invite FROM freeok where level < 4 and balance < 1 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);

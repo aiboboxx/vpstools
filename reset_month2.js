@@ -1,4 +1,4 @@
-//专注于购买套餐
+//4小时运行一次
 const fs = require("fs");
 const core = require('@actions/core');
 const github = require('@actions/github');
@@ -32,46 +32,54 @@ const pool = mysql.createPool({
 });
 
 async function freeokBuy(row, page) {
-  let cookies = [];
-  await clearBrowser(page); //clear all cookies
-  if (row.cookies == null) {
-    if (!runId) await login(row, page, pool);
-  } else {
-    await loginWithCookies(row, page, pool).catch(async () => {
-      if (!runId) await login(row, page, pool);
-    });
-  }
-  while (await page.$('#reactive')) {
-    await page.type('#email', row.usr);
-    await page.click('#reactive');
-    await sleep(1000);
-    console.log('账户解除限制');
-    await page.goto('https://okgg.xyz/user');
-  }
-  await sleep(3000);
-  let selecter, innerHtml;
-    await resetPwd(row,browser,pool);
-    console.log("reset.pwd");
-    await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
-    await page.waitForFunction(
-      'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-      { timeout: 5000 }
-    ).then(async () => {
-      //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-      await sleep(3000);
-      console.log("reset.rss");
-    });
-      //rss
-  innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-  //console.log( "rss: " + innerHtml);
-  row.rss = innerHtml;
-  return row;
+    //console.log(count)
+    await clearBrowser(page) //clear all cookies
+    if (row.cookies == null) {
+      if (!runId) await login(row, page, pool)
+    } else {
+      await loginWithCookies(row, page, pool).catch(async () => {
+        if (!runId) await login(row, page, pool)
+      })
+    }
+    while (await page.$('#reactive')) {
+      await page.type('#email', row.usr)
+      await page.click('#reactive')
+      await sleep(1000)
+      console.log('账户解除限制')
+      await page.goto('https://okgg.xyz/user')
+    }
+    await sleep(2000)
+    let selecter, innerHtml
+      await resetPwd(row,browser,pool)
+      console.log("reset.pwd")
+      await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+      await page.waitForFunction(
+        'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+        { timeout: 5000 }
+      ).then(async () => {
+        //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+        await sleep(3000);
+        console.log("reset.rss")
+      })
+        //rss
+    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim())
+    //console.log( "rss: " + innerHtml);
+    row.rss = innerHtml
+    row.cookies = JSON.stringify(await page.cookies(), null, '\t')
+    let sql, arr;
+    sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `count`=0, `reset_time` = NOW() WHERE `id` = ?'
+    arr = [row.cookies,row.rss,row.id]
+    sql = await pool.format(sql, arr)
+    //console.log(sql)
+    await pool.query(sql)
+    .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
+    .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); })
 }
 async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -93,36 +101,30 @@ async function main() {
   });
 
   console.log(`*****************开始Reset ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss 
+  let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
              FROM freeok 
-             WHERE level = 2  and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
-            ;`
-  //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
+             WHERE level = 3  and (reset_time < date_sub(now(), interval 6 day) or reset_time IS NULL) 
+             order by reset_time asc 
+             limit 20;`
+   //sql = "SELECT * FROM freeok WHERE  level = 4;"
   let r = await pool.query(sql);
   let i = 0;
-  console.log(`共有${r[0].length}个账户要Reset`);
+  console.log(`共有${r[0].length}个账户要Reset`)
+  //console.log(JSON.stringify(r))
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);
     if (i % 3 == 0) await sleep(3000)
     if (row.usr && row.pwd) await freeokBuy(row, page)
-      .then(async () => {
-        //console.log(JSON.stringify(row));    
-        let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?,  `reset_time` = NOW() WHERE `id` = ?';
-        arr = [row.cookies, row.rss, row.id];
-        sql = await pool.format(sql, arr);
-        //console.log(sql);
-        await pool.query(sql)
-          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
-          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
+       .then(async () => {
+        console.log("成功")   
       })
       .catch(async (error) => {
-        console.log('Reset error: ', error.message)
-      });
-  }
-  await pool.end();
+        console.log('error: ', error.message)
+      })
+  } 
+  await pool.end()
   if (runId ? true : false) await browser.close();
 }
-main();
+main()
 
