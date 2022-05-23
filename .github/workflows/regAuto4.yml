@@ -34,7 +34,7 @@ jobs:
                 key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('package-lock.json') }} # 使用 package-lock.json 的 Hash 作为缓存的 key。也可以使用 package.json 代替    
             - name: Run install
               run: npm install
-            - name: regAuto4.js
-              run: node regAuto4.js  # > report.txt             
+            - name: freeok_regAuto4.js
+              run: node freeok_regAuto4.js  # > report.txt             
 
               

@@ -81,6 +81,9 @@ async function freeokBuy(row, page) {
   if ((row.level === 2 || row.level === 3 || row.level === 8) && (row.balance < 0.3 && row.balance != null)){
     row.level = 0 
   }
+  if ((row.level === 4 || row.level === 5 || row.level === 6 || row.level === 7) && (row.balance < 0.05 && row.balance != null) && row.id > 50){
+    row.level = 0 
+  }
   //console.log('row.level',row.level,row.balance);
   //invite 邀请码
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input").value.trim());
