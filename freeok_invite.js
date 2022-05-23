@@ -78,7 +78,7 @@ async function freeokBuy(row, page) {
       row.level = 0;
     }
   }
-  if ((row.level === 2 || row.level === 3 || row.level === 8) && row.balance < 30){
+  if ((row.level === 2 || row.level === 3 || row.level === 8) && (row.balance < 0.3 && row.balance != null)){
     row.level = 0 
   }
   //console.log('row.level',row.level,row.balance);
