@@ -35,10 +35,10 @@ async function freeokBuy(row, page) {
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
-    if (!runId) await login(row, page, pool);
+    await login(row, page, pool);
   } else {
     await loginWithCookies(row, page, pool).catch(async () => {
-      if (!runId) await login(row, page, pool);
+      await login(row, page, pool);
     });
   }
   while (await page.$('#reactive')) {
@@ -55,7 +55,7 @@ async function freeokBuy(row, page) {
   await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 15000 })
+  await page.waitForSelector(selecter, { timeout: 30000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
       //await page.goto('https://okgg.xyz/user');

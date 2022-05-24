@@ -36,10 +36,10 @@ async function freeokBuy(row, page) {
   //console.log(row.id,row.level);
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
-    if (!runId) await login(row, page);
+      await login(row, page);
   } else {
     await loginWithCookies(row, page).catch(async () => {
-      if (!runId) await login(row, page);
+        await login(row, page);
     });
   }
   while (await page.$('#reactive', { timeout: 3000 })) {

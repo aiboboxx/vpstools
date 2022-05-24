@@ -37,10 +37,10 @@ async function freeokSign(row, page) {
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
-    if (!runId) await login(row, page, pool);
+    await login(row, page, pool);
   } else {
     await loginWithCookies(row, page, pool).catch(async () => {
-      if (!runId) await login(row, page, pool);
+       await login(row, page, pool);
     });
   }
   //cookies = await page.cookies();

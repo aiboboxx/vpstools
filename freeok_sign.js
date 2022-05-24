@@ -37,10 +37,10 @@ async function freeokSign(row, page) {
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
-    if (!runId) await login(row, page, pool);
+    await login(row, page, pool);
   } else {
     await loginWithCookies(row, page, pool).catch(async () => {
-      if (!runId) await login(row, page, pool);
+      await login(row, page, pool);
     });
   }
   //cookies = await page.cookies();
@@ -60,7 +60,7 @@ async function freeokSign(row, page) {
   //await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 15000 })
+  await page.waitForSelector(selecter, { timeout: 30000 })
   //上次使用时间
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
   innerHtml = innerHtml.split(';')[1];
