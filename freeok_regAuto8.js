@@ -165,7 +165,7 @@ async function regFreeok(page,invite){
   else
     console.log("购买套餐结果: " + innerHtml);
   await sleep(1000);
-  console.log(msg);
+  //console.log(msg);
   await page.evaluate((selecter, text) => document.querySelector(selecter).innerText = text, selecter, msg);
 
 }

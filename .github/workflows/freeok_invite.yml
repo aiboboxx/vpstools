@@ -7,8 +7,7 @@ on:
   #  - cron: '45 */12 * * *'
     
 env:
-  FREEOK_ACCOUNTS: ${{ secrets.FREEOK_ACCOUNTS }}
-  FREEOK_COOKIES: ${{ secrets.FREEOK_COOKIES }}
+  SETUP: ${{ secrets.SETUP }}
   UPLOAD_BESULT_DIR: true
 
 jobs:

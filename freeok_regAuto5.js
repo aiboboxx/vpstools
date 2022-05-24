@@ -138,7 +138,7 @@ async function regFreeok(page,invite){
   cookies = await page.cookies();
   ck = JSON.stringify(cookies, null, '\t');
   let sql, arr;
-  sql = 'insert into  freeok (usr,pwd,cookies,level,reset_time) values (?,?,?,5,now());';
+  sql = 'insert into  freeok (usr,pwd,cookies,level,reset_time) values (?,?,?,5,NOW());';
   arr = [usr, pwd, ck];
   sql = await pool.format(sql, arr);
   await pool.query(sql)
@@ -165,12 +165,12 @@ async function regFreeok(page,invite){
   else
     console.log("购买套餐结果: " + innerHtml);
   await sleep(1000);
-  console.log(msg);
+  //console.log(msg);
   await page.evaluate((selecter, text) => document.querySelector(selecter).innerText = text, selecter, msg);
 
 }
 async function main() {
-  let sql = "SELECT id FROM freeok where level = 5 and count < 5;"
+  let sql = "SELECT id FROM freeok where level = 5 and count < 3;"
   let r = await pool.query(sql);
   if ( r[0].length > 2 ) {
     console.log('已有3个level=5空闲账户');

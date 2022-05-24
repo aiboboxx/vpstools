@@ -7,7 +7,6 @@ on:
     - cron: '00 1,3,5,7,9,11,13,15,17,19,21,23 * * *'
     
 env:
-  FREEOK_ACCOUNTS: ${{ secrets.FREEOK_ACCOUNTS }}
   SETUP: ${{ secrets.SETUP }}
   UPLOAD_BESULT_DIR: true
 
