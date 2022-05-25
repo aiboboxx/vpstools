@@ -40,7 +40,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + "@appls.eu.org";
   //usr = 'v2ray-free@outlook.com';
   console.log(usr);
-  await page.goto('https://okgg.xyz/auth/register?code=uwc0', { timeout: 15000 })
+  await page.goto('https://okgg.xyz/auth/register?code=mURV', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -179,7 +179,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      setup.proxy.changeip
+      runId ? '' : setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
