@@ -100,9 +100,14 @@ async function freeokSign(row, page) {
   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
       if ((new Date().setHours(0, 0, 0, 0) - new Date(row.rss_refresh_time).getTime()) > 0 ) {
+        innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+        //console.log( "rss: " + innerHtml);
+        row.rss = innerHtml;
+        await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
         reset.rss = true;
         row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
+
       }
     }
   }
