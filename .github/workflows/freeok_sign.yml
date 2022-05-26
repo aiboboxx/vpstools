@@ -32,12 +32,5 @@ jobs:
               run: npm install
             - name: Run Script
               run: node freeok_sign.js  #> report.txt             
-            - name: Commit report
-              run: |
-                echo  "freeok_sign运行时间：`date '+%Y%m%d %H%M%S'`" > report.txt
-                git config --global user.name 'aiboboxx' 
-                git config --global user.email 'aiboboxx@gmail.com'
-                git add .
-                git commit -m "Automated report $(date '+%Y/%m/%d')"
-                git push
+
               

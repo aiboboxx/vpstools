@@ -69,8 +69,6 @@ async function freeokSign(row, page) {
     row.last_used_time = null;
   else
     row.last_used_time = innerHtml;
-
-
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
