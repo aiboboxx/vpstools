@@ -135,6 +135,7 @@ async function regFreeok(page,invite){
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
   innerHtml = innerHtml.split(' ')[0];
   //console.log( "余额: " + innerHtml);
+  if (innerHtml == '0.99') {
   cookies = await page.cookies();
   ck = JSON.stringify(cookies, null, '\t');
   let sql, arr;
@@ -165,7 +166,10 @@ async function regFreeok(page,invite){
   else
     console.log("购买套餐结果: " + innerHtml);
   await sleep(1000);
-  //console.log(msg);
+  } else {
+    msg = '不添加数据库：' + usr;
+  }
+  console.log(msg);
   await page.evaluate((selecter, text) => document.querySelector(selecter).innerText = text, selecter, msg);
 
 }
@@ -177,7 +181,7 @@ async function main() {
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-  sql =  "SELECT invite FROM freeok where level < 4 and balance < 1 order by balance asc limit 1;"
+  sql =  "SELECT invite FROM freeok where (level < 4 and balance < 1) or (level > 4 and balance < 5) order by balance asc, id asc limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);

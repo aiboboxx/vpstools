@@ -95,7 +95,7 @@ async function main() {
   console.log(`*****************开始Reset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss 
              FROM freeok 
-             WHERE level = 2
+             WHERE usr = "DGFWvJ520@qq.com"
             ;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql);

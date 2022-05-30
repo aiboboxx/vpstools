@@ -177,13 +177,13 @@ async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where level = 1;"
   let r = await pool.query(sql);
   //console.log(JSON.stringify(r))
-  if ( r[0][0].Number > 160 ) {
-    console.log('已有160个level=1账户');
+  if ( r[0][0].Number > 180 ) {
+    console.log('已有180个level=1账户');
     return;
   }
   console.log('已有账户：',r[0][0].Number);
   //sql =  "SELECT invite FROM freeok where level = 1 and balance < 160 order by id asc limit 1;"
-  sql =  "SELECT invite FROM freeok where (level < 4 and balance < 1) or (level > 4 and balance < 10) order by balance asc limit 1;"
+  sql =  "SELECT invite FROM freeok where (level < 4 and balance < 1) or (level > 4 and balance < 5) order by id asc, level desc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);
