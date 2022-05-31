@@ -78,10 +78,10 @@ async function freeokBuy(row, page) {
       row.level = 0;
     }
   }
-  if ((row.level === 2 || row.level === 3 || row.level === 8) && (row.balance < 0.03 && row.balance != null)){
+  if ((row.level === 2 || row.level === 3 || row.level === 8) && (row.balance < 0.1 && row.balance != null)){
     row.level = 0 
   }
-  if ((row.level === 4 || row.level === 5 || row.level === 6 || row.level === 7) && (row.balance < 0.03 && row.balance != null) && row.id > 50){
+  if ((row.level === 4 || row.level === 5 || row.level === 6 || row.level === 7) && (row.balance < 0.1 && row.balance != null) && row.id > 50){
     row.level = 0 
   }
   //console.log('row.level',row.level,row.balance);

@@ -183,7 +183,7 @@ async function main() {
   }
   console.log('已有账户：',r[0][0].Number);
   //sql =  "SELECT invite FROM freeok where level = 1 and balance < 160 order by id asc limit 1;"
-  sql =  "SELECT invite FROM freeok where (level < 4 and balance < 1) or (level > 4 and balance < 5) order by id asc, level desc  limit 1;"
+  sql =  "SELECT invite FROM freeok where (level < 4 and balance < 1) or (level > 4 and balance < 5) order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);
