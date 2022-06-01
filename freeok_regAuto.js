@@ -177,8 +177,8 @@ async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where level = 1;"
   let r = await pool.query(sql);
   //console.log(JSON.stringify(r))
-  if ( r[0][0].Number > 160 ) {
-    console.log('已有160个level=1账户');
+  if ( r[0][0].Number > 100 ) {
+    console.log('已有100个level=1账户');
     return;
   }
   console.log('已有账户：',r[0][0].Number);
