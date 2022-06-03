@@ -79,11 +79,11 @@ async function freeokSign(row, page) {
     new Date(row.last_used_time).getTime(),
     new Date(row.fetch_time).getTime()
   ];
-  if ((Date.now() -  unixtimes[1]) / (24 * 60 * 60 * 1000) > 3 && row.level === 1 && row.count !== 0) {
+  if ((Date.now() -  unixtimes[1]) / (24 * 60 * 60 * 1000) > 5 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("3天重置")
+      console.log("5天重置")
     }
   if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
