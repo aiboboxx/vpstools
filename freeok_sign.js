@@ -7,7 +7,13 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
-Date.prototype.format = tFormat;
+const dayjs = require('dayjs')
+let utc = require('dayjs/plugin/utc') // dependent on utc plugin
+let timezone = require('dayjs/plugin/timezone')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault("Asia/Hong_Kong")
+//Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;
@@ -76,16 +82,16 @@ async function freeokSign(row, page) {
   row.level_end_time = innerHtml;
   
   let unixtimes = [
-    new Date(row.last_used_time).getTime(),
-    new Date(row.fetch_time).getTime()
+    dayjs.tz(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),
+    dayjs.tz(row.fetch_time).unix()//new Date(row.fetch_time).getTime()
   ];
-  if ((Date.now() -  unixtimes[1]) / (24 * 60 * 60 * 1000) > 5 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz(row.fetch_time).unix() -  unixtimes[1]) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
       console.log("5天重置")
     }
-  if ((Date.now() - Math.max(...unixtimes)) / (60 * 60 * 1000) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz(row.fetch_time).unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
@@ -104,7 +110,7 @@ async function freeokSign(row, page) {
         await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
         reset.rss = true;
-        row.rss_refresh_time = (new Date).format('yyyy-MM-dd hh:mm:ss');
+        row.rss_refresh_time = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
 
       }
     }
@@ -176,7 +182,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count
+  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count,level_end_time
              FROM freeok 
              where level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 

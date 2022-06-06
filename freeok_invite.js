@@ -134,7 +134,7 @@ async function main() {
 
   console.log(`*****************开始freeok invite ${Date()}*******************\n`);
   //level,balance必须有
-  let sql = `SELECT id,usr,pwd,cookies,level,balance
+  let sql = `SELECT id,usr,pwd,cookies,level,balance,level_end_time
              FROM freeok  
              where  level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 

@@ -1,5 +1,11 @@
 const fs = require("fs");
 const { sleep, getRndInteger, randomOne, randomString } = require('./common.js');
+const dayjs = require('dayjs')
+let utc = require('dayjs/plugin/utc') // dependent on utc plugin
+let timezone = require('dayjs/plugin/timezone')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault("Asia/Hong_Kong")
 exports.sbFreeok = async function sbFreeok(page) {
   const injectedScript = `
       const getCanvasValue = (selector) => {
@@ -171,8 +177,8 @@ exports.login = async function login(row, page, pool) {
     .catch(async (err) => {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
       if (msg == "账号在虚无之地，请尝试重新注册") {
-        console.log('虚无之地',row.id,(Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000));
-        if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>1){
+        console.log('虚无之地',row.id,(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix()),(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60));
+        if ((dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60)>1){
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
         }
@@ -209,7 +215,7 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
       async (err) => {
         let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
         if (msg == "账号在虚无之地，请尝试重新注册") {
-          if ((Date.now()-new Date(row.level_end_time).getTime())/(24 * 60 * 60 * 1000)>1){
+          if ((dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60)>1){
             await pool.query("UPDATE freeok SET level = 0 WHERE id = ?", [row.id]);
           }
           return Promise.reject(new Error('账号在虚无之地'));

@@ -178,7 +178,7 @@ async function main() {
   let r = await pool.query(sql);
   //console.log(JSON.stringify(r))
   if ( r[0][0].Number > 100 ) {
-    console.log('已有100个level=1账户');
+    console.log('已有100个level=1账户',r[0][0].Number);
     return;
   }
   console.log('已有账户：',r[0][0].Number);

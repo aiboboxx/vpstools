@@ -8,7 +8,13 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok, login, loginWithCookies, resetPwd,resetRss  } = require('./utils.js');
-//Date.prototype.format =Format;
+const dayjs = require('dayjs')
+let utc = require('dayjs/plugin/utc') // dependent on utc plugin
+let timezone = require('dayjs/plugin/timezone')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault("Asia/Hong_Kong")
+//Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;
@@ -73,8 +79,8 @@ async function freeokBuy(row, page) {
   //console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
   //购买套餐
-  date = new Date(row.level_end_time);
-  if ((date.getTime() < Date.now()) || row['balance'] == 0.99) {
+  //date = dayjs.tz(row.level_end_time);
+  if ((dayjs.tz(row.level_end_time).unix() < dayjs.tz().unix()) || row['balance'] == 0.99) {
     //await page.waitFor(1500);
     await page.goto('https://okgg.xyz/user/shop');
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
@@ -146,7 +152,7 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level
+  let sql = `SELECT id,usr,pwd,cookies,balance,level,level_end_time
              FROM freeok 
              WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
