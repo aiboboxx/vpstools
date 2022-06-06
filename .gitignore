@@ -107,3 +107,4 @@ dist
 .vscode/
 setup.json
 .history/
+zpush.sh

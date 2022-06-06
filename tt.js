@@ -1,17 +1,7 @@
-const puppeteer = require('puppeteer-extra')
-
-// add stealth plugin and use defaults (all evasion techniques)
-const StealthPlugin = require('puppeteer-extra-plugin-stealth')
-puppeteer.use(StealthPlugin())
-let browser;
-async function name(params) {
-    browser = await puppeteer.launch({ ignoreDefaultArgs: ["--enable-automation"], headless: false }); //去除自动化测试的提醒
-    const page = await browser.newPage()
-
-
-    }) 
-    await page.goto('https://okgg.xyz/auth/register?code=wsOq');
-    await page.goto('https://bot.sannysoft.com/');
-
-}
-name();
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
+const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
+Date.prototype.format = tFormat;
+let d = new Date()
+console.log(d.toLocaleString())
+console.log(d.toString())
+console.log(d.format('yyyy-MM-dd hh:mm:ss'))
