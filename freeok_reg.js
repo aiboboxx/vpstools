@@ -37,10 +37,11 @@ async function regFreeok(page){
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
   //console.log("写入cookies");
-  usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + "@appls.eu.org";
+  usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
+  //usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + "@appls.eu.org";
   //usr = 'v2ray-free@outlook.com';
   console.log(usr);
-  await page.goto('https://okgg.xyz/auth/register?code=mURV', { timeout: 15000 })
+  await page.goto('https://okgg.xyz/auth/register?code=uwc0', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(

@@ -93,7 +93,7 @@ async function freeokBuy(row, page) {
   //console.log( "剩余要请:",innerHtml);
   let times = Number(innerHtml);
   //console.log('row.level',row.level,row.balance,times);
-  if (times < 30 && row.level > 0 && row.balance > 3) {
+  if (times < 10 && row.level > 0 && row.balance > 1) {
     selecter = '#buy-invite-num'
     await page.waitForSelector(selecter)
     await page.type(selecter, '30')
