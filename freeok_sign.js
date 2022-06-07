@@ -85,7 +85,9 @@ async function freeokSign(row, page) {
     dayjs.tz(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),
     dayjs.tz(row.fetch_time).unix()//new Date(row.fetch_time).getTime()
   ];
-  if ((dayjs.tz(row.fetch_time).unix() -  unixtimes[1]) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
+  //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
+  //console.log(dayjs.tz().toString(),dayjs.tz().unix())
+  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
@@ -188,7 +190,7 @@ async function main() {
              order by sign_time asc 
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
-  //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
+  //sql = "SELECT * FROM freeok where level = 1 order by fetch_time asc limit 5;"
   //sql = "SELECT * FROM freeok where err=1"
   let r = await pool.query(sql, []);
   let i = 0;
