@@ -174,10 +174,10 @@ async function regFreeok(page,invite){
 
 }
 async function main() {
-  let sql = "SELECT count(*) AS Number FROM freeok where level = 4 and count < 5;"
+  let sql = "SELECT count(*) AS Number FROM freeok where level = 4 and count < 4;"
   let r = await pool.query(sql);
-  if ( r[0][0].Number >= 2 ) {
-    console.log('已有2个level=4空闲账户');
+  if ( r[0][0].Number >= 1 ) {
+    console.log('已有1个level=4空闲账户');
     return;
   }
   console.log('已有账户：',r[0][0].Number);

@@ -190,7 +190,7 @@ async function main() {
              order by sign_time asc 
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
-  //sql = "SELECT * FROM freeok where level = 1 order by fetch_time asc limit 5;"
+  //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where err=1"
   let r = await pool.query(sql, []);
   let i = 0;
