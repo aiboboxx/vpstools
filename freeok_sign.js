@@ -87,11 +87,11 @@ async function freeokSign(row, page) {
   ];
   //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
   //console.log(dayjs.tz().toString(),dayjs.tz().unix())
-  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("3天重置")
+      console.log("5天重置")
     }
   if ((dayjs.tz(row.fetch_time).unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
