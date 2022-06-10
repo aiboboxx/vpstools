@@ -12,7 +12,7 @@ let utc = require('dayjs/plugin/utc') // dependent on utc plugin
 let timezone = require('dayjs/plugin/timezone')
 dayjs.extend(utc)
 dayjs.extend(timezone)
-dayjs.tz.setDefault("Asia/Hong_Kong")
+//dayjs.tz.setDefault("Asia/Hong_Kong")
 //Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
@@ -32,7 +32,7 @@ const pool = mysql.createPool({
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0, //可以等待的连接的个数
-  timezone: '+08:00',//时区配置
+  //timezone: '+08:00',//时区配置
   charset: 'utf8' //字符集设置
 });
 
@@ -74,26 +74,26 @@ async function freeokSign(row, page) {
   if (innerHtml == '从未使用')
     row.last_used_time = "2020-06-13 09:29:18";
   else
-    row.last_used_time = innerHtml;
+    row.last_used_time = dayjs.tz(innerHtml,"Asia/Hong_Kong").local().format('YYYY-MM-DD HH:mm:ss');
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
   console.log( "等级过期时间: " , row.level_end_time, innerHtml);
-  row.level_end_time = innerHtml;
+  row.level_end_time = dayjs.tz(innerHtml,"Asia/Hong_Kong").local().format('YYYY-MM-DD HH:mm:ss');
   
   let unixtimes = [
-    dayjs.tz(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),
-    dayjs.tz(row.fetch_time).unix()//new Date(row.fetch_time).getTime()
+    dayjs(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),
+    dayjs(row.fetch_time).unix()//new Date(row.fetch_time).getTime()
   ];
   //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
   //console.log(dayjs.tz().toString(),dayjs.tz().unix())
-  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
+  if ((dayjs().unix() -  unixtimes[1]) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
       console.log("5天重置")
     }
-  if ((dayjs.tz(row.fetch_time).unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
+  if ((dayjs(row.fetch_time).unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
@@ -112,7 +112,7 @@ async function freeokSign(row, page) {
         await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
         reset.rss = true;
-        row.rss_refresh_time = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
+        row.rss_refresh_time = dayjs.format('YYYY-MM-DD HH:mm:ss');
 
       }
     }
