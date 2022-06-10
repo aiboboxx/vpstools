@@ -4,8 +4,8 @@ name: regAuto4.js
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '20 0,4,8,12,16,20 * * *'
+  #schedule:
+  #  - cron: '20 0,4,8,12,16,20 * * *'
   # watch:
   #   types: started
     
