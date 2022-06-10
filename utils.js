@@ -224,6 +224,26 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         }
       });
 }
+exports.selectAsiaGroup = async function selectAsiaGroup(browser) {
+  const page = await browser.newPage();
+  page.on('dialog', async dialog => {
+    //console.info(`➞ ${dialog.message()}`);
+    await dialog.dismiss();
+  });
+  await page.goto('https://okgg.xyz/user/edit');
+  await sleep(1000);
+  await page.waitForSelector('#group')
+  await page.click('#group')
+  await sleep(1000);
+  await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+  await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+  await sleep(1000);
+  await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+  await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+  await page.waitForNavigation()
+  await sleep(2000);
+  await page.close();
+}
 exports.resetPwd = async function resetPwd(row,browser,pool) {
   const page = await browser.newPage();
   page.on('dialog', async dialog => {
@@ -232,26 +252,25 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
   });
   await page.goto('https://okgg.xyz/user/edit');
   await sleep(1000);
-  let selecter, innerHtml;
-
-  await page.waitForSelector('#group')
-  await page.click('#group')
-
-  await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
-  await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
-
-  await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
-  await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
-
-  await page.waitForNavigation()
-  
+  if (row.leveel > 1){
+    await page.waitForSelector('#group')
+    await page.click('#group')
+    await sleep(1000);
+    await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+    await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+    await sleep(1000);
+    await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+    await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+    await page.waitForNavigation()
+    await sleep(2000);
+  }
+  let selecter;
   selecter = '#sspwd';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
       //console.log('进入页面：修改资料');
       //await page.goto('https://okgg.xyz/user');
     });
-  //innerHtml = await page.$eval(selecter, el => el.value);
   await page.type(selecter, Math.random().toString(36).slice(-12));
   await sleep(1500);
   await page.click('#ss-pwd-update')
@@ -275,7 +294,7 @@ exports.resetRss = async function resetRss(browser){
   });
   await page.goto('https://okgg.xyz/user');
   await sleep(1000);
-  let selecter, innerHtml;
+  let selecter;
   selecter = "body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a";
   await page.waitForSelector(selecter, { timeout: 10000 })
     await page.click(selecter)
