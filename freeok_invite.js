@@ -100,7 +100,7 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
-  if (row.level >1)  await selectAsiaGroup(browser)
+  await selectAsiaGroup(browser)
   let cookies = [];
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
