@@ -158,7 +158,7 @@ async function main() {
              WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
              limit 30;`
-  sql = "SELECT * FROM freeok  order by level_end_time asc limit 20;"
+  //sql = "SELECT * FROM freeok  order by level_end_time asc limit 20;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要购买套餐`);
