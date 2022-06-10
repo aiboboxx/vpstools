@@ -100,7 +100,7 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
-  await selectAsiaGroup(browser)
+  if (row.leveel > 1) await selectAsiaGroup(browser)
   let cookies = [];
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
@@ -140,7 +140,7 @@ async function main() {
              where  level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 30;` //必须要有level，不然level置0
-             //sql = "SELECT id,usr,pwd,cookies,level,balance from freeok where id=6";
+  sql = "SELECT id,usr,pwd,cookies,level,balance from freeok where level>1";
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);
