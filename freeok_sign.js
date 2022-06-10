@@ -32,7 +32,7 @@ const pool = mysql.createPool({
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0, //可以等待的连接的个数
-  timezone: '+08:00',//时区配置
+  //timezone: '+08:00',//时区配置
   charset: 'utf8' //字符集设置
 });
 
@@ -72,13 +72,13 @@ async function freeokSign(row, page) {
   innerHtml = innerHtml.split(';')[1];
   console.log("上次使用时间: " + innerHtml);
   if (innerHtml == '从未使用')
-    row.last_used_time = null;
+    row.last_used_time = "2020-06-13 09:29:18";
   else
     row.last_used_time = innerHtml;
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
-  //console.log( "等级过期时间: " +  innerHtml);
+  console.log( "等级过期时间: " , row.level_end_time, innerHtml);
   row.level_end_time = innerHtml;
   
   let unixtimes = [
@@ -171,7 +171,7 @@ async function main() {
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      runId ? '' :setup.proxy.normal
+      runId ? '' :setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -191,7 +191,7 @@ async function main() {
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where err=1"
+  sql = "SELECT * FROM freeok where id=585"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
