@@ -143,7 +143,7 @@ async function freeokSign(row, page) {
   //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
   row.last_used_time = dayjs.tz(row.last_used_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
+  if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
   await page.click('#checkin', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
@@ -185,7 +185,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count,level_end_time
+  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count
              FROM freeok 
              where level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 

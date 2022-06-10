@@ -177,7 +177,7 @@ exports.login = async function login(row, page, pool) {
     .catch(async (err) => {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
       if (msg == "账号在虚无之地，请尝试重新注册") {
-        console.log('虚无之地',row.id,(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix()),(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60));
+        //console.log('虚无之地',row.id,(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix()),(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60));
         if ((dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60)>1){
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
@@ -233,6 +233,18 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
   await page.goto('https://okgg.xyz/user/edit');
   await sleep(1000);
   let selecter, innerHtml;
+
+  await page.waitForSelector('#group')
+  await page.click('#group')
+
+  await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+  await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+
+  await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+  await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+
+  await page.waitForNavigation()
+  
   selecter = '#sspwd';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {

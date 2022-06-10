@@ -137,8 +137,8 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip 
-      //setup.proxy.normal
+      //runId ? '' : setup.proxy.changeip, 
+      runId ? '' : setup.proxy.normal 
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -153,12 +153,12 @@ async function main() {
   });
 
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,balance,level,level_end_time
+  let sql = `SELECT id,usr,pwd,cookies,balance,level
              FROM freeok 
              WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
              limit 30;`
-  //sql = "SELECT * FROM freeok WHERE id =661 order by update_time asc limit 2;"
+  sql = "SELECT * FROM freeok  order by level_end_time asc limit 20;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要购买套餐`);
