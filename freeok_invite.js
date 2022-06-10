@@ -8,7 +8,7 @@ const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
-const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
+const { sbFreeok, login, loginWithCookies, resetPwd, resetRss, selectAsiaGroup } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
@@ -100,6 +100,7 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
+  if (row.level >1)  await selectAsiaGroup(browser)
   let cookies = [];
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
@@ -111,7 +112,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
