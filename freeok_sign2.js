@@ -129,7 +129,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies
              FROM freeok 
-             where level > 1 and (sign_time < date_sub(now(), interval 8 hour) or sign_time is null)
+             where site = 'okgg' and level > 1 and (sign_time < date_sub(now(), interval 8 hour) or sign_time is null)
              order by sign_time asc 
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"

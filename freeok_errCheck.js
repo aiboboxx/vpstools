@@ -176,7 +176,7 @@ async function main() {
   let sql
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
-  sql = "SELECT * FROM freeok where err=1"
+  sql = "SELECT * FROM freeok where site = 'okgg' and err=1"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);

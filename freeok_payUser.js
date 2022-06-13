@@ -108,7 +108,7 @@ async function main() {
     console.log(`*****************开始查看payUser ${Date()}*******************\n`);
     let sql = `SELECT id,usr,pwd,cookies
              FROM freeok 
-             WHERE balance >1 
+             WHERE site = "okgg" and balance >1 
              order by id;`
     //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
     let r = await pool.query(sql);

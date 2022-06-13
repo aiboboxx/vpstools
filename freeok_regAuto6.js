@@ -139,7 +139,7 @@ async function regFreeok(page,invite){
   cookies = await page.cookies();
   ck = JSON.stringify(cookies, null, '\t');
   let sql, arr;
-  sql = 'insert into  freeok (usr,pwd,cookies,level,reset_time) values (?,?,?,6,now());';
+  sql = 'insert into  freeok (usr,pwd,cookies,level,reset_time,site) values (?,?,?,6,now(),"okgg");';
   arr = [usr, pwd, ck];
   sql = await pool.format(sql, arr);
   await pool.query(sql)
@@ -174,7 +174,7 @@ async function regFreeok(page,invite){
 
 }
 async function main() {
-  let sql = "SELECT count(*) AS Number FROM freeok where level = 6 and count < 8;"
+  let sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 6 and count < 8;"
   let r = await pool.query(sql);
   if ( r[0][0].Number >= 1 ) {
     console.log('已有1个level=6空闲账户');
@@ -182,7 +182,7 @@ async function main() {
   }
   console.log('已有账户：',r[0][0].Number);
   //sql =  "SELECT invite FROM freeok where level = 1 and balance < 160 order by id asc limit 1;"
-  sql =  "SELECT invite FROM freeok where level < 4 and balance < 1  order by level desc,id asc  limit 1;"
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level < 4 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);

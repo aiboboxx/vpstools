@@ -155,7 +155,7 @@ async function main() {
   console.log(`*****************开始freeok购买套餐 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,balance,level
              FROM freeok 
-             WHERE level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
+             WHERE site = "okgg" and level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
              limit 30;`
   //sql = "SELECT * FROM freeok  order by level_end_time asc limit 20;"
