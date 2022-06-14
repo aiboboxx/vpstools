@@ -5,8 +5,7 @@ const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
-const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, waitForString } = require('./common.js');
 const dayjs = require('dayjs')
 let utc = require('dayjs/plugin/utc') // dependent on utc plugin
 let timezone = require('dayjs/plugin/timezone')
@@ -35,11 +34,9 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset: 'utf8' //字符集设置
 });
-
-
+main()
 async function freeokSign(row, page) {
   let reset = { pwd: false, rss: false, fetcher: false, block: false };
-  //let needreset = false;
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
@@ -49,66 +46,23 @@ async function freeokSign(row, page) {
       await login(row, page, pool);
     });
   }
-  //cookies = await page.cookies();
-  //row.cookies = JSON.stringify(cookies, null, '\t');
-  while (await page.$('#reactive')) {
-    await page.type('#email', row.usr);
-    await page.click('#reactive');
-    await sleep(1000);
-    console.log('账户解除限制');
-    if (row.level === 1) {
-      await resetPwd(row, browser, pool);
-      await resetRss(browser);
-    }
-
-    await page.goto('https://okgg.xyz/user');
-  }
-  //await sleep(3000);
   let selecter, innerHtml;
-  selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 30000 })
-  //上次使用时间
-  innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
-  innerHtml = innerHtml.split(';')[1];
-  console.log("上次使用时间: " + innerHtml);
-  if (innerHtml == '从未使用')
-    row.last_used_time = "2020-06-13 09:29:18";
-  else
-    row.last_used_time = innerHtml;
-  //等级过期时间 xpath
-  innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
-  innerHtml = innerHtml.split(';')[1];
-  row.level_end_time = innerHtml;
-  console.log( "等级过期时间: " , row.level_end_time, innerHtml);
-  
-  let unixtimes = [
-    dayjs.tz(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),
-    dayjs.tz(row.fetch_time).unix()//new Date(row.fetch_time).getTime()
-  ];
-  //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
-  //console.log(dayjs.tz().toString(),dayjs.tz().unix())
-  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 7 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 7 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
       console.log("7天重置")
     }
-  if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 3 : 23) && row.level === 1 && row.count !== 0) {
-      reset.pwd = true;
-      reset.rss = true;
-      //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
-  }
+
   //今日已用
-  selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
+  selecter = '.list-inline > li:nth-of-type(1) > .d-sm-block';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
+
   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
-        innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-        //console.log( "rss: " + innerHtml);
-        row.rss = innerHtml;
         await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
         reset.rss = true;
@@ -119,13 +73,13 @@ async function freeokSign(row, page) {
   }
 
   if (reset.pwd) {
-    await resetPwd(row, browser, pool);
+    //await resetPwd(row, browser, pool);
     console.log("reset.pwd");
   }
   if (reset.rss) {
-    await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+    await page.click(".reset-link")
     await page.waitForFunction(
-      'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
+      'document.querySelector(".el-message-box__header").innerText.includes("重置成功")',
       { timeout: 5000 }
     ).then(async () => {
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
@@ -133,18 +87,13 @@ async function freeokSign(row, page) {
       console.log("reset.rss");
     });
   }
-  //余额
-  innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
-  innerHtml = innerHtml.split(' ')[0];
-  //console.log( "余额: " + innerHtml);
-  row.balance = Number(innerHtml)
+
   //rss 必须放最后，因为前面有rss重置
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
   //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
-  row.last_used_time = dayjs.tz(row.last_used_time).utc().format('YYYY-MM-DD HH:mm:ss');
   if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  await page.click('#checkin', { delay: 200 })
+  await page.click('#succedaneum', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
         .then(async () => {
@@ -184,13 +133,13 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count
+  console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
+  let sql = `SELECT id,usr,pwd,cookies,rss,count
              FROM freeok 
-             where site = 'okgg' and level > 0 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
+             where site = 'chinaG' and level = 1 
              order by sign_time asc 
              limit 25;`
-  //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
+  //and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=585"
   let r = await pool.query(sql, []);
@@ -205,8 +154,8 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`rss`=?,`sign_time`=NOW(),`rss_refresh_time`=?,`used`=?,`last_used_time`=?,`err` = NULL WHERE `id`=?';
-        arr = [row.cookies, row.balance, row.rss, row.rss_refresh_time, row.used, row.last_used_time, row.id];
+        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`used`=? WHERE `id`=?';
+        arr = [row.cookies, row.rss, row.used, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
@@ -229,4 +178,52 @@ async function main() {
   await pool.end();
   if (runId ? true : false) await browser.close();
 }
-main();
+
+async function login(row, page, pool) {
+    let cookies = []
+    //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
+    //await page.setCookie(...cookies);
+    await page.goto('https://b.luxury/signin', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+    await page.waitForSelector('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner')
+    await page.type('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner',row.usr)   
+    await page.type('.demo-ruleForm > .el-form-item:nth-child(2) > .el-form-item__content > .el-input > .el-input__inner', row.pwd)
+    await page.click('div > .demo-ruleForm > .el-form-item > .el-form-item__content > .el-button')
+    await waitForString(page,"body > div.el-message-box__wrapper > div","请切换服务器")
+    await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__btns > button > span")
+    await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
+    await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
+    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 30000 })
+      .then(async () => {
+        console.log('模拟登录成功');
+      })
+      .catch(async (err) => {
+        return Promise.reject(new Error('模拟登录失败'));
+      });
+  }
+async function loginWithCookies(row, page, pool) {
+    let cookies = JSON.parse(row.cookies);
+    await page.setCookie(...cookies);
+    await page.goto('https://b.luxury/user', { timeout: 15000 });
+    //console.log('开始cookie登录');
+    await page.waitForFunction(
+      (selecter) => {
+        if (document.querySelector(selecter)) {
+          return document.querySelector(selecter).innerText.includes("今日已用流量");
+        } else {
+          return false;
+        }
+      },
+      { timeout: 20000 },
+      'body'
+    )
+    let selecter, innerHtml;
+    selecter = '.bg-gradient-yellow > .card-body'; //订阅
+    await page.waitForSelector(selecter, { timeout: 30000 })
+      .then(
+        async () => {
+            return true;
+        },
+        async (err) => {
+            return Promise.reject(new Error('登录失败'));
+        });
+  }
