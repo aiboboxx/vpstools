@@ -73,31 +73,36 @@ async function freeokSign(row, page) {
   }
 
   if (reset.pwd) {
-    //await resetPwd(row, browser, pool);
+    await resetPwd(row, browser, pool);
     console.log("reset.pwd");
   }
   if (reset.rss) {
     await page.click(".reset-link")
-    await page.waitForFunction(
-      'document.querySelector(".el-message-box__header").innerText.includes("重置成功")',
-      { timeout: 5000 }
-    ).then(async () => {
+    await waitForString(page,"body > div.el-message-box__wrapper > div > div.el-message-box__header","重置成功")
+    .then(async () => {
+      await sleep(1000);
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-      await sleep(3000);
+      await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
+      await sleep(1000);
       console.log("reset.rss");
     });
   }
-
+  await sleep(5000)
   //rss 必须放最后，因为前面有rss重置
-  innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-  //console.log( "rss: " + innerHtml);
+  await page.waitForSelector('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
+  await page.click('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
+  await page.waitForSelector("body > div.el-message-box__wrapper > div",{visible: true, timeout: 10000})
+  innerHtml = await page.evaluate(() => document.querySelector('body > div.el-message-box__wrapper > div > div.el-message-box__content > div.el-message-box__container > div > div > p:nth-child(2) > a:nth-child(11) > span').innerText.trim());
+  console.log( "rss: " + innerHtml);
+  await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
+  await sleep(1000)
   row.rss = innerHtml;
   if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  await page.click('#succedaneum', { delay: 200 })
+  await page.click('.leftbuttonwraps div:last-child #succedaneum', { delay: 200 })
     .then(async () => {
-      await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
+      await page.waitForFunction('document.querySelector("body").innerText.includes("获得了")', { timeout: 6000 })
         .then(async () => {
-          console.log('签到成功', await page.evaluate(() => document.querySelector('#msg').innerHTML));
+          console.log('签到成功');
           //await page.goto('https://okgg.xyz/user');
         })
         .catch((err) => console.log('签到超时'));
@@ -136,10 +141,10 @@ async function main() {
   console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss,count
              FROM freeok 
-             where site = 'chinaG' and level = 1 
+             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
              limit 25;`
-  //and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
+  //
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=585"
   let r = await pool.query(sql, []);
@@ -183,7 +188,7 @@ async function login(row, page, pool) {
     let cookies = []
     //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
     //await page.setCookie(...cookies);
-    await page.goto('https://b.luxury/signin', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+    await page.goto('https://b.luxury/signin', { timeout: 10000 }).catch((err) => console.log('首页超时'));
     await page.waitForSelector('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner')
     await page.type('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner',row.usr)   
     await page.type('.demo-ruleForm > .el-form-item:nth-child(2) > .el-form-item__content > .el-input > .el-input__inner', row.pwd)
@@ -203,7 +208,7 @@ async function login(row, page, pool) {
 async function loginWithCookies(row, page, pool) {
     let cookies = JSON.parse(row.cookies);
     await page.setCookie(...cookies);
-    await page.goto('https://b.luxury/user', { timeout: 15000 });
+    await page.goto('https://b.luxury/user', { timeout: 10000 });
     //console.log('开始cookie登录');
     await page.waitForFunction(
       (selecter) => {
@@ -213,17 +218,46 @@ async function loginWithCookies(row, page, pool) {
           return false;
         }
       },
-      { timeout: 20000 },
+      { timeout: 10000 },
       'body'
     )
-    let selecter, innerHtml;
-    selecter = '.bg-gradient-yellow > .card-body'; //订阅
-    await page.waitForSelector(selecter, { timeout: 30000 })
-      .then(
-        async () => {
-            return true;
-        },
-        async (err) => {
-            return Promise.reject(new Error('登录失败'));
-        });
+    await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
+    await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
+    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 30000 })
+      .then(async () => {
+        console.log('登录成功');
+      })
+      .catch(async (err) => {
+        return Promise.reject(new Error('登录失败'));
+      });
+  }
+  async function resetPwd(row,browser,pool) {
+    const page = await browser.newPage();
+    page.on('dialog', async dialog => {
+      //console.info(`➞ ${dialog.message()}`);
+      await dialog.dismiss();
+    });
+    await page.goto('https://b.luxury/user/edit?tab=fifth');
+    await sleep(1000);
+    let selecter;
+    selecter = '#sspwd';
+    await page.waitForSelector(selecter, { timeout: 10000 })
+      .then(async () => {
+        //console.log('进入页面：修改资料');
+        //await page.goto('https://okgg.xyz/user');
+      });
+    await page.type(selecter, Math.random().toString(36).slice(-12));
+    await sleep(1500);
+    await page.click('#ss-pwd-update')
+      .then(async () => {
+        await page.waitForFunction('document.querySelector(".modal-body").innerText.includes("修改成功")', { timeout: 13000 })
+          .then(async () => {
+            console.log('修改v2ray密码成功');
+            if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
+            //await page.goto('https://okgg.xyz/user');
+          })
+          .catch((err) => console.log('修改v2ray密码失败'));
+      });
+    await sleep(2000);
+    await page.close();
   }
