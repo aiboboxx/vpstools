@@ -87,7 +87,7 @@ async function freeokSign(row, page) {
       console.log("reset.rss");
     });
   }
-  await sleep(5000)
+  await sleep(3000)
   //rss 必须放最后，因为前面有rss重置
   await page.waitForSelector('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
   await page.click('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
@@ -159,7 +159,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`used`=? WHERE `id`=?';
+        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`used`=?,`err`=null WHERE `id`=?';
         arr = [row.cookies, row.rss, row.used, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
