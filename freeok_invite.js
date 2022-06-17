@@ -139,7 +139,7 @@ async function main() {
              FROM freeok  
              where  site = "okgg" and level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
-             limit 30;` //必须要有level，不然level置0
+             limit 20;` //必须要有level，不然level置0
   //sql = "SELECT id,usr,pwd,cookies,level,balance from freeok where id = 572";
   let r = await pool.query(sql);
   let i = 0;

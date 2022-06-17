@@ -5,10 +5,12 @@ const mysql = require('mysql2/promise');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const runId = github.context.runId;
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
+
 //Date.prototype.format = tFormat;
+const runId = github.context.runId;
+
 let browser;
 let setup = {};
 if (!runId) {
@@ -188,7 +190,7 @@ async function main() {
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);
-  console.log(JSON.stringify(r))
+  //console.log(JSON.stringify(r))
   if (!r[0].length) {
     console.log("无需invite");
     return
