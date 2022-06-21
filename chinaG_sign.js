@@ -153,7 +153,7 @@ async function main() {
   console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss,count
              FROM freeok 
-             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
+             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //
