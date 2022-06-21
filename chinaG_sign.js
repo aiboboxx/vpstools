@@ -47,13 +47,25 @@ async function freeokSign(row, page) {
     });
   }
   let selecter, innerHtml;
-  if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 90 && row.level === 1) {
+       await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
+       return Promise.reject(new Error('账户即将失效'));
+   }
+  if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("5天重置")
+      console.log("3天重置")
     }
-
+  //console.log("获取剩余流量")
+  //剩余流量
+  selecter = ".list-inline-item.col-sm-4.col-md-auto.px-3.my-2.mx-0:nth-child(2) .d-sm-block.h5.text-white.font-weight-bold.pl-2"
+  innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
+  console.log("剩余流量: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
+  if (innerHtml.slice(-2) !== 'GB') {
+    await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
+    return Promise.reject(new Error('账户即将失效'));
+  }
   //今日已用
   selecter = '.list-inline > li:nth-of-type(1) > .d-sm-block';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
@@ -61,7 +73,7 @@ async function freeokSign(row, page) {
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
 
   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
-    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
+    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 6) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
         await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
@@ -143,7 +155,7 @@ async function main() {
              FROM freeok 
              where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
-             limit 25;`
+             limit 20;`
   //
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=585"
