@@ -76,7 +76,7 @@ async function freeokSign(row, page) {
   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 6) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
-        await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
+        //await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
         reset.rss = true;
         row.rss_refresh_time = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
