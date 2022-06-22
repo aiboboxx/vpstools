@@ -46,17 +46,18 @@ async function freeokSign(row, page) {
       await login(row, page, pool);
     });
   }
-  let selecter, innerHtml;
+
   if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 90 && row.level === 1) {
        await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
        return Promise.reject(new Error('账户即将失效'));
-   }
+  }
   if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
       console.log("3天重置")
-    }
+  }
+   let selecter, innerHtml;
   //console.log("获取剩余流量")
   //剩余流量
   selecter = ".list-inline-item.col-sm-4.col-md-auto.px-3.my-2.mx-0:nth-child(2) .d-sm-block.h5.text-white.font-weight-bold.pl-2"

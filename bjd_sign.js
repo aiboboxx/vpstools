@@ -56,8 +56,21 @@ async function freeokSign(row, page) {
     console.log('账户解除限制');
     await page.goto('https://v2.bujidao.org/user');
   }
-  //await sleep(3000);
+  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 20 && row.level === 1) {
+      await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
+      return Promise.reject(new Error('账户即将失效'));
+  }
   let selecter, innerHtml;
+    //剩余流量
+    selecter = "#remain"
+    innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
+    console.log("剩余流量: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
+    if (innerHtml.slice(-2) !== 'GB') {
+      await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
+      return Promise.reject(new Error('账户即将失效'));
+    }
+  //await sleep(3000);
+
   selecter = '.card-tag.tag-red';
   await page.waitForSelector(selecter, { timeout: 15000 })
 
@@ -73,18 +86,6 @@ async function freeokSign(row, page) {
   innerHtml = await page.evaluate(() => document.querySelector("#sub_center_windows > p:nth-child(3) > a.copy-text.btn-dl").getAttribute("data-clipboard-text"));
   console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
-
-  await page.click('.btn.btn-brand.disabled.btn-flat.waves-attach', { delay: 200 })
-    .then(async () => {
-      await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
-        .then(async () => {
-          console.log('签到成功', await page.evaluate(() => document.querySelector('#msg').innerHTML));
-          //await page.goto('https://okgg.xyz/user');
-        })
-        .catch((err) => console.log('签到超时'));
-    })
-    .catch((err) => console.log('今日已签到'));
-  await sleep(1000);
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
@@ -223,4 +224,46 @@ async function loginWithCookies(row, page, pool) {
           return Promise.reject(new Error('登录失败'));
         }
       });
+}
+async function resetPwd(row,browser,pool) {
+  const page = await browser.newPage();
+  page.on('dialog', async dialog => {
+    //console.info(`➞ ${dialog.message()}`);
+    await dialog.dismiss();
+  });
+  await page.goto('https://v2.bujidao.org/user/edit');
+  await sleep(1000);
+  if (row.leveel > 1){
+    await page.waitForSelector('#group')
+    await page.click('#group')
+    await sleep(1000);
+    await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+    await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
+    await sleep(1000);
+    await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+    await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
+    await page.waitForNavigation()
+    await sleep(2000);
+  } 
+  let selecter;
+  selecter = '#sspwd';
+  await page.waitForSelector(selecter, { timeout: 10000 })
+    .then(async () => {
+      //console.log('进入页面：修改资料');
+      //await page.goto('https://okgg.xyz/user');
+    });
+  await page.type(selecter, Math.random().toString(36).slice(-12));
+  await sleep(1500);
+  await page.click('#ss-pwd-update')
+    .then(async () => {
+      await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 13000 })
+        .then(async () => {
+          console.log('修改v2ray密码成功');
+          if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
+          //await page.goto('https://okgg.xyz/user');
+        })
+        .catch((err) => console.log('修改v2ray密码失败'));
+    });
+  await sleep(2000);
+  await page.close();
 }
