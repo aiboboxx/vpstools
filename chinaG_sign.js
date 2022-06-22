@@ -51,11 +51,11 @@ async function freeokSign(row, page) {
        await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
        return Promise.reject(new Error('账户即将失效'));
   }
-  if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 7 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("3天重置")
+      console.log("7天重置")
   }
    let selecter, innerHtml;
   //console.log("获取剩余流量")
