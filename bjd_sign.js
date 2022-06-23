@@ -125,7 +125,7 @@ async function main() {
              where site = 'bjd' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
-  //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
+  //sql = "SELECT * FROM freeok where  site = 'bjd' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=605"
   let r = await pool.query(sql, []);
