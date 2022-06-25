@@ -156,10 +156,10 @@ async function main() {
              FROM freeok 
              where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
-             limit 20;`
+             limit 10;`
   //
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=585"
+  //sql = "SELECT * FROM freeok where err=1 and site = 'chinaG' "
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
