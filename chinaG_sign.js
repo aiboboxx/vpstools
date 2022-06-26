@@ -42,7 +42,8 @@ async function freeokSign(row, page) {
   if (row.cookies == null) {
     await login(row, page, pool);
   } else {
-    await loginWithCookies(row, page, pool).catch(async () => {
+    await loginWithCookies(row, page, pool)
+    .catch(async () => {
       await login(row, page, pool);
     });
   }
@@ -206,7 +207,15 @@ async function login(row, page, pool) {
     await page.type('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner',row.usr)   
     await page.type('.demo-ruleForm > .el-form-item:nth-child(2) > .el-form-item__content > .el-input > .el-input__inner', row.pwd)
     await page.click('div > .demo-ruleForm > .el-form-item > .el-form-item__content > .el-button')
-    await waitForString(page,"body > div.el-message-box__wrapper > div","请切换服务器")
+    await waitForString(page,"body > div.el-message-box__wrapper > div","请切换服务器",15000)
+    .catch(async (err) => {
+      await waitForString(page,"body","邮箱或者密码错误",15000)
+      .then(async () => {
+        await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
+        return Promise.reject(new Error('邮箱或者密码错误'));
+      })
+      return Promise.reject(new Error('登录失败'));
+    })
     await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__btns > button > span")
     await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
     await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
