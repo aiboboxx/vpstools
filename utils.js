@@ -252,7 +252,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
   });
   await page.goto('https://okgg.xyz/user/edit');
   await sleep(1000);
-  if (row.leveel > 1){
+/*   if (row.leveel > 1){
     await page.waitForSelector('#group')
     await page.click('#group')
     await sleep(1000);
@@ -263,7 +263,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
     await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
     await page.waitForNavigation()
     await sleep(2000);
-  } 
+  } */ 
   let selecter;
   selecter = '#sspwd';
   await page.waitForSelector(selecter, { timeout: 10000 })

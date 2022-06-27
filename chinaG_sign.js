@@ -204,6 +204,7 @@ async function login(row, page, pool) {
     //await page.setCookie(...cookies);
     await page.goto('https://b.luxury/signin', { timeout: 10000 }).catch((err) => console.log('首页超时'));
     await page.waitForSelector('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner')
+    await sleep(1500)
     await page.type('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner',row.usr)   
     await page.type('.demo-ruleForm > .el-form-item:nth-child(2) > .el-form-item__content > .el-input > .el-input__inner', row.pwd)
     await page.click('div > .demo-ruleForm > .el-form-item > .el-form-item__content > .el-button')
