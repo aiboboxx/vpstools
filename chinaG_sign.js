@@ -37,6 +37,17 @@ const pool = mysql.createPool({
 main()
 async function freeokSign(row, page) {
   let reset = { pwd: false, rss: false, fetcher: false, block: false };
+  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 90 && row.level === 1) {
+    await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
+    return Promise.reject(new Error('账户即将失效'));
+  }
+  //console.log(row.reset_time?row.reset_time:"2006-07-02 08:09:04")
+  if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time?row.reset_time:"2006-07-02 08:09:04").unix()) / (24 * 60 * 60) > 12 ) {
+    // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
+    reset.pwd = true;
+    reset.rss = true;
+    console.log("12天重置")
+  }
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
@@ -48,17 +59,7 @@ async function freeokSign(row, page) {
     });
   }
   await sleep(2000)
-  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 90 && row.level === 1) {
-       await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
-       return Promise.reject(new Error('账户即将失效'));
-  }
-  if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time).unix()) / (24 * 60 * 60) > 10 && row.level === 1 && row.count !== 0) {
-     // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
-      reset.pwd = true;
-      reset.rss = true;
-      console.log("10天重置")
-  }
-   let selecter, innerHtml;
+  let selecter, innerHtml;
   //console.log("获取剩余流量")
   //剩余流量
   selecter = ".list-inline-item.col-sm-4.col-md-auto.px-3.my-2.mx-0:nth-child(2) .d-sm-block.h5.text-white.font-weight-bold.pl-2"
@@ -155,7 +156,7 @@ async function main() {
   console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,regtime,reset_time
              FROM freeok 
-             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
+             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 12 hour) or sign_time is null)
              order by sign_time asc 
              limit 10;`
   //

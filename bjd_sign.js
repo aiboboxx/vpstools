@@ -5,7 +5,7 @@ const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, waitForString } = require('./common.js');
 const dayjs = require('dayjs')
 let utc = require('dayjs/plugin/utc') // dependent on utc plugin
 let timezone = require('dayjs/plugin/timezone')
@@ -37,14 +37,25 @@ const pool = mysql.createPool({
 main()
 async function freeokSign(row, page) {
   let reset = { pwd: false, rss: false, fetcher: false, block: false };
-  //let needreset = false;
+  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 20) {
+    await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
+    return Promise.reject(new Error('账户即将失效'));
+  }
+  //console.log(row.reset_time?row.reset_time:"2006-07-02 08:09:04")
+  if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time?row.reset_time:"2006-07-02 08:09:04").unix()) / (24 * 60 * 60) > 12) {
+    // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
+    reset.pwd = true;
+    reset.rss = true;
+    console.log("12天重置")
+  }
   let cookies = [];
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
     await login(row, page, pool);
   } else {
-    await loginWithCookies(row, page, pool).catch(async () => {
-       await login(row, page, pool);
+    await loginWithCookies(row, page, pool)
+    .catch(async () => {
+      await login(row, page, pool);
     });
   }
   //cookies = await page.cookies();
@@ -56,11 +67,6 @@ async function freeokSign(row, page) {
     console.log('账户解除限制');
     await page.goto('https://v2.bujidao.org/user');
   }
-  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 20 && row.level === 1) {
-      await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
-      return Promise.reject(new Error('账户即将失效'));
-  }
-
   let selecter, innerHtml;
     //剩余流量
     selecter = "#remain"
@@ -71,16 +77,19 @@ async function freeokSign(row, page) {
       return Promise.reject(new Error('账户即将失效'));
     }
   //await sleep(3000);
-
   selecter = '.card-tag.tag-red';
   await page.waitForSelector(selecter, { timeout: 15000 })
-
   //今日已用
   selecter = '.card-tag.tag-red';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   row.used = innerHtml;
-  console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
 
+  console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
+  if (reset.pwd) {
+    await resetPwd(row, browser, pool);
+    await sleep(500)
+    //console.log("reset.pwd");
+  }
   //rss 必须放最后，因为前面有rss重置
   await page.click('.tab-nav.margin-top-no li:nth-child(2) a')
   await sleep(500)
@@ -117,14 +126,14 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始bjd签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,regtime
+  let sql = `SELECT id,usr,pwd,cookies,regtime,reset_time
              FROM freeok 
-             where site = 'bjd' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
+             where site = 'bjd' and level = 1 and (sign_time < date_sub(now(), interval 12 hour) or sign_time is null)
              order by sign_time asc 
              limit 10;`
   //sql = "SELECT * FROM freeok where  site = 'bjd' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=605"
+  //sql = "SELECT * FROM freeok where site = 'bjd' and level = 1"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
@@ -233,38 +242,32 @@ async function resetPwd(row,browser,pool) {
     await dialog.dismiss();
   });
   await page.goto('https://v2.bujidao.org/user/edit');
-  await sleep(1000);
-  if (row.leveel > 1){
-    await page.waitForSelector('#group')
-    await page.click('#group')
-    await sleep(1000);
-    await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
-    await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
-    await sleep(1000);
-    await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
-    await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
-    await page.waitForNavigation()
-    await sleep(2000);
-  } 
   let selecter;
-  selecter = '#sspwd';
+  selecter = '#ss-pwd-update';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
-      //console.log('进入页面：修改资料');
-      //await page.goto('https://okgg.xyz/user');
+      console.log('修改节点连接密码');
     });
-  await page.type(selecter, Math.random().toString(36).slice(-12));
-  await sleep(1500);
   await page.click('#ss-pwd-update')
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 13000 })
         .then(async () => {
-          console.log('修改v2ray密码成功');
-          if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
-          //await page.goto('https://okgg.xyz/user');
+          console.log('修改v2ray密码成功'); 
+          await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
+          await sleep(1000)
+          await page.click("#result_ok")
+          await sleep(500);
         })
-        .catch((err) => console.log('修改v2ray密码失败'));
+        .catch((err) => console.log('修改v2ray密码失败'))
     });
-  await sleep(2000);
+  await page.click(".reset-link.btn.btn-brand-accent.btn-flat .icon")
+  .then(async () => {
+    await page.waitForFunction('document.querySelector("#msg").innerText.includes("重置")', { timeout: 13000 })
+      .then(async () => {
+        console.log('重置rss成功'); 
+        await sleep(1500)
+      })
+      .catch((err) => console.log('重置rss失败'))
+  });
   await page.close();
 }
