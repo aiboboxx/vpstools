@@ -79,7 +79,7 @@ async function regFreeok(page,invite){
   cookies = await page.cookies();
   ck = JSON.stringify(cookies, null, '\t');
   let sql, arr;
-  sql = 'insert into  freeok (usr,pwd,cookies,fetch_time,site) values (?,?,?,NOW(),"bjd");';
+  sql = 'insert into  freeok (usr,pwd,cookies,reset_time,site) values (?,?,?,NOW(),"bjd");';
   arr = [usr, pwd, ck];
   sql = await pool.format(sql, arr);
   await pool.query(sql)

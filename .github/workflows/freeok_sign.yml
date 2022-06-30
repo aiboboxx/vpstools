@@ -13,7 +13,7 @@ env:
 jobs:
     build:
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 5
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2 
@@ -31,6 +31,6 @@ jobs:
             - name: Run install
               run: npm install
             - name: Run Script
-              run: node freeok_sign.js  #> report.txt             
+              run: node freeok_sign.js  #> report.txt            
 
               

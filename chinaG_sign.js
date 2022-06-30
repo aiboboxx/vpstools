@@ -47,16 +47,16 @@ async function freeokSign(row, page) {
       await login(row, page, pool);
     });
   }
-
+  await sleep(2000)
   if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 90 && row.level === 1) {
        await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
        return Promise.reject(new Error('账户即将失效'));
   }
-  if ((dayjs.tz().unix() -  dayjs.tz(row.fetch_time).unix()) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time).unix()) / (24 * 60 * 60) > 10 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("5天重置")
+      console.log("10天重置")
   }
    let selecter, innerHtml;
   //console.log("获取剩余流量")
@@ -75,7 +75,7 @@ async function freeokSign(row, page) {
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
 
   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
-    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 6) {
+    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 5) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
         //await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
@@ -153,7 +153,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss,count
+  let sql = `SELECT id,usr,pwd,cookies,regtime,reset_time
              FROM freeok 
              where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
@@ -276,7 +276,7 @@ async function loginWithCookies(row, page, pool) {
         await page.waitForFunction('document.querySelector(".modal-body").innerText.includes("修改成功")', { timeout: 13000 })
           .then(async () => {
             console.log('修改v2ray密码成功');
-            if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
+            if (row.level === 1) await pool.query("UPDATE freeok SET count = 0,reset_time = now()  WHERE id = ?", [row.id]);
             //await page.goto('https://okgg.xyz/user');
           })
           .catch((err) => console.log('修改v2ray密码失败'));

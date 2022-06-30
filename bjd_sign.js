@@ -117,11 +117,11 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始bjd签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies
+  let sql = `SELECT id,usr,pwd,cookies,regtime
              FROM freeok 
              where site = 'bjd' and level = 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
-             limit 20;`
+             limit 10;`
   //sql = "SELECT * FROM freeok where  site = 'bjd' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=605"
