@@ -133,7 +133,7 @@ async function main() {
              limit 10;`
   //sql = "SELECT * FROM freeok where  site = 'bjd' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where site = 'bjd' and level = 1"
+  //sql = "SELECT * FROM freeok where site = 'bjd' and level = 1 order by sign_time asc "
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
@@ -253,7 +253,7 @@ async function resetPwd(row,browser,pool) {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 13000 })
         .then(async () => {
           console.log('修改v2ray密码成功'); 
-          await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
+          await pool.query("UPDATE freeok SET count = 0,reset_time = now()  WHERE id = ?", [row.id])
           await sleep(1000)
           await page.click("#result_ok")
           await sleep(500);

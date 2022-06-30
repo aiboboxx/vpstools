@@ -277,7 +277,7 @@ async function loginWithCookies(row, page, pool) {
         await page.waitForFunction('document.querySelector(".modal-body").innerText.includes("修改成功")', { timeout: 13000 })
           .then(async () => {
             console.log('修改v2ray密码成功');
-            if (row.level === 1) await pool.query("UPDATE freeok SET count = 0,reset_time = now()  WHERE id = ?", [row.id]);
+            await pool.query("UPDATE freeok SET count = 0,reset_time = now()  WHERE id = ?", [row.id]);
             //await page.goto('https://okgg.xyz/user');
           })
           .catch((err) => console.log('修改v2ray密码失败'));

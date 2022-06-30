@@ -97,7 +97,7 @@ async function main() {
              FROM freeok 
              WHERE id = 14
             ;`
-  //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
+  sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level = 0 order by update_time asc ;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要Reset`);
