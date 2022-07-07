@@ -84,7 +84,7 @@ async function main() {
     //await v2raya();
     browser = await puppeteer.launch({
         headless: runId ? true : false,
-        headless: true,
+        //headless: true,
         args: [
             '--window-size=1920,1080',
             '--no-sandbox',
@@ -110,10 +110,10 @@ async function main() {
              FROM freeok 
              WHERE site = "okgg" and balance >1 
              order by id;`
-    //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
+    sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level=8 order by update_time asc;"
     let r = await pool.query(sql);
     let i = 0;
-    console.log(`共有${r[0].length}个账户已购买套餐`);
+    console.log(`共有${r[0].length}个payUser`);
     for (let row of r[0]) {
         i++;
         console.log("user:", i, row.id, row.usr);
