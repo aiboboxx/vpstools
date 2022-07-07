@@ -30,9 +30,17 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset:'utf8' //字符集设置
 });
-
+async function getCount(id) {
+  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE regtime > date_sub(now(), interval 30 day) and sid = '+id)
+  //console.log(JSON.stringify(result))
+/*   if (result[0].length < 1) {
+    return 0;
+  } */
+  return result[0][0].Number
+}
 async function freeokBuy(row, page) {
-    //console.log(count)
+  let count = await getCount(row.id)
+    console.log(count)
     await clearBrowser(page) //clear all cookies
     if (row.cookies == null) {
       if (!runId) await login(row, page, pool)
@@ -65,10 +73,11 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim())
     //console.log( "rss: " + innerHtml);
     row.rss = innerHtml
+    row.count = count
     row.cookies = JSON.stringify(await page.cookies(), null, '\t')
     let sql, arr;
-    sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `count`=0, `reset_time` = NOW() WHERE `id` = ?'
-    arr = [row.cookies,row.rss,row.id]
+    sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ?, `count`=?, `reset_time` = NOW() WHERE `id` = ?'
+    arr = [row.cookies,row.rss,row.count,row.id]
     sql = await pool.format(sql, arr)
     //console.log(sql)
     await pool.query(sql)
@@ -101,7 +110,7 @@ async function main() {
   });
 
   console.log(`*****************开始Reset ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
+  let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
              WHERE level = 3  and (reset_time < date_sub(now(), interval 6 day) or reset_time IS NULL) 
              order by reset_time asc 

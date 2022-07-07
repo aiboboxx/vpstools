@@ -93,7 +93,7 @@ async function main() {
   });
 
   console.log(`*****************开始Reset ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss 
+  let sql = `SELECT id,usr,pwd,cookies 
              FROM freeok 
              WHERE id = 14
             ;`

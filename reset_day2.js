@@ -104,7 +104,7 @@ async function main() {
   });
 
   console.log(`*****************开始dailyReset ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
+  let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
              WHERE level = 2  and (reset_time < date_sub(now(), interval 1 day) or reset_time IS NULL) 
              order by reset_time asc 

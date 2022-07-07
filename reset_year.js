@@ -123,7 +123,7 @@ async function main() {
   })
 
   console.log(`*****************开始monthlyReset ${Date()}*******************\n`)
-  let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
+  let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
              WHERE level = 7  and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
              order by reset_time asc 
@@ -131,7 +131,7 @@ async function main() {
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql)
   let i = 0
-  console.log(`共有${r[0].length}个账户要halfyearlyReset`)
+  console.log(`共有${r[0].length}个账户要yearlyReset`)
   for (let row of r[0]) {
     i++
     console.log("user:", i, row.id, row.usr)

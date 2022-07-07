@@ -31,7 +31,7 @@ const pool = mysql.createPool({
   charset:'utf8' //字符集设置
 })
 async function getCount(id) {
-  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE type = 7 and regtime > date_sub(now(), interval 180 day) and fid = '+id)
+  const result = await pool.query('SELECT count(*) AS Number from paylog WHERE regtime > date_sub(now(), interval 183 day) and fid = '+id)
   //console.log(JSON.stringify(result))
 /*   if (result[0].length < 1) {
     return 0;
@@ -39,7 +39,7 @@ async function getCount(id) {
   return result[0][0].Number
 }
 async function getDelCount(id) {
-  const result = await pool.query('delete from paylog WHERE type = 7 and regtime < date_sub(now(), interval 180 day) and fid = '+id)
+  const result = await pool.query('delete from paylog WHERE type = 7 and regtime < date_sub(now(), interval 183 day) and fid = '+id)
   //console.log(JSON.stringify(result))
   return result[0].affectedRows
 }
@@ -123,7 +123,7 @@ async function main() {
   })
 
   console.log(`*****************开始monthlyReset ${Date()}*******************\n`)
-  let sql = `SELECT id,usr,pwd,cookies,rss,reset_time 
+  let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
              WHERE level = 7  and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
              order by reset_time asc 
