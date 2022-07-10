@@ -75,7 +75,7 @@ async function freeokSign(row, page) {
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
 
-  if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
+/*   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 5) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
         //await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
@@ -85,7 +85,7 @@ async function freeokSign(row, page) {
 
       }
     }
-  }
+  } */
 
   if (reset.pwd) {
     await resetPwd(row, browser, pool);
@@ -203,15 +203,15 @@ async function login(row, page, pool) {
     let cookies = []
     //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
     //await page.setCookie(...cookies);
-    await page.goto('https://b.luxury/signin', { timeout: 10000 }).catch((err) => console.log('首页超时'));
-    await page.waitForSelector('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner')
+    await page.goto('https://b.luxury/signin', { timeout: 8000 }).catch((err) => console.log('首页超时'));
+    await page.waitForSelector('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner',{ timeout: 8000 })
     await sleep(1500)
     await page.type('.demo-ruleForm > .el-form-item:nth-child(1) > .el-form-item__content > .el-input > .el-input__inner',row.usr)   
     await page.type('.demo-ruleForm > .el-form-item:nth-child(2) > .el-form-item__content > .el-input > .el-input__inner', row.pwd)
     await page.click('div > .demo-ruleForm > .el-form-item > .el-form-item__content > .el-button')
-    await waitForString(page,"body > div.el-message-box__wrapper > div","请切换服务器",15000)
+    await waitForString(page,"body > div.el-message-box__wrapper > div","请切换服务器",8000)
     .catch(async (err) => {
-      await waitForString(page,"body","邮箱或者密码错误",15000)
+      await waitForString(page,"body","邮箱或者密码错误",8000)
       .then(async () => {
         await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
         return Promise.reject(new Error('邮箱或者密码错误'));
@@ -221,7 +221,7 @@ async function login(row, page, pool) {
     await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__btns > button > span")
     await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
     await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
-    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 30000 })
+    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 10000 })
       .then(async () => {
         console.log('模拟登录成功');
       })
@@ -232,7 +232,7 @@ async function login(row, page, pool) {
 async function loginWithCookies(row, page, pool) {
     let cookies = JSON.parse(row.cookies);
     await page.setCookie(...cookies);
-    await page.goto('https://b.luxury/user', { timeout: 10000 });
+    await page.goto('https://b.luxury/user', { timeout: 8000 });
     //console.log('开始cookie登录');
     await page.waitForFunction(
       (selecter) => {
@@ -242,12 +242,12 @@ async function loginWithCookies(row, page, pool) {
           return false;
         }
       },
-      { timeout: 10000 },
+      { timeout: 5000 },
       'body'
     )
     await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
     await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
-    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 30000 })
+    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 8000 })
       .then(async () => {
         console.log('登录成功');
       })
