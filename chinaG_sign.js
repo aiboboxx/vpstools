@@ -58,11 +58,13 @@ async function freeokSign(row, page) {
       await login(row, page, pool);
     });
   }
-  await sleep(2000)
+  await sleep(500)
   let selecter, innerHtml;
   //console.log("获取剩余流量")
   //剩余流量
   selecter = ".list-inline-item.col-sm-4.col-md-auto.px-3.my-2.mx-0:nth-child(2) .d-sm-block.h5.text-white.font-weight-bold.pl-2"
+  await page.waitForSelector(selecter,{timeout: 10000})
+  await sleep(1000)
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   console.log("剩余流量: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (innerHtml.slice(-2) !== 'GB') {

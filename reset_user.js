@@ -95,9 +95,9 @@ async function main() {
   console.log(`*****************开始Reset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies 
              FROM freeok 
-             WHERE id = 14
+             WHERE id = 15
             ;`
-  sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level = 0 order by update_time asc ;"
+  //sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level = 0 order by update_time asc ;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要Reset`);

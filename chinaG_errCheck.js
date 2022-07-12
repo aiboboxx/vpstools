@@ -75,7 +75,7 @@ async function freeokSign(row, page) {
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
 
-  if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
+/*   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 5) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
         //await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
@@ -85,7 +85,7 @@ async function freeokSign(row, page) {
 
       }
     }
-  }
+  } */
 
   if (reset.pwd) {
     await resetPwd(row, browser, pool);
