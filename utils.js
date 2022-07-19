@@ -144,8 +144,8 @@ exports.login = async function login(row, page, pool) {
   let cookies = []
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 30000 })
+  await page.goto('https://okgg.xyz/auth/login', { timeout: 10000 }).catch((err) => console.log('首页超时'));
+  await page.waitForSelector("#email", { timeout: 10000 })
   .then(async () => {
     //cookies = await page.cookies();
     //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
@@ -153,7 +153,7 @@ exports.login = async function login(row, page, pool) {
   await page.type('#email', row.usr, { delay: 20 });
   await page.type('#passwd', row.pwd, { delay: 20 });
   await page.click('body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon');
-  await sleep(1000);
+  await sleep(500);
   /*await page.waitForSelector('#embed-captcha > div');
   await page.click('#embed-captcha > div');
   await sleep(2500);
@@ -167,7 +167,7 @@ exports.login = async function login(row, page, pool) {
   await sleep(1000);
   */
   await Promise.all([
-    page.waitForNavigation({ timeout: 10000 }),
+    page.waitForNavigation({ timeout: 6000 }),
     //等待页面跳转完成，一般点击某个按钮需要跳转时，都需要等待 page.waitForNavigation() 执行完毕才表示跳转成功
     page.click('#login'),
   ])
@@ -176,7 +176,7 @@ exports.login = async function login(row, page, pool) {
     })
     .catch(async (err) => {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
-      if (msg == "账号在虚无之地，请尝试重新注册") {
+      if (msg.includes("账号在虚无之地，请尝试重新注册")) {
         //console.log('虚无之地',row.id,(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix()),(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60));
         if ((dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60)>1){
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
@@ -184,12 +184,22 @@ exports.login = async function login(row, page, pool) {
         }
         return Promise.reject(new Error('账号在虚无之地'));
       }
+      msg = await page.evaluate(() => document.querySelector("#result > div > div > div.modal-inner").innerText);
+      if (msg.includes('忘记密码了？请尝试重置密码')) {
+        let array = [2,3,8]
+        if (array.includes(row.level)){
+          await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
+          console.log('账户置0')
+        }
+        return Promise.reject(new Error('请尝试重置密码'));
+      }
+      return Promise.reject(new Error('模拟登录失败'));
     });
 }
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/user', { timeout: 15000 });
+  await page.goto('https://okgg.xyz/user', { timeout: 10000 });
   //console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
@@ -199,14 +209,13 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         return false;
       }
     },
-    { timeout: 20000 },
+    { timeout: 6000 },
     'body'
   )
   //.then(async () => { console.log("无需验证"); await sleep(1000); });
-
   let selecter, innerHtml;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter, { timeout: 30000 })
+  await page.waitForSelector(selecter, { timeout: 6000 })
     .then(
       async () => {
         //console.log('cookie登录成功');

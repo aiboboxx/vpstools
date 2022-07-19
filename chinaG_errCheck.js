@@ -215,7 +215,7 @@ async function login(row, page, pool) {
     await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__btns > button > span")
     await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
     await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
-    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 30000 })
+    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 1000 })
       .then(async () => {
         console.log('模拟登录成功');
       })
@@ -241,7 +241,7 @@ async function loginWithCookies(row, page, pool) {
     )
     await waitForString(page,"#app > div > div:nth-child(3) > div > div > div.el-dialog__body","有问题需要反馈")
     await page.click("#app > div > div:nth-child(3) > div > div > div.el-dialog__footer > span > button > span")
-    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 30000 })
+    await page.waitForSelector('.bg-gradient-yellow > .card-body', { visible: true,timeout: 10000 })
       .then(async () => {
         console.log('登录成功');
       })

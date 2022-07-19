@@ -50,14 +50,7 @@ async function freeokSign(row, page) {
   }
   let cookies = [];
   await clearBrowser(page); //clear all cookies
-  if (row.cookies == null) {
-    await login(row, page, pool);
-  } else {
-    await loginWithCookies(row, page, pool)
-    .catch(async () => {
-      await login(row, page, pool);
-    });
-  }
+  await login(row, page, pool);
   await sleep(500)
   let selecter, innerHtml;
   //console.log("获取剩余流量")
