@@ -180,7 +180,7 @@ async function main() {
     console.log('已有1个level=3空闲账户');
     return;
   }
-  console.log('已有账户：',r[0][0].Number);
+  //console.log('已有账户：',r[0][0].Number);
   sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
   //sql =  "SELECT invite FROM freeok where site = 'okgg' and level < 4 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
@@ -197,7 +197,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip
+      runId ? '' : setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
