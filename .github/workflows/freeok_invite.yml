@@ -3,8 +3,8 @@ name: freeok_invite
 on:
   repository_dispatch:
   workflow_dispatch:
-  #schedule:
-  #  - cron: '45 */12 * * *'
+  schedule:
+    - cron: '35 4,10,16,22 * * *'
     
 env:
   SETUP: ${{ secrets.SETUP }}
@@ -13,7 +13,7 @@ env:
 jobs:
     build:
         runs-on: ubuntu-latest
-        timeout-minutes: 5
+        timeout-minutes: 3
         steps:
             - name: Checkout codes
               uses: actions/checkout@v2 
