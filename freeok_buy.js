@@ -56,12 +56,12 @@ async function freeokBuy(row, page) {
       await resetPwd(row,browser,pool);
       await resetRss(browser);
     }
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
   }
-  await sleep(3000);
+  await sleep(1000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 30000 })
+  await page.waitForSelector(selecter, { timeout: 8000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
       //await page.goto('https://okgg.xyz/user');
@@ -82,7 +82,7 @@ async function freeokBuy(row, page) {
   //date = dayjs.tz(row.level_end_time);
   if ((dayjs.tz(row.level_end_time).unix() < dayjs.tz().unix()) || row['balance'] == 0.99) {
     //await page.waitFor(1500);
-    await page.goto('https://okgg.xyz/user/shop');
+    await page.goto('https://okgg.xyz/user/shop',{ timeout: 8000 });
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
       delay: 500
     })
@@ -105,9 +105,9 @@ async function freeokBuy(row, page) {
     }
     await sleep(1000);
   }
-  await page.goto('https://okgg.xyz/user')
+  await page.goto('https://okgg.xyz/user',{ timeout: 8000 })
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 10000 })
+  await page.waitForSelector(selecter, { timeout: 8000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
       //await page.goto('https://okgg.xyz/user');
@@ -122,7 +122,7 @@ async function freeokBuy(row, page) {
   console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
   row.level_end_time = dayjs.tz(row.level_end_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  await sleep(2000);
+  await sleep(500);
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
   return row;
@@ -165,7 +165,7 @@ async function main() {
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);
-    if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
+    //if (i % 3 == 0) await sleep(3000).then(() => console.log('暂停3秒！'));
     if (row.usr && row.pwd) await freeokBuy(row, page)
       .then(async () => {
         //console.log(JSON.stringify(row));    
@@ -175,8 +175,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
-          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
+          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(300); })
+          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(300); });
       })
       .catch(async (error) => {
         console.log('buyerror: ', error.message)
@@ -186,8 +186,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
-          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); });
+          .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(300); })
+          .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(300); });
       });
   }
   await pool.end();

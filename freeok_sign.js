@@ -61,12 +61,12 @@ async function freeokSign(row, page) {
       await resetRss(browser);
     }
 
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
   }
   //await sleep(3000);
   let selecter, innerHtml;
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
-  await page.waitForSelector(selecter, { timeout: 30000 })
+  await page.waitForSelector(selecter, { timeout: 8000 })
   //上次使用时间
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(1) > div > div > dl > dd:nth-child(25)").innerHTML.trim());
   innerHtml = innerHtml.split(';')[1];
@@ -129,7 +129,7 @@ async function freeokSign(row, page) {
       { timeout: 5000 }
     ).then(async () => {
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-      await sleep(3000);
+      await sleep(1000);
       console.log("reset.rss");
     });
   }
@@ -200,7 +200,7 @@ async function main() {
   for (let row of r[0]) {
     i++;
     console.log("user:", i, row.id, row.usr);
-    if (i % 3 == 0) await sleep(3000)
+    //if (i % 3 == 0) await sleep(3000)
     if (row.usr && row.pwd) await freeokSign(row, page)
       .then(async () => {
         //console.log(JSON.stringify(row));    
@@ -210,8 +210,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async (reslut) => { console.log('changedRows', reslut[0].changedRows); await sleep(3000); })
-          .catch(async (error) => { console.error('UPDATEerror: ', error.message); await sleep(3000); });
+          .then(async (reslut) => { console.log('changedRows', reslut[0].changedRows); await sleep(300); })
+          .catch(async (error) => { console.error('UPDATEerror: ', error.message); await sleep(300); });
       })
       .catch(async (error) => {
         console.error('signerror: ', error.message)
@@ -221,8 +221,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async (reslut) => { console.error('changedRows2', reslut[0].changedRows); await sleep(3000); })
-          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(3000); });
+          .then(async (reslut) => { console.error('changedRows2', reslut[0].changedRows); await sleep(300); })
+          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(300); });
       });
   }
   //sqlite.close();

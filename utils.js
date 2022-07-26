@@ -144,8 +144,8 @@ exports.login = async function login(row, page, pool) {
   let cookies = []
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/auth/login', { timeout: 10000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 10000 })
+  await page.goto('https://okgg.xyz/auth/login', { timeout: 8000 }).catch((err) => console.log('首页超时'));
+  await page.waitForSelector("#email", { timeout: 8000 })
   .then(async () => {
     //cookies = await page.cookies();
     //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
@@ -199,7 +199,7 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/user', { timeout: 10000 });
+  await page.goto('https://okgg.xyz/user', { timeout: 8000 });
   //console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
@@ -239,7 +239,7 @@ exports.selectAsiaGroup = async function selectAsiaGroup(browser) {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://okgg.xyz/user/edit');
+  await page.goto('https://okgg.xyz/user/edit',{ timeout: 8000 });
   await sleep(1000);
   await page.waitForSelector('#group')
   await page.click('#group')
@@ -250,7 +250,7 @@ exports.selectAsiaGroup = async function selectAsiaGroup(browser) {
   await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
   await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
   await page.waitForNavigation()
-  await sleep(2000);
+  await sleep(1000);
   await page.close();
 }
 exports.resetPwd = async function resetPwd(row,browser,pool) {
@@ -259,7 +259,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://okgg.xyz/user/edit');
+  await page.goto('https://okgg.xyz/user/edit',{ timeout: 8000 });
   await sleep(1000);
 /*   if (row.leveel > 1){
     await page.waitForSelector('#group')
@@ -275,16 +275,16 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
   } */ 
   let selecter;
   selecter = '#sspwd';
-  await page.waitForSelector(selecter, { timeout: 10000 })
+  await page.waitForSelector(selecter, { timeout: 8000 })
     .then(async () => {
       //console.log('进入页面：修改资料');
       //await page.goto('https://okgg.xyz/user');
     });
   await page.type(selecter, Math.random().toString(36).slice(-12));
-  await sleep(1500);
+  await sleep(1000);
   await page.click('#ss-pwd-update')
     .then(async () => {
-      await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 13000 })
+      await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 8000 })
         .then(async () => {
           console.log('修改v2ray密码成功');
           if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
@@ -301,18 +301,18 @@ exports.resetRss = async function resetRss(browser){
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://okgg.xyz/user');
+  await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
   await sleep(1000);
   let selecter;
   selecter = "body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a";
-  await page.waitForSelector(selecter, { timeout: 10000 })
+  await page.waitForSelector(selecter, { timeout: 8000 })
     await page.click(selecter)
     await page.waitForFunction(
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
       { timeout: 5000 }
     ).then(async () => {
       console.log('重置订阅链接成功')
-      await sleep(2000)
+      //await sleep(2000)
     })
     await page.close()
 }
