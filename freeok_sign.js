@@ -129,7 +129,7 @@ async function freeokSign(row, page) {
       { timeout: 5000 }
     ).then(async () => {
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-      await sleep(1000);
+      await sleep(2500);
       console.log("reset.rss");
     });
   }

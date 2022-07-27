@@ -37,7 +37,7 @@ const pool = mysql.createPool({
 main()
 async function freeokSign(row, page) {
   let reset = { pwd: false, rss: false, fetcher: false, block: false };
-  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 90 && row.level === 1) {
+  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 360 && row.level === 1) {
     await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
     return Promise.reject(new Error('账户即将失效'));
   }
