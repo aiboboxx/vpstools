@@ -179,8 +179,8 @@ async function main() {
   let sql = "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
   let r = await pool.query(sql);
   //console.log(JSON.stringify(r))
-  if ( r[0][0].Number > 100 ) {
-    console.log('已有100个level=1账户',r[0][0].Number);
+  if ( r[0][0].Number > 90 ) {
+    console.log('已有90个level=1账户',r[0][0].Number);
     return;
   }
   console.log('已有账户：',r[0][0].Number); 
