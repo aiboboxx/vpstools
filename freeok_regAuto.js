@@ -176,11 +176,11 @@ async function regFreeok(page,invite){
 
 }
 async function main() {
-  let sql = "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
+  let sql = "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 120 order by id asc limit 1;"
   let r = await pool.query(sql);
   //console.log(JSON.stringify(r))
-  if ( r[0][0].Number > 90 ) {
-    console.log('已有90个level=1账户',r[0][0].Number);
+  if ( r[0][0].Number >= 75 ) {
+    console.log('已有75个level=1账户',r[0][0].Number);
     return;
   }
   console.log('已有账户：',r[0][0].Number); 

@@ -89,12 +89,12 @@ async function freeokBuy(row, page) {
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
       });
-    await sleep(3500);
+    await sleep(2500);
     await page.click('#coupon_input', { delay: 200 });
-    await sleep(2000);
+    await sleep(1000);
     //await page.waitForSelector("#order_input");
     await page.click('#order_input', { delay: 200 });
-    await sleep(2000);
+    await sleep(1000);
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");

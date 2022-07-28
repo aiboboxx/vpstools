@@ -81,8 +81,8 @@ async function main() {
   let r = await pool.query(sql)
   let invite = ""
   //console.log(JSON.stringify(r))
-  if ( r[0][0].Number >= 15 ) {
-    console.log('已有15个level=1账户',r[0][0].Number);
+  if ( r[0][0].Number >= 10 ) {
+    console.log('已有10个level=1账户',r[0][0].Number);
     return;
   }
   console.log('已有账户：',r[0][0].Number);
