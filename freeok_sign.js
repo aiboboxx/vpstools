@@ -99,7 +99,7 @@ async function freeokSign(row, page) {
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (row.used === "0B") {
-    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 6 : 18) && row.level === 1 && row.count === 3) {
+    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 6 : 18) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       //await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
@@ -190,7 +190,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count
              FROM freeok 
-             where site = 'okgg' and level > 0 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
+             where site = 'okgg' and level > 0 and (sign_time < date_sub(now(), interval 2 hour) or sign_time is null)
              order by sign_time asc 
              limit 15;`
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
