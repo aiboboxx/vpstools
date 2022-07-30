@@ -176,26 +176,18 @@ async function regFreeok(page,invite){
 
 }
 async function main() {
-  let sql = "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 120 order by id asc limit 1;"
+  let sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 1;"
   let r = await pool.query(sql);
-  //console.log(JSON.stringify(r))
   if ( r[0][0].Number >= 75 ) {
-    console.log('已有75个level=1账户',r[0][0].Number);
+    console.log('已有level=1账户',r[0][0].Number);
     return;
   }
-  console.log('已有账户：',r[0][0].Number); 
-/*   let sql,r
-  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
-  sql =  "SELECT invite FROM freeok where site = 'okgg' and level > 3 and balance < 10 and id < 50 order by level desc,id asc  limit 1;"
+  console.log('已有账户：',r[0][0].Number);
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 120 order by id asc limit 1;"
+  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level < 4 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);
-  //console.log(JSON.stringify(r))
-  if (!r[0].length) {
-    console.log("无需invite");
-    return
-  } */
   let invite = r[0][0].invite;
-  //invite = "uwc0"
   console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
