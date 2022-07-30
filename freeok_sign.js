@@ -104,11 +104,12 @@ async function freeokSign(row, page) {
       reset.rss = true;
       //await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
+    }
   }
-  }
-  if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
+  //console.log( innerHtml,row.level);
+  if (innerHtml.slice(-2) == 'GB' && row.level === 1) {
     if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
-      if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
+      if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
         innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
         //console.log( "rss: " + innerHtml);
         row.rss = innerHtml;
@@ -195,7 +196,7 @@ async function main() {
              limit 15;`
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=648"
+  //sql = "SELECT * FROM freeok where id=967"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
