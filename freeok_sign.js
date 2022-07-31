@@ -108,12 +108,15 @@ async function freeokSign(row, page) {
   }
   //console.log( innerHtml,row.level);
   if (innerHtml.slice(-2) == 'GB' && row.level === 1) {
-    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 4) {
+    let used = Number(innerHtml.slice(0, innerHtml.length - 2))
+    if (used > 4) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
-        innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
-        //console.log( "rss: " + innerHtml);
-        row.rss = innerHtml;
-        //await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
+        if (used > 8) {
+          innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
+          console.log( "bind rss: " + innerHtml);
+          row.rss = innerHtml;
+          await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
+        }
         reset.pwd = true;
         reset.rss = true;
         row.rss_refresh_time = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
