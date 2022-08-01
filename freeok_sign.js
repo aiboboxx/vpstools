@@ -108,7 +108,7 @@ async function freeokSign(row, page) {
   }
   //console.log( innerHtml,row.level);
   if (innerHtml.slice(-2) == 'GB' && row.level === 1) {
-    let used = Number(innerHtml.slice(0, innerHtml.length - 2))
+    let used = Math.abs(Number(innerHtml.slice(0, innerHtml.length - 2)))
     if (used > 4) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
         if (used > 8) {
