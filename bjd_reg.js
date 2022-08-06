@@ -88,17 +88,23 @@ async function regFreeok(page,invite){
 
 }
 async function main() {
+  let invite = "vip";
+  let ignore = false
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'bjd' and level = 1;"
   let r = await pool.query(sql);
   //console.log(JSON.stringify(r))
   if ( r[0][0].Number >= 10 ) {
-    console.log('已有10个level=1 bjd账户',r[0][0].Number);
-    return;
+    console.log('已有10以上个level=1 bjd账户',r[0][0].Number);
+    ignore = true;
   }
+  sql = "SELECT count(*) AS Number FROM freeok where site = 'bjd' and level = 1 AND reset_time > DATE_SUB(now(), INTERVAL 5 DAY) ;"
+  r = await pool.query(sql)
+  if ( r[0][0].Number >= 3 ) {
+    console.log('已有两天以上有效期账户',r[0][0].Number);
+    ignore = true;
+  }
+  if (ignore) return
   console.log('已有bjd账户：',r[0][0].Number);
-  let invite = "vip";
-  //invite = "uwc0"
-  console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
     //headless: true,

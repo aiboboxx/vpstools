@@ -77,18 +77,23 @@ async function regFreeok(page,invite){
 
 }
 async function main() {
+  let invite = "https://b.luxury/signin"
+  let ignore = false
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'chinaG' and level = 1;"
   let r = await pool.query(sql)
-  let invite = ""
   //console.log(JSON.stringify(r))
   if ( r[0][0].Number >= 15 ) {
-    console.log('已有15个level=1账户',r[0][0].Number);
-    return;
+    console.log('已有15个以上level=1账户',r[0][0].Number);
+    ignore = true;
   }
+  sql = "SELECT count(*) AS Number FROM freeok where site = 'chinaG' and level = 1 AND reset_time > DATE_SUB(now(), INTERVAL 5 DAY) ;"
+  r = await pool.query(sql)
+  if ( r[0][0].Number >= 3 ) {
+    console.log('已有两天以上有效期账户',r[0][0].Number);
+    ignore = true;
+  }
+  if (ignore) return
   console.log('已有账户：',r[0][0].Number);
-
-  invite = "https://b.luxury/signin"
-  console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
     //headless: true,
