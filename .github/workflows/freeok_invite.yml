@@ -3,8 +3,8 @@ name: freeok_invite
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '35 4,10,16,22 * * *'
+  #schedule:
+  #  - cron: '35 4,10,16,22 * * *'
     
 env:
   SETUP: ${{ secrets.SETUP }}
