@@ -37,16 +37,16 @@ const pool = mysql.createPool({
 main()
 async function freeokSign(row, page) {
   let reset = { pwd: false, rss: false, fetcher: false, block: false };
-  if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 360 && row.level === 1) {
+/*   if ((dayjs.tz().unix() -  dayjs.tz(row.regtime).unix()) / (24 * 60 * 60) > 360 && row.level === 1) {
     await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id])
     return Promise.reject(new Error('账户即将失效'));
-  }
+  } */
   //console.log(row.reset_time?row.reset_time:"2006-07-02 08:09:04")
   if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time?row.reset_time:"2006-07-02 08:09:04").unix()) / (24 * 60 * 60) > 7 ) {
     // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
     reset.pwd = true;
     reset.rss = true;
-    console.log("10天重置")
+    console.log("7天重置")
   }
   let cookies = [];
   await clearBrowser(page); //clear all cookies
@@ -69,18 +69,16 @@ async function freeokSign(row, page) {
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
-
-/*   if (innerHtml.slice(-2) == 'GB' && row.level == 1) {
-    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 5) {
+/*   if (innerHtml.slice(-2) == 'GB') {
+    if (Number(innerHtml.slice(0, innerHtml.length - 2)) > 6) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time).unix()) > 0 ) {
         //await pool.query("UPDATE email SET bind = 1 WHERE rss = ?", [row.rss]);
         reset.pwd = true;
         reset.rss = true;
         row.rss_refresh_time = dayjs.tz().format('YYYY-MM-DD HH:mm:ss');
-
       }
     }
-  } */
+  }  */
 
   if (reset.pwd) {
     await resetPwd(row, browser, pool);
@@ -107,7 +105,7 @@ async function freeokSign(row, page) {
   await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
   await sleep(1000)
   row.rss = innerHtml;
-  if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
+  //if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
   await page.click('.leftbuttonwraps div:last-child #succedaneum', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("body").innerText.includes("获得了")', { timeout: 6000 })
@@ -169,8 +167,8 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`used`=?,`err`=null WHERE `id`=?';
-        arr = [row.cookies, row.rss, row.used, row.id];
+        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`rss_refresh_time`=?,`used`=?,`err`=null WHERE `id`=?';
+        arr = [row.cookies,row.rss,row.rss_refresh_time,row.used, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
