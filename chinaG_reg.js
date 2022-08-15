@@ -88,7 +88,7 @@ async function main() {
   }
   sql = "SELECT count(*) AS Number FROM freeok where site = 'chinaG' and level = 1 and err IS NULL AND reset_time > DATE_SUB(now(), INTERVAL 5 DAY) ;"
   r = await pool.query(sql)
-  if ( r[0][0].Number >= 5 ) {
+  if ( r[0][0].Number >= 8 ) {
     console.log('已有两天以上有效期账户',r[0][0].Number);
     ignoreB = true;
   }
