@@ -99,7 +99,7 @@ async function freeokSign(row, page) {
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (row.used === "0B") {
-    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 6 : 18) && row.level === 1 && row.count !== 0) {
+    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 6 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       //await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
@@ -111,7 +111,7 @@ async function freeokSign(row, page) {
     let used = Math.abs(Number(innerHtml.slice(0, innerHtml.length - 2)))
     if (used > 4) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
-        if (used > 6) {
+        if (used > 5) {
           innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
           console.log( "bind rss: " + innerHtml);
           row.rss = innerHtml;
