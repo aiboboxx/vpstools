@@ -87,11 +87,11 @@ async function freeokSign(row, page) {
   ];
   //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
   //console.log(dayjs.tz().toString(),dayjs.tz().unix())
-  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 7 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 5 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("7天重置")
+      console.log("5天重置")
     }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
