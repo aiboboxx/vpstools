@@ -97,7 +97,7 @@ async function main() {
     console.log('已有10以上个level=1 bjd账户',r[0][0].Number);
     ignoreA = true;
   }
-  sql = "SELECT count(*) AS Number FROM freeok where site = 'bjd' and level = 1 and err IS NULL AND reset_time > DATE_SUB(now(), INTERVAL 5 DAY) ;"
+  sql = "SELECT count(*) AS Number FROM freeok where site = 'bjd' and level = 1 and err IS NULL AND reset_time > DATE_SUB(now(), INTERVAL 2 DAY) ;"
   r = await pool.query(sql)
   if ( r[0][0].Number >= 8 ) {
     console.log('已有两天以上有效期账户',r[0][0].Number);

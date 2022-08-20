@@ -42,7 +42,7 @@ async function freeokSign(row, page) {
     return Promise.reject(new Error('账户即将失效'));
   } */
   //console.log(row.reset_time?row.reset_time:"2006-07-02 08:09:04")
-  if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time?row.reset_time:"2006-07-02 08:09:04").unix()) / (24 * 60 * 60) > 5 ) {
+  if ((dayjs.tz().unix() -  dayjs.tz(row.reset_time?row.reset_time:"2006-07-02 08:09:04").unix()) / (24 * 60 * 60) > 3 ) {
     // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
     reset.pwd = true;
     reset.rss = true;
