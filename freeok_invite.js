@@ -9,7 +9,12 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok, login, loginWithCookies, resetPwd, resetRss, selectAsiaGroup } = require('./utils.js');
-//Date.prototype.format =Format;
+const dayjs = require('dayjs')
+let utc = require('dayjs/plugin/utc') // dependent on utc plugin
+let timezone = require('dayjs/plugin/timezone')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault("Asia/Hong_Kong")
 const mysql = require('mysql2/promise');
 const runId = github.context.runId;
 let browser;
@@ -100,8 +105,12 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
-  let array = [2,3,8]
+  let array = [2,3,4,8]
   if (array.includes(row.level)) await selectAsiaGroup(browser)
+  array = [5,6,7]
+/*   if (array.includes(row.level)) {
+    if (dayjs.tz().date() % 5 === 1) await selectAsiaGroup(browser)
+  } */
   //if (row.level > 1) await selectAsiaGroup(browser)
   let cookies = [];
   cookies = await page.cookies();
