@@ -39,9 +39,9 @@ async function regFreeok(page){
   //console.log("写入cookies");
   //usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + "@appls.eu.org";
-  usr = 'eroslp.99@gmail.com';
+  //usr = 'eroslp.99@gmail.com';
   console.log(usr);
-  await page.goto('https://okgg.xyz/auth/register?code=FTPs', { timeout: 15000 })
+  await page.goto('https://okgg.xyz/auth/register?code=sNws', { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
