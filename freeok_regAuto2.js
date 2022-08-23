@@ -177,7 +177,7 @@ async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 2 and count < 3;"
   //sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 1;"
   let r = await pool.query(sql);
-  if ( r[0][0].Number >= 3 ) {
+  if ( r[0][0].Number >= 5 ) {
     console.log('已有2个level=2空闲账户',r[0][0].Number);
     return;
   }
