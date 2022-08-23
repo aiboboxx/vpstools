@@ -181,10 +181,12 @@ async function main() {
     return;
   }
   //console.log('已有账户：',r[0][0].Number);
-  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
-  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level < 4 and balance < 1  order by level desc,id asc  limit 1;"
-  //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
-  //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
+  sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300
+      AND ((level = 1 AND balance < 130) 
+          OR (level > 1 AND balance < 10))
+      ORDER BY RAND() 
+      LIMIT 1;
+      `
   r = await pool.query(sql);
   let invite = r[0][0].invite;
   //invite = "uwc0"
@@ -197,7 +199,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.normal
+      runId ? '' : setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
