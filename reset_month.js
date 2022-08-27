@@ -101,7 +101,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -145,7 +145,8 @@ async function main() {
       })
   }
   await pool.end()
-  if (runId ? true : false) await browser.close()
+  //if (runId ? true : false) await browser.close()
+  await browser.close();
 }
 main()
 

@@ -169,6 +169,7 @@ async function main() {
   }
   //sqlite.close();
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();

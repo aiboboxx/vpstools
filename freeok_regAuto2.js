@@ -177,7 +177,7 @@ async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and err is null and level = 2 and count < 3;"
   //sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 1;"
   let r = await pool.query(sql);
-  if ( r[0][0].Number >= 5 ) {
+  if ( r[0][0].Number >= 3 ) {
     console.log('已有2个level=2空闲账户',r[0][0].Number);
     return;
   }
@@ -194,7 +194,7 @@ async function main() {
   console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -243,7 +243,8 @@ await page.evaluateOnNewDocument(() => {
   .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();
 

@@ -106,7 +106,7 @@ async function main() {
   if (ignoreA && ignoreB ) return
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -133,7 +133,8 @@ async function main() {
   .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************bjd注册结束 ${Date()}*******************\n`);
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();
 

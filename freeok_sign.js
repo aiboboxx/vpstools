@@ -172,14 +172,14 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      //runId ? '' : setup.proxy.changeip,
-      runId ? '' :setup.proxy.normal
+      runId ? '' : setup.proxy.changeip,
+      //runId ? '' :setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -234,6 +234,7 @@ async function main() {
   }
   //sqlite.close();
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();

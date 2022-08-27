@@ -193,7 +193,7 @@ async function main() {
   console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -242,7 +242,8 @@ await page.evaluateOnNewDocument(() => {
   .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();
 

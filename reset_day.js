@@ -98,7 +98,6 @@ async function freeokBuy(row, page) {
   }
 }
 async function main() {
-  //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
     headless: true,
@@ -147,6 +146,7 @@ async function main() {
   } 
   await pool.end()
   if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main()
 

@@ -3,8 +3,8 @@ name:  regAuto
 on:
   repository_dispatch:
   workflow_dispatch:
-  schedule:
-    - cron: '20 1,5,9,13,17,21 * * *'
+  #schedule:
+  #  - cron: '20 1,5,9,13,17,21 * * *'
        
 env:
   SETUP: ${{ secrets.SETUP }}
