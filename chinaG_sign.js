@@ -91,7 +91,7 @@ async function freeokSign(row, page) {
       await sleep(1000);
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
       await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
-      await sleep(1000);
+      await sleep(8000);
       console.log("reset.rss");
     });
   }
@@ -100,13 +100,13 @@ async function freeokSign(row, page) {
   await page.waitForSelector('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
   await page.click('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
   await page.waitForSelector("body > div.el-message-box__wrapper > div",{visible: true, timeout: 10000})
-  innerHtml = await page.evaluate(() => document.querySelector('body > div.el-message-box__wrapper > div > div.el-message-box__content > div.el-message-box__container > div > div > p:nth-child(2) > a:nth-child(11) > span').innerText.trim());
+  innerHtml = await page.evaluate(() => document.querySelector('body > div.el-message-box__wrapper > div > div.el-message-box__content > div.el-message-box__container > div > div > p:nth-child(2) > a:nth-child(7) > span').innerText.trim());
   console.log( "rss: " + innerHtml);
   await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
   await sleep(1000)
   row.rss = innerHtml;
   //if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  await page.click('.leftbuttonwraps div:last-child #succedaneum', { delay: 200 })
+/*   await page.click('.leftbuttonwraps div:last-child #succedaneum', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("body").innerText.includes("获得了")', { timeout: 6000 })
         .then(async () => {
@@ -115,7 +115,7 @@ async function freeokSign(row, page) {
         })
         .catch((err) => console.log('签到超时'));
     })
-    .catch((err) => console.log('今日已签到'));
+    .catch((err) => console.log('今日已签到')); */
   await sleep(1000);
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
@@ -149,12 +149,12 @@ async function main() {
   console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,regtime,reset_time
              FROM freeok 
-             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 12 hour) or sign_time is null)
+             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 12 hour) or sign_time is null or err = 1)
              order by sign_time asc 
              limit 15;`
   //
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where err=1 and site = 'chinaG' "
+  //sql = "SELECT * FROM freeok where usr = 'yOUXkM792@163.com' and site = 'chinaG' "
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);

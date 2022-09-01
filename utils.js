@@ -186,7 +186,7 @@ exports.login = async function login(row, page, pool) {
       }
       msg = await page.evaluate(() => document.querySelector("#result > div > div > div.modal-inner").innerText);
       if (msg.includes('忘记密码了？请尝试重置密码')) {
-        let array = [2,3,8]
+        let array = [1,2,3,8]
         if (array.includes(row.level)){
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')

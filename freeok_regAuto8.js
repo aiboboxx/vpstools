@@ -181,12 +181,17 @@ async function main() {
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-  sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300 and err is null
+/*   sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300 and err is null
       AND ((level = 1 AND balance < 130) 
           OR (level > 1 AND balance < 10))
       ORDER BY RAND() 
       LIMIT 1;
-      `
+      ` */
+  sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300
+      AND level = 1 AND balance < 130
+      ORDER BY RAND() 
+      LIMIT 1;
+    `
   //sql =  "SELECT invite FROM freeok where site = 'okgg' and level < 4 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where usr = 'ZQEyqq118@163.com' limit 1;"
   r = await pool.query(sql);

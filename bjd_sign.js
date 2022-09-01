@@ -87,7 +87,7 @@ async function freeokSign(row, page) {
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (reset.pwd) {
     await resetPwd(row, browser, pool);
-    await sleep(500)
+    await sleep(1000)
     //console.log("reset.pwd");
   }
   //rss 必须放最后，因为前面有rss重置
