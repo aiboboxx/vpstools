@@ -1,7 +1,6 @@
 //3天运行一次,30天重置
 const fs = require("fs")
-const core = require('@actions/core')
-const github = require('@actions/github')
+
 const puppeteer = require('puppeteer-extra')
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
@@ -9,15 +8,10 @@ puppeteer.use(StealthPlugin())
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js')
 const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js')
 //Date.prototype.format =Format;
-const mysql = require('mysql2/promise')
-const runId = github.context.runId
-let browser
-let setup = {}
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
-} else {
-  setup = JSON.parse(process.env.SETUP)
-}
+const mysql = require('mysql2/promise');
+let runId = process.env.runId;
+let browser;
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -46,10 +40,6 @@ async function getDelCount(id) {
 async function freeokBuy(row, page) {
   let delCount = await getDelCount(row.id)
   console.log("删除：",delCount)
-  if (delCount == 0) {
-    console.log("无过期记录")
-    return
-  }else{
     let count = await getCount(row.id)
     //console.log(count)
     await clearBrowser(page) //clear all cookies
@@ -95,7 +85,7 @@ async function freeokBuy(row, page) {
     await pool.query(sql)
     .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
     .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); })
-  }
+  
 }
 async function main() {
   //await v2raya();
@@ -107,8 +97,9 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.normal
-      //setup.proxy.normal
+      runId ? '' : setup.proxy.changeip,
+      //runId ? '' :setup.proxy.normal
+      //setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -125,9 +116,9 @@ async function main() {
   console.log(`*****************开始monthlyReset ${Date()}*******************\n`)
   let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
-             WHERE level = 7  and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
+             WHERE level = 7 and site = "okgg" and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
              order by reset_time asc 
-             limit 20;`
+             limit 30;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
   let r = await pool.query(sql)
   let i = 0

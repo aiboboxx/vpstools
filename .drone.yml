@@ -1,0 +1,215 @@
+---
+kind: pipeline
+type: docker
+name: buy
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node freeok_buy.js
+trigger:
+  event:
+  - cron
+  cron:
+  - buy
+---
+kind: pipeline
+type: docker
+name: sign
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node freeok_sign.js
+trigger:
+  event:
+  - cron
+  cron:
+  - sign
+---
+kind: pipeline
+type: docker
+name: sign2
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node freeok_sign2.js
+trigger:
+  event:
+  - cron
+  cron:
+  - sign2
+---
+kind: pipeline
+type: docker
+name: invite
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node freeok_invite.js
+trigger:
+  event:
+  - cron
+  cron:
+  - invite
+---
+kind: pipeline
+type: docker
+name: reset_day
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node reset_day.js
+      - node v2raya_day.js
+trigger:
+  event:
+  - cron
+  cron:
+  - reset_day
+---
+kind: pipeline
+type: docker
+name: reset_month
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node reset_month.js
+      - node v2raya_month.js
+trigger:
+  event:
+  - cron
+  cron:
+  - reset_month
+---
+kind: pipeline
+type: docker
+name: reset_year
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node reset_year.js
+      - node reset_halfyear.js
+      - node v2raya_year.js
+      - node sq_reset.js
+
+trigger:
+  event:
+  - cron
+  cron:
+  - reset_year
+---
+kind: pipeline
+type: docker
+name: chinag
+volumes: # 声明数据卷（此为服务器中的实际目录）
+  - name: node_modules # 数据卷名称
+    host: # Host Volume
+      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+steps: # 定义管道的执行步骤
+  - name: deploy # 步骤名称
+    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    depends_on: [clone] # 依赖的步骤
+    volumes: # 挂载数据卷（此为容器内的目录）
+      - name: node_modules # 数据卷名称
+        path: /drone/src/node_modules # 容器内目录 绝对路径
+    commands: # 当前步骤执行的命令
+      - export runId=123456
+      - pwd # 查看当前目录
+      - npm install # 安装node_modules包
+      #- ls
+      - node ssrsub_sign.js
+      #- node ssrsub_reg6.js     
+trigger:
+  event:
+  - cron
+  cron:
+  - chinag

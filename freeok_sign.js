@@ -1,8 +1,5 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
-// add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
@@ -13,16 +10,10 @@ let timezone = require('dayjs/plugin/timezone')
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
-//Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -87,31 +78,31 @@ async function freeokSign(row, page) {
   ];
   //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
   //console.log(dayjs.tz().toString(),dayjs.tz().unix())
-  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 10 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 3 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("5天重置")
+      console.log("3天重置")
     }
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
-  if (row.used === "0B") {
-    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 4 : 23) && row.level === 1 && row.count !== 0) {
-      reset.pwd = true;
-      reset.rss = true;
+/*   if (row.used === "0B") {
+    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 6 : 18) && row.level === 1 && row.count !== 0) {
+      //reset.pwd = true;
+      //reset.rss = true;
       //await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
     }
-  }
+  } */
   //console.log( innerHtml,row.level);
   if (innerHtml.slice(-2) == 'GB' && row.level === 1) {
     let used = Math.abs(Number(innerHtml.slice(0, innerHtml.length - 2)))
-    if (used > 3) {
+    if (used > 4) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
-        if (used > 4) {
+        if (used > 6) {
           innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
           console.log( "bind rss: " + innerHtml);
           row.rss = innerHtml;
@@ -172,7 +163,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -180,6 +171,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       runId ? '' : setup.proxy.changeip,
       //runId ? '' :setup.proxy.normal
+      //setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -196,10 +188,10 @@ async function main() {
              FROM freeok 
              where site = 'okgg' and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
-             limit 15;`
+             limit 25;`
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=967"
+  //sql = "SELECT * FROM freeok where id=817"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
@@ -223,7 +215,7 @@ async function main() {
       .catch(async (error) => {
         console.error('signerror: ', error.message)
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `sign_time`=NOW(),`err`=1 WHERE `id`=?';
+        sql = 'UPDATE `freeok` SET `sign_time`=NOW() WHERE `id`=?';
         arr = [row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
@@ -234,7 +226,7 @@ async function main() {
   }
   //sqlite.close();
   await pool.end();
-  //if (runId ? true : false) await browser.close();
-  await browser.close();
+  if (runId ? true : false) await browser.close();
+  //await browser.close();
 }
 main();

@@ -1,8 +1,6 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
+
 const puppeteer = require('puppeteer-extra');
-// add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, waitForString } = require('./common.js');
@@ -13,14 +11,9 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -113,7 +106,8 @@ async function main() {
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      runId ? '' :setup.proxy.normal
+      //runId ? '' : setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

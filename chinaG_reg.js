@@ -1,21 +1,13 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
-const mysql = require('mysql2/promise');
+
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const runId = github.context.runId;
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, waitForString } = require('./common.js');
-const { sbFreeok } = require('./utils.js');
-//Date.prototype.format = tFormat;
+const mysql = require('mysql2/promise');
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -82,33 +74,34 @@ async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'chinaG' and level = 1;"
   let r = await pool.query(sql)
   //console.log(JSON.stringify(r))
-  if ( r[0][0].Number >= 15 ) {
+  if ( r[0][0].Number >= 50 ) {
     console.log('已有15个以上level=1账户',r[0][0].Number);
     ignoreA = true;
   }
-  sql = "SELECT count(*) AS Number FROM freeok where site = 'chinaG' and level = 1 and err IS NULL AND reset_time > DATE_SUB(now(), INTERVAL 2 DAY) ;"
+/*   sql = "SELECT count(*) AS Number FROM freeok where site = 'chinaG' and level = 1 and err IS NULL AND reset_time > DATE_SUB(now(), INTERVAL 2 DAY) ;"
   r = await pool.query(sql)
-  if ( r[0][0].Number >= 8 ) {
+  if ( r[0][0].Number >= 5 ) {
     console.log('已有两天以上有效期账户',r[0][0].Number);
     ignoreB = true;
-  }
-  if (ignoreA && ignoreB ) return
+  } */
+  //if (ignoreA && ignoreB ) return
+  if (ignoreA) return
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      runId ? '' : setup.proxy.normal
+      //runId ? '' : setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
     dumpio: false
   });
-  //console.log(await sqlite.open('./freeok.db'))
   const page = await browser.newPage();
   //await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
   await page.authenticate({username:setup.proxy.usr, password:setup.proxy.pwd});

@@ -91,6 +91,7 @@ exports.sbFreeok = async function sbFreeok(page) {
   const box = await button.boundingBox();
   const axleX = Math.floor(box.x + box.width / 2);
   const axleY = Math.floor(box.y + box.height / 2);
+  let count = 0;
   await btnSlider(distance);
   async function btnSlider(distance) {
     await page.mouse.move(axleX, axleY);
@@ -119,8 +120,8 @@ exports.sbFreeok = async function sbFreeok(page) {
     // });
     console.log(text);
     let step = 0;
-    if (text) {
-      // 如果失败重新获取滑块
+    //if (count > 5) return Promise.reject(new Error("识别验证码超次"))
+    if (count > 5) return
       if (
         text.includes("怪物吃了拼图") ||
         text.includes("拖动滑块将悬浮图像正确拼合") ||
@@ -131,12 +132,13 @@ exports.sbFreeok = async function sbFreeok(page) {
         //await page.waitForResponse(response =>  response.url().match(encodeURIComponent('https://api.geetest.com/ajax.php')) && response.ok());
         await sleep(2500);
         step = await _getDistance();
+        count ++
         await btnSlider(step);
       } else if (text.includes("请完成验证")) {
         step = await _getDistance();
+        count ++
         await btnSlider(step);
       }
-    }
   }
 }
 
@@ -145,7 +147,7 @@ exports.login = async function login(row, page, pool) {
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
   await page.goto('https://okgg.xyz/auth/login', { timeout: 8000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 8000 })
+  await page.waitForSelector("#email", { timeout: 5000 })
   .then(async () => {
     //cookies = await page.cookies();
     //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
@@ -178,9 +180,16 @@ exports.login = async function login(row, page, pool) {
       let msg = await page.evaluate(() => document.querySelector('#msg').innerHTML);
       if (msg.includes("账号在虚无之地，请尝试重新注册")) {
         //console.log('虚无之地',row.id,(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix()),(dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60));
-        if ((dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60)>1){
+/*         if ((dayjs.tz().unix()-dayjs.tz(row.level_end_time).unix())/(24 * 60 * 60)>1){
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
+        } */
+        let array = [1,2,3,8]
+        if (array.includes(row.level)){
+          await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
+          console.log('账户置0')
+        }else{
+          await pool.query("UPDATE freeok SET err = 1  WHERE id = ?", [row.id]);
         }
         return Promise.reject(new Error('账号在虚无之地'));
       }
@@ -190,6 +199,8 @@ exports.login = async function login(row, page, pool) {
         if (array.includes(row.level)){
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
+        }else{
+          await pool.query("UPDATE freeok SET err = 1  WHERE id = ?", [row.id]);
         }
         return Promise.reject(new Error('请尝试重置密码'));
       }
@@ -199,12 +210,12 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/user', { timeout: 8000 });
+  await page.goto('https://okgg.xyz/user', { timeout: 10000 });
   //console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
       if (document.querySelector(selecter)) {
-        return document.querySelector(selecter).innerText.includes("用户中心");
+        return document.querySelector(selecter).innerText.includes("用户面板");
       } else {
         return false;
       }
@@ -286,11 +297,12 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("修改成功")', { timeout: 8000 })
         .then(async () => {
-          console.log('修改v2ray密码成功');
-          if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id]);
+          console.log('修改v2ray密码成功',row.id);
+          if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
+          //.catch((err) => console.log('重置count失败'));
           //await page.goto('https://okgg.xyz/user');
         })
-        .catch((err) => console.log('修改v2ray密码失败'));
+
     });
   await sleep(2000);
   await page.close();

@@ -1,6 +1,4 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -15,14 +13,9 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 //Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -61,7 +54,7 @@ async function freeokSign(row, page) {
       await resetRss(browser);
     }
 
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
   }
   //await sleep(3000);
   let selecter, innerHtml;
@@ -117,7 +110,8 @@ async function main() {
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      runId ? '' :setup.proxy.normal
+      //runId ? '' :setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -168,6 +162,7 @@ async function main() {
   }
   //sqlite.close();
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();

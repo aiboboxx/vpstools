@@ -105,6 +105,5 @@ dist
 
 #customize
 .vscode/
-setup.json
 .history/
 zpush.sh

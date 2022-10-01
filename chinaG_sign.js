@@ -1,8 +1,6 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
+
 const puppeteer = require('puppeteer-extra');
-// add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, waitForString } = require('./common.js');
@@ -14,14 +12,9 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 //Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -99,13 +92,15 @@ async function freeokSign(row, page) {
   //rss 必须放最后，因为前面有rss重置
   await page.waitForSelector('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
   await page.click('.container > .row > .col-lg-3 > .bg-gradient-yellow > .card-body')
+  //console.log( "订阅");
   await page.waitForSelector("body > div.el-message-box__wrapper > div",{visible: true, timeout: 10000})
-  innerHtml = await page.evaluate(() => document.querySelector('body > div.el-message-box__wrapper > div > div.el-message-box__content > div.el-message-box__container > div > div > p:nth-child(2) > a:nth-child(7) > span').innerText.trim());
+  selecter = "body > div.el-message-box__wrapper > div > div.el-message-box__content > div.el-message-box__container > div > div > p:nth-child(2) > a:nth-child(7) > span"
+  innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText.trim(),selecter);
   console.log( "rss: " + innerHtml);
-  await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
-  await sleep(1000)
+  //await page.click("body > div.el-message-box__wrapper > div > div.el-message-box__header > button")
+  //await sleep(1000)
   row.rss = innerHtml;
-  //if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
+
 /*   await page.click('.leftbuttonwraps div:last-child #succedaneum', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("body").innerText.includes("获得了")', { timeout: 6000 })
@@ -127,14 +122,15 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      runId ? '' :setup.proxy.normal
+      //runId ? '' : setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -149,12 +145,12 @@ async function main() {
   console.log(`*****************开始chinaG签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,regtime,reset_time
              FROM freeok 
-             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 12 hour) or sign_time is null or err = 1)
+             where site = 'chinaG' and level = 1 and (sign_time < date_sub(now(), interval 12 hour) or sign_time is null)
              order by sign_time asc 
              limit 15;`
   //
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where usr = 'yOUXkM792@163.com' and site = 'chinaG' "
+  //sql = "SELECT * FROM freeok where site = 'chinaG' and err = 1 "
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
@@ -167,8 +163,8 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`rss_refresh_time`=?,`used`=?,`err`=null WHERE `id`=?';
-        arr = [row.cookies,row.rss,row.rss_refresh_time,row.used, row.id];
+        sql = 'UPDATE `freeok` SET `cookies`=?,`rss`=?,`sign_time`=NOW(),`used`=?,`err` = NULL WHERE `id`=?';
+        arr = [row.cookies,  row.rss, row.used, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
@@ -178,7 +174,7 @@ async function main() {
       .catch(async (error) => {
         console.error('signerror: ', error.message)
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `sign_time`=NOW(),`err`=1 WHERE `id`=?';
+        sql = 'UPDATE `freeok` SET `sign_time`=NOW() WHERE `id`=?';
         arr = [row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);

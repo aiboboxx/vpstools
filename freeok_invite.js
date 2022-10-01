@@ -2,8 +2,6 @@
   主要功能：更新level=0、score、invite，购买邀请次数
 */
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
@@ -16,14 +14,9 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -75,8 +68,9 @@ async function freeokBuy(row, page) {
   innerHtml = innerHtml.split('=')[1].trim();
   row.score = Number(innerHtml);
   console.log("score: " + innerHtml);
+  let array = [2,3,8]
   if (row.score > 3.3) {
-    if (row.balance < 1 && row.level === 1 && row.id > 200) {
+    if (row.balance < 1 && array.includes(row.level) && row.id > 200) {
       //await resetPwd(row,browser,pool);
       //await resetRss(browser);
       //await pool.query("UPDATE freeok SET reset_time = NOW()  WHERE id = ?", [row.id]);
@@ -105,11 +99,11 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
-  let array = [2,3,8]
+  array = [2,3,8,4]
   if (array.includes(row.level)) await selectAsiaGroup(browser)
-  array = [4,5,6,7]
+  array = [5,6,7]
   if (array.includes(row.level)) {
-    if (dayjs.tz().date() % 5 === 0) await selectAsiaGroup(browser)
+    if (dayjs.tz().date() % 3 === 0) await selectAsiaGroup(browser)
   }
   //if (row.level > 1) await selectAsiaGroup(browser)
   let cookies = [];
@@ -120,10 +114,10 @@ async function freeokBuy(row, page) {
 }
 
 async function main() {
-  //await v2raya();
+  console.log("runId:",runId);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -131,7 +125,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.normal,
       runId ? '' : setup.proxy.changeip
-      //setup.proxy.normal
+      //setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -151,7 +145,7 @@ async function main() {
              FROM freeok  
              where  site = "okgg" and level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
-             limit 15;` //必须要有level，不然level置0
+             limit 25;` //必须要有level，不然level置0
   //sql = "SELECT id,usr,pwd,cookies,level,balance,level_end_time from freeok where level = 6";
   let r = await pool.query(sql);
   let i = 0;

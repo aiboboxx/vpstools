@@ -1,21 +1,15 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
+
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -60,7 +54,7 @@ async function freeokSign(row, page) {
   innerHtml = innerHtml.split(';')[1];
   console.log("上次使用时间: " + innerHtml);
   if (innerHtml == '从未使用')
-    row.last_used_time = null;
+    row.last_used_time = "2020-06-13 09:29:18";
   else
     row.last_used_time = innerHtml;
 
@@ -107,14 +101,15 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      runId ? '' :setup.proxy.normal
+      //runId ? '' :setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -131,7 +126,7 @@ async function main() {
              FROM freeok 
              where site = 'okgg' and level > 1 and (sign_time < date_sub(now(), interval 6 hour) or sign_time is null)
              order by sign_time asc 
-             limit 15;`
+             limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=605"
@@ -158,7 +153,7 @@ async function main() {
       .catch(async (error) => {
         console.error('signerror: ', error.message)
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `sign_time`=NOW(),`err`=1 WHERE `id`=?';
+        sql = 'UPDATE `freeok` SET `sign_time`=NOW()  WHERE `id`=?';
         arr = [row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);

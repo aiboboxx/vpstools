@@ -7,21 +7,18 @@
     "test": "node test.js",
     "sqlite3": "node sqlite-test.js"
   },
-  "author": "爱波波的XX <aiboboxx@gmail.com> (https://www.aiboboxx.ml)",
+  "author": "<aiboboxx@gmail.com> (https://www.aiboboxx.ml)",
   "license": "ISC",
   "description": "freeok自动签到续费",
   "homepage": "https://www.aiboboxx.ml",
   "repository": "github:aiboboxx/dailyjob",
   "bugs": "https://github.com/aiboboxx/dailyjob/issues",
   "dependencies": {
-    "@actions/core": "^1.2.6",
-    "@actions/github": "^4.0.0",
+    "axios": "^0.27.2",
     "dayjs": "^1.11.2",
     "mysql2": "^2.2.5",
-    "node": "16.10.0",
     "puppeteer": "^13.1.3",
     "puppeteer-extra": "^3.2.3",
-    "puppeteer-extra-plugin-stealth": "^2.9.0",
-    "sqlite3": "^4.2.0"
+    "puppeteer-extra-plugin-stealth": "^2.9.0"
   }
 }

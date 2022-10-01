@@ -1,21 +1,18 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
-const mysql = require('mysql2/promise');
+
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const runId = github.context.runId;
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
+const mysql = require('mysql2/promise');
+
+
 //Date.prototype.format = tFormat;
+let runId = process.env.runId;
+
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -182,17 +179,13 @@ async function main() {
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-/*   sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300
-      AND ((level = 1 AND balance < 130) 
-          OR (level > 1 AND balance < 10))
-      ORDER BY RAND() 
-      LIMIT 1;
-      ` */
-  sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300
-    AND level = 1 AND balance < 130
-    ORDER BY RAND() 
-    LIMIT 1;
-  `
+  // sql =  `SELECT invite FROM freeok WHERE site = 'okgg' AND id < 300
+  //     AND ((level = 1 AND balance < 130) 
+  //         OR (level > 1 AND balance < 10))
+  //     ORDER BY RAND() 
+  //     LIMIT 1;
+  //     `
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
   r = await pool.query(sql);
   let invite = r[0][0].invite;
   //invite = "uwc0"
@@ -205,7 +198,9 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip
+      //runId ? '' : setup.proxy.changeip,
+      //runId ? '' :setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,

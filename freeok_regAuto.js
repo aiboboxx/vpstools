@@ -1,23 +1,18 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
-const mysql = require('mysql2/promise');
+
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
+const mysql = require('mysql2/promise');
+
 
 //Date.prototype.format = tFormat;
-const runId = github.context.runId;
+let runId = process.env.runId;
 
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -178,13 +173,13 @@ async function regFreeok(page,invite){
 async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 1;"
   let r = await pool.query(sql);
-  if ( r[0][0].Number >= 90 ) {
+  if ( r[0][0].Number >= 80 ) {
     console.log('已有level=1账户',r[0][0].Number);
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 120 order by id asc limit 1;"
-  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level < 4 and balance < 1  order by level desc,id asc  limit 1;"
+  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 120 order by id asc limit 1;"
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);
   let invite = r[0][0].invite;
@@ -197,8 +192,9 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      //runId ? '' : setup.proxy.changeip,
-      runId ? '' : setup.proxy.normal
+      runId ? '' : setup.proxy.changeip,
+      //runId ? '' :setup.proxy.normal
+      //setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,

@@ -76,8 +76,8 @@ exports.waitForString = async function waitForString(page, selecter, string, tim
   await page.waitForFunction(
     (selecter, string) => {
       if (document.querySelector(selecter)) {
-        //console.log("body",document.querySelector('body').innerText);
-        return document.querySelector(selecter).innerText.includes(string);
+        //console.log("body",document.querySelector('body').innerHTML);
+        return document.querySelector(selecter).innerHTML.includes(string);
       } else {
         return false;
       }
@@ -106,3 +106,17 @@ exports.spawnLog = function spawnLog(spawn) {
     console.log(`Child exited with code ${code}`);
   });
 }
+exports.md5 = function md5(str) {
+  const crypto = require('crypto')
+  return crypto.createHash('md5').update(str).digest('hex')
+}
+function cutString(origin, preStr, aftStr, includeBorders = false) {
+  let pos = origin.indexOf(preStr)
+  let pos2 = origin.indexOf(aftStr, pos+preStr.length)
+  //console.log(pos,pos2,origin.length)
+  if (pos == -1 || pos2 == -1) return ''
+  if (includeBorders) return origin.slice(pos, pos2 + aftStr.length)
+  return origin.slice(pos + preStr.length, pos2)
+  //return origin.substring(pos,pos2+aftStr.length)
+}
+exports.cutString = cutString   //要分开，因为filterContent内要用到cutString

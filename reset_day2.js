@@ -1,7 +1,5 @@
 //4小时运行一次
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -10,14 +8,9 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } =
 const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -95,8 +88,9 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.normal
-      //setup.proxy.normal
+      //runId ? '' : setup.proxy.changeip,
+      //runId ? '' :setup.proxy.normal
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -113,9 +107,9 @@ async function main() {
   console.log(`*****************开始dailyReset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
-             WHERE level = 2  and (reset_time < date_sub(now(), interval 1 day) or reset_time IS NULL) 
+             WHERE level = 2 and site = "okgg" and (reset_time < date_sub(now(), interval 1 day) or reset_time IS NULL) 
              order by reset_time asc 
-             limit 20;`
+             limit 30;`
    //sql = "SELECT * FROM freeok WHERE  level = 4;"
   let r = await pool.query(sql);
   let i = 0;

@@ -1,7 +1,5 @@
 //专注于购买套餐
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -14,16 +12,10 @@ let timezone = require('dayjs/plugin/timezone')
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
-//Date.prototype.format = tFormat;
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+let runId = process.env.runId;
 let browser;
-let setup = {};
-if (!runId) {
-  setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
-} else {
-  setup = JSON.parse(process.env.SETUP);
-}
+let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -89,12 +81,12 @@ async function freeokBuy(row, page) {
       .catch(async (err) => {
         return Promise.reject(new Error('购买失败'));
       });
-    await sleep(2500);
+    await sleep(2000);
     await page.click('#coupon_input', { delay: 200 });
-    await sleep(1000);
+    await sleep(2000);
     //await page.waitForSelector("#order_input");
     await page.click('#order_input', { delay: 200 });
-    await sleep(1000);
+    await sleep(2000);
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
@@ -131,7 +123,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -139,6 +131,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       runId ? '' : setup.proxy.changeip, 
       //runId ? '' : setup.proxy.normal 
+      //setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true
@@ -157,7 +150,7 @@ async function main() {
              FROM freeok 
              WHERE site = "okgg" and level >0  and (level_end_time < NOW() or level_end_time IS NULL or balance = 0.99) 
              order by update_time asc 
-             limit 15;`
+             limit 25;`
   //sql = "SELECT * FROM freeok  order by level_end_time asc limit 20;"
   let r = await pool.query(sql);
   let i = 0;
