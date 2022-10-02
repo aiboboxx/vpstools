@@ -163,7 +163,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -209,8 +209,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async (reslut) => { console.log('changedRows', reslut[0].changedRows); await sleep(300); })
-          .catch(async (error) => { console.error('UPDATEerror: ', error.message); await sleep(300); });
+          .then(async (reslut) => { console.log('changedRows', reslut[0].changedRows); await sleep(3000); })
+          .catch(async (error) => { console.error('UPDATEerror: ', error.message); await sleep(3000); });
       })
       .catch(async (error) => {
         console.error('signerror: ', error.message)
@@ -220,8 +220,8 @@ async function main() {
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
-          .then(async (reslut) => { console.error('changedRows2', reslut[0].changedRows); await sleep(300); })
-          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(300); });
+          .then(async (reslut) => { console.error('changedRows2', reslut[0].changedRows); await sleep(3000); })
+          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(3000); });
       });
   }
   //sqlite.close();

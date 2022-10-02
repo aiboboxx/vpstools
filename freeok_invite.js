@@ -84,6 +84,7 @@ async function freeokBuy(row, page) {
     row.level = 0 
   }
   //console.log('row.level',row.level,row.balance);
+  await sleep(1000)
   //invite 邀请码
   innerHtml = await page.evaluate(() => document.querySelector("body > main > div.container > section > div > div:nth-child(2) > div > div > div > div > div:nth-child(4) > input").value.trim());
   row.invite = innerHtml;
