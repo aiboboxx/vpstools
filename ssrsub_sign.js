@@ -77,6 +77,25 @@ async function freeokSign(row, page) {
     await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
     console.log('账户过期')
   } 
+  if (dayjs.tz().isAfter(dayjs.tz(row.reset_time).add(3,'day'))) {// 默认毫秒)
+    //await page.goto("https://sub.ssrsub.com/#/subscribe",{ timeout: 6000})
+    selecter = '#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-outline-primary.btn-rounded.px-3.mr-1.my-1.ant-dropdown-trigger';
+    await page.waitForSelector(selecter, { timeout: 8000 })
+    await page.click(selecter)
+    await sleep(500)
+    selecter = "body > div:nth-child(7) > div > div > ul > li:nth-child(2)"
+    await page.waitForSelector(selecter, { timeout: 5000 })
+    await sleep(500)
+    await page.click(selecter)
+    await sleep(1000)
+    selecter = "body > div:nth-child(9) > div > div.ant-modal-wrap > div > div.ant-modal-content > div > div > div.ant-modal-confirm-btns > button.ant-btn.ant-btn-primary"
+    // xpath = "/html/body/div[4]/div/div[2]/div/div[2]/div/div/div[2]/button[2]"
+    await page.waitForSelector(selecter, { timeout: 5000 })
+    await page.click(selecter)
+    await sleep(1500)
+    await pool.query("UPDATE freeok SET reset_time = now()  WHERE id = ?", [row.id]);
+    console.log('三天重置')
+  } 
   //return Promise.reject(new Error('test'));
   await page.goto("https://sub.ssrsub.com/#/subscribe",{ timeout: 6000})
   //rss
@@ -122,7 +141,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,regtime
+  let sql = `SELECT id,usr,pwd,regtime,reset_time
              FROM freeok 
              where site = 'ssrsub' and (sign_time < date_sub(now(), interval 8 hour) or sign_time is null)
              order by sign_time asc
