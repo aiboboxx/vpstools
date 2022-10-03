@@ -68,20 +68,11 @@ async function freeokBuy(row, page) {
   innerHtml = innerHtml.split('=')[1].trim();
   row.score = Number(innerHtml);
   console.log("score: " + innerHtml);
-  let array = [2,3,8]
+  let array = [1,2,3,8]
   if (row.score > 3.3) {
     if (row.balance < 1 && array.includes(row.level) && row.id > 200) {
-      //await resetPwd(row,browser,pool);
-      //await resetRss(browser);
-      //await pool.query("UPDATE freeok SET reset_time = NOW()  WHERE id = ?", [row.id]);
       row.level = 0;
     }
-  }
-  if ((row.level === 2 || row.level === 3 || row.level === 8) && (row.balance < 0.1 && row.balance != null)){
-    row.level = 0 
-  }
-  if ((row.level === 4 || row.level === 5 || row.level === 6 || row.level === 7) && (row.balance < 0.1 && row.balance != null) && row.id > 50){
-    row.level = 0 
   }
   //console.log('row.level',row.level,row.balance);
   await sleep(1000)
@@ -147,7 +138,7 @@ async function main() {
              where  site = "okgg" and level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 25;` //必须要有level，不然level置0
-  //sql = "SELECT id,usr,pwd,cookies,level,balance,level_end_time from freeok where level = 6";
+  //sql = "SELECT id,usr,pwd,cookies,level,balance,level_end_time from freeok where id = 1075";
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要invite`);

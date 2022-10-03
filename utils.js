@@ -324,7 +324,7 @@ exports.resetRss = async function resetRss(browser){
       { timeout: 5000 }
     ).then(async () => {
       console.log('重置订阅链接成功')
-      //await sleep(2000)
+      await sleep(1000)
     })
     await page.close()
 }

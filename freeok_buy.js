@@ -90,8 +90,8 @@ async function freeokBuy(row, page) {
     innerHtml = await page.evaluate(() => document.querySelector('#msg').innerHTML);
     if (innerHtml == '') {
       console.log("购买成功！");
-      //await resetPwd(row,browser,pool)
-      //await resetRss(browser)
+      await resetPwd(row,browser,pool)
+      await resetRss(browser)
     } else {
       console.log("购买套餐结果: " + innerHtml)
     }
@@ -163,7 +163,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `cookies`=?,`balance` = ?, `level_end_time` = ?, `rss` = ?, `update_time` = NOW() WHERE `id` = ?';
+        sql = 'UPDATE `freeok` SET `cookies`=?,`balance`=?,`level_end_time`=?,`rss`=?,`update_time`=NOW(),`count`=0 WHERE `id`=?';
         arr = [row.cookies, row.balance, row.level_end_time, row.rss, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);

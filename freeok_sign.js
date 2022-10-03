@@ -72,7 +72,7 @@ async function freeokSign(row, page) {
   row.level_end_time = innerHtml;
   console.log( "等级过期时间: " , row.level_end_time, innerHtml);
   
-  let unixtimes = [
+/*   let unixtimes = [
     dayjs.tz(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),
     dayjs.tz(row.fetch_time).unix()//new Date(row.fetch_time).getTime()
   ];
@@ -83,7 +83,7 @@ async function freeokSign(row, page) {
       reset.pwd = true;
       reset.rss = true;
       console.log("3天重置")
-    }
+    } */
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
@@ -184,7 +184,7 @@ async function main() {
     await dialog.dismiss();
   });
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
-  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time,count
+  let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level
              FROM freeok 
              where site = 'okgg' and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
