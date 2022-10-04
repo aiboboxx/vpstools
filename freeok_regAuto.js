@@ -173,13 +173,13 @@ async function regFreeok(page,invite){
 async function main() {
   let sql = "SELECT count(*) AS Number FROM freeok where site = 'okgg' and level = 1;"
   let r = await pool.query(sql);
-  if ( r[0][0].Number >= 80 ) {
+  if ( r[0][0].Number >= 120 ) {
     console.log('已有level=1账户',r[0][0].Number);
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 120 order by id asc limit 1;"
-  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 1  order by level desc,id asc  limit 1;"
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
+  //sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);
   let invite = r[0][0].invite;
