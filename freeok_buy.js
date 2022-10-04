@@ -68,7 +68,7 @@ async function freeokBuy(row, page) {
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
-  //console.log( "等级过期时间: " +  innerHtml);
+  console.log( "等级过期时间: " +  innerHtml,dayjs.tz().format('YYYY-MM-DD HH:mm:ss'));
   row.level_end_time = innerHtml;
   //购买套餐
   //date = dayjs.tz(row.level_end_time);
@@ -111,9 +111,9 @@ async function freeokBuy(row, page) {
   //等级过期时间 xpath
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
-  console.log( "等级过期时间: " +  innerHtml);
   row.level_end_time = innerHtml;
-  row.level_end_time = dayjs.tz(row.level_end_time).utc().format('YYYY-MM-DD HH:mm:ss');
+  //row.level_end_time = dayjs.tz(row.level_end_time).utc().format('YYYY-MM-DD HH:mm:ss');
+  console.log( "等级过期时间: " +  innerHtml,row.level_end_time);
   await sleep(500);
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');

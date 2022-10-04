@@ -140,8 +140,8 @@ async function freeokSign(row, page) {
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
   //console.log( "rss: " + innerHtml);
   row.rss = innerHtml;
-  row.last_used_time = dayjs.tz(row.last_used_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
+  //row.last_used_time = dayjs.tz(row.last_used_time).utc().format('YYYY-MM-DD HH:mm:ss');
+  //if (row.rss_refresh_time) row.rss_refresh_time = dayjs.tz(row.rss_refresh_time).utc().format('YYYY-MM-DD HH:mm:ss');
   await page.click('#checkin', { delay: 200 })
     .then(async () => {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
