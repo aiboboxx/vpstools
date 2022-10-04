@@ -70,7 +70,7 @@ async function freeokSign(row, page) {
   innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);
   innerHtml = innerHtml.split(';')[1];
   row.level_end_time = innerHtml;
-  console.log( "等级过期时间: " , row.level_end_time, innerHtml);
+  //console.log( "等级过期时间: " , row.level_end_time, innerHtml);
   
 /*   let unixtimes = [
     dayjs.tz(row.last_used_time).unix(), //new Date(row.last_used_time).getTime(),

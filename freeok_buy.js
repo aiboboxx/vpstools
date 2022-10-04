@@ -113,7 +113,7 @@ async function freeokBuy(row, page) {
   innerHtml = innerHtml.split(';')[1];
   row.level_end_time = innerHtml;
   //row.level_end_time = dayjs.tz(row.level_end_time).utc().format('YYYY-MM-DD HH:mm:ss');
-  console.log( "等级过期时间: " +  innerHtml,row.level_end_time);
+  //console.log( "等级过期时间: " +  innerHtml,row.level_end_time);
   await sleep(500);
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');
