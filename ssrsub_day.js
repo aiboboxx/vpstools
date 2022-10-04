@@ -109,8 +109,8 @@ async function main() {
   console.log(`*****************开始 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd
              FROM freeok 
-             where site = 'ssrsub' and level = 4 and (reset_time < date_sub(now(), interval 1 day) or reset_time IS NULL) 
-             limit 100;`
+             where site = 'ssrsub' and level = 1 and (reset_time < date_sub(now(), interval 1 day) or reset_time IS NULL) 
+             limit 1;`
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要重置rss`);

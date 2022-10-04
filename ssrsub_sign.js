@@ -30,7 +30,7 @@ main()
 async function freeokSign(row, page) {
   await clearBrowser(page); //clear all cookies
   await login(row, page)
-  await sleep(5000)
+  await sleep(3000)
   let selecter, innerHtml,isCancel = false, isBuy = false
   if (await page.$("#main-container > div > div.alert.alert-danger > p > a")) isCancel = true
   if (await page.$("#main-container > div > div > div:nth-child(1) > div > div.block-content > div > div > div > div:nth-child(1) > div > p > span")) {
@@ -54,7 +54,7 @@ async function freeokSign(row, page) {
   if (isBuy) await buy(row, page)
   await page.goto("https://sub.ssrsub.com/#/subscribe",{ timeout: 8000})
   selecter = "#main-container > div > div.block.block-rounded.mb-4 > div > div > div:nth-child(1) > div > p > span"
-  await page.waitForSelector(selecter,{ timeout: 3000})
+  await page.waitForSelector(selecter,{ timeout: 5000})
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   let traffic = cutString(innerHtml,"已用 "," / ")
   console.log("流量: " , innerHtml,traffic);
@@ -69,7 +69,7 @@ async function freeokSign(row, page) {
   }
   console.log(row.used,row.used_num)
   selecter = "#main-container > div > div.block.block-rounded.mb-4 > div > div > div:nth-child(1) > p > span"
-  await page.waitForSelector(selecter,{ timeout: 3000})
+  await page.waitForSelector(selecter,{ timeout: 5000})
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   let datetime = cutString(innerHtml,"于 "," 到期")
   console.log("到期时间 " , innerHtml,datetime);
@@ -82,14 +82,15 @@ async function freeokSign(row, page) {
     selecter = '#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-outline-primary.btn-rounded.px-3.mr-1.my-1.ant-dropdown-trigger';
     await page.waitForSelector(selecter, { timeout: 8000 })
     await page.click(selecter)
-    await sleep(500)
-    selecter = "body > div:nth-child(7) > div > div > ul > li:nth-child(2)"
+    await sleep(1500)
+    selecter = ".ant-dropdown-menu,.ant-dropdown-menu-light,.ant-dropdown-menu-root,.ant-dropdown-menu-vertical > li:nth-child(2)"
+    //body > div:nth-child(8) > div > div > ul > li:nth-child(2) > a
     await page.waitForSelector(selecter, { timeout: 5000 })
-    await sleep(500)
+    await sleep(1500)
     await page.click(selecter)
-    await sleep(1000)
-    selecter = "body > div:nth-child(9) > div > div.ant-modal-wrap > div > div.ant-modal-content > div > div > div.ant-modal-confirm-btns > button.ant-btn.ant-btn-primary"
-    // xpath = "/html/body/div[4]/div/div[2]/div/div[2]/div/div/div[2]/button[2]"
+    await sleep(1500)
+    //selecter = "body > div:nth-child(9) > div > div.ant-modal-wrap > div > div.ant-modal-content > div > div > div.ant-modal-confirm-btns > button.ant-btn.ant-btn-primary"
+    selecter = ".ant-btn,.ant-btn-primary"
     await page.waitForSelector(selecter, { timeout: 5000 })
     await page.click(selecter)
     await sleep(1500)
@@ -102,12 +103,12 @@ async function freeokSign(row, page) {
   selecter = "#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-primary.btn-rounded.px-3.mr-1.my-1"
   await page.waitForSelector(selecter, { timeout: 5000 })
   await page.click(selecter)
-  await sleep(500)
+  await sleep(1500)
   //selecter = "body > div:nth-child(7) > div > div.ant-modal-wrap.ant-modal-centered > div > div.ant-modal-content > div > div > div.item___yrtOv.subsrcibe-for-link > div:nth-child(2)"
   selecter = ".item___yrtOv,.subsrcibe-for-link"
   await page.waitForSelector(selecter, { timeout: 5000 })
   await page.click(selecter)
-  await sleep(500)
+  await sleep(1500)
   const text =await page.evaluate(() => navigator.clipboard.readText());
   console.log(text);
   row.rss = text
