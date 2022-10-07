@@ -91,7 +91,7 @@ async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -119,7 +119,7 @@ async function main() {
              WHERE level = 7 and site = "okgg" and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
              order by reset_time asc 
              limit 30;`
-  //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
+  //sql = "SELECT * FROM freeok WHERE level = 7 and site = 'okgg' order by reset_time asc limit 20;"
   let r = await pool.query(sql)
   let i = 0
   console.log(`共有${r[0].length}个账户要halfyearlyReset`)

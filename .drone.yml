@@ -206,7 +206,7 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      #- node ssrsub_sign.js
+      - node ssrsub_sign.js
       #- node ssrsub_reg6.js     
 trigger:
   event:
