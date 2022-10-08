@@ -6,11 +6,8 @@ puppeteer.use(StealthPlugin());
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
 const mysql = require('mysql2/promise');
-
-
 //Date.prototype.format = tFormat;
 let runId = process.env.runId;
-
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
@@ -175,6 +172,8 @@ async function main() {
   let r = await pool.query(sql);
   if ( r[0][0].Number >= 90 ) {
     console.log('已有level=1账户',r[0][0].Number);
+    await pool.end();
+    if (runId ? true : false) await browser.close();
     return;
   }
   console.log('已有账户：',r[0][0].Number);
@@ -239,5 +238,5 @@ await page.evaluateOnNewDocument(() => {
   await pool.end();
   if (runId ? true : false) await browser.close();
 }
-main();
+main()
 

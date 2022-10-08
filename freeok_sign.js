@@ -100,9 +100,9 @@ async function freeokSign(row, page) {
   //console.log( innerHtml,row.level);
   if (innerHtml.slice(-2) == 'GB' && row.level === 1) {
     let used = Math.abs(Number(innerHtml.slice(0, innerHtml.length - 2)))
-    if (used > 4) {
+    if (used > 3) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
-        if (used > 6) {
+        if (used > 4) {
           innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
           console.log( "bind rss: " + innerHtml);
           row.rss = innerHtml;
