@@ -94,7 +94,7 @@ async function freeokSign(row, page) {
     await page.waitForSelector(selecter, { timeout: 5000 })
     await page.click(selecter)
     await sleep(1500)
-    await pool.query("UPDATE freeok SET reset_time = now()  WHERE id = ?", [row.id]);
+    await pool.query("UPDATE freeok SET count = 0,reset_time = now()  WHERE id = ?", [row.id]);
     console.log('三天重置')
   } 
   //return Promise.reject(new Error('test'));
