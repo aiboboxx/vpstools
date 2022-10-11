@@ -9,6 +9,6 @@
 	"pwd": "780830lp",
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
-		"changeip":  "--proxy-server=socks5://www.ibobo.eu.org:7899"
+		"changeip":  "--proxy-server=socks5://192.168.0.104:7899"
 	}
 }

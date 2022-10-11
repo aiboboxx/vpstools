@@ -220,13 +220,13 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
         return false;
       }
     },
-    { timeout: 6000 },
+    { timeout: 10000 },
     'body'
   )
   //.then(async () => { console.log("无需验证"); await sleep(1000); });
   let selecter, innerHtml;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter, { timeout: 6000 })
+  await page.waitForSelector(selecter, { timeout: 10000 })
     .then(
       async () => {
         //console.log('cookie登录成功');
