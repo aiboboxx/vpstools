@@ -177,7 +177,7 @@ async function main() {
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 order by id asc limit 1;"
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 ORDER BY RAND() limit 1;"
   //sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);
@@ -185,14 +185,14 @@ async function main() {
   console.log(invite);
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip,
-      //runId ? '' :setup.proxy.normal
+      //runId ? '' : setup.proxy.changeip,
+      runId ? '' :setup.proxy.normal
       //setup.proxy.changeip,
     ],
     defaultViewport: null,

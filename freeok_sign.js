@@ -51,7 +51,6 @@ async function freeokSign(row, page) {
       await resetPwd(row, browser, pool);
       await resetRss(browser);
     }
-
     await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
   }
   //await sleep(3000);
@@ -78,31 +77,31 @@ async function freeokSign(row, page) {
   ];
   //console.log(row.fetch_time,dayjs.tz(row.fetch_time).unix())
   //console.log(dayjs.tz().toString(),dayjs.tz().unix())
-  /* if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 7 && row.level === 1 && row.count !== 0) {
+  if ((dayjs.tz().unix() -  unixtimes[1]) / (24 * 60 * 60) > 1 && row.level === 1 && row.count !== 0) {
      // await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       reset.pwd = true;
       reset.rss = true;
-      console.log("7天重置")
-    } */
+      console.log("1天重置")
+    } 
   //今日已用
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-4 > div:nth-child(2) > div > div > div:nth-child(1) > div.label-flex > div > code';
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
-  if (row.used === "0B") {
+/*   if (row.used === "0B") {
     if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 23 : 23) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
       //console.log('清空fetcher',new Date(row.regtime).format('yyyy-MM-dd hh:mm:ss'),new Date(row.last_used_time).format('yyyy-MM-dd hh:mm:ss'),new Date(row.fetch_time).format('yyyy-MM-dd hh:mm:ss'));
     }
-  } 
+  }  */
   //console.log( innerHtml,row.level);
   if (innerHtml.slice(-2) == 'GB' && row.level === 1) {
     let used = Math.abs(Number(innerHtml.slice(0, innerHtml.length - 2)))
-    if (used > 3) {
+    if (used > 4) {
       if ((dayjs.tz().startOf('date').unix() - dayjs.tz(row.rss_refresh_time?row.rss_refresh_time:"2022-07-14 06:54:17").unix()) > 0 ) {
-        if (used > 4) {
+        if (used > 6) {
           innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());
           console.log( "bind rss: " + innerHtml);
           row.rss = innerHtml;
