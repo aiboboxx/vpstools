@@ -304,7 +304,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
         })
 
     });
-  await sleep(2000);
+  await sleep(3000);
   await page.close();
 }
 exports.resetRss = async function resetRss(browser){
