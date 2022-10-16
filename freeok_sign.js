@@ -10,6 +10,7 @@ let timezone = require('dayjs/plugin/timezone')
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
+let resetUrl = ''
 const mysql = require('mysql2/promise');
 let runId = process.env.runId;
 let browser;
@@ -188,7 +189,7 @@ async function main() {
              limit 20;`
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=817"
+  //sql = "SELECT * FROM freeok where id=19"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);

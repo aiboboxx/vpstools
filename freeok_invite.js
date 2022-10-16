@@ -91,13 +91,13 @@ async function freeokBuy(row, page) {
     await page.click('#buy-invite > span')
     await sleep(2000);
   }
-  array = [2,3,8,4]
+/*   array = [2,3,8,4]
   if (array.includes(row.level)) await selectAsiaGroup(browser)
   array = [5,6,7]
   if (array.includes(row.level)) {
     if (dayjs.tz().date() % 3 === 0) await selectAsiaGroup(browser)
-  }
-  //if (row.level > 1) await selectAsiaGroup(browser)
+  } */
+  if (row.level > 1) await selectAsiaGroup(browser)
   let cookies = [];
   cookies = await page.cookies();
   row.cookies = JSON.stringify(cookies, null, '\t');

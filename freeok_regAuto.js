@@ -177,7 +177,7 @@ async function main() {
     return;
   }
   console.log('已有账户：',r[0][0].Number);
-  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 130 ORDER BY RAND() limit 1;"
+  sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 150 ORDER BY RAND() limit 1;"
   //sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 1  order by level desc,id asc  limit 1;"
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);

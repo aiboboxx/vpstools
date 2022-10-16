@@ -116,6 +116,7 @@ function getResetUrl() {
     imap.connect();
 }
 async function main() {
+
     let i = 0
     do {
         getResetUrl()

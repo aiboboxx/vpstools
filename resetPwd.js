@@ -8,6 +8,13 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } =
 const { sbFreeok,login,loginWithCookies,resetPwd } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
+const dayjs = require('dayjs')
+let utc = require('dayjs/plugin/utc') // dependent on utc plugin
+let timezone = require('dayjs/plugin/timezone')
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.tz.setDefault("Asia/Hong_Kong")
+let resetUrl = '';
 let runId = process.env.runId;
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
@@ -23,44 +30,181 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset:'utf8' //字符集设置
 });
-async function freeokBuy(row, page) {
+async function resetMM(row,page,pool) {
     await clearBrowser(page) //clear all cookies
     await page.goto('https://okgg.xyz/password/reset', { timeout: 8000 }).catch((err) => console.log('首页超时'));
     await page.waitForSelector("#email", { timeout: 5000 })
     await page.type('#email', row.usr, { delay: 20 });
     await page.click('#reset');
-    await page.waitForNavigation({ timeout: 6000 })
+    await page.waitForNavigation({ timeout: 3000 }).catch((err) => console.log('跳转超时'));
     await sleep(500);
-    
-    while (await page.$('#reactive')) {
-      await page.type('#email', row.usr)
-      await page.click('#reactive')
-      await sleep(1000)
-      console.log('账户解除限制')
-      await page.goto('https://okgg.xyz/user')
-    }
-    await sleep(2000)
-
+    await clearBrowser(page) //clear all cookies
+    let pwd = setup.pwd;
+    let i = 0
+    do {
+        getResetUrl()
+        await sleep(10000)
+        i++
+    } while (resetUrl == '' && i < 10)
+    console.log("getResetUrl:", resetUrl)
+    if (resetUrl == "") return Promise.reject(new Error('重置链接获取失败'));
+    //await reset(browser,resetUrl,pwd)
+    await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))
     let selecter, innerHtml
-    //rss
-    innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim())
-    //console.log( "rss: " + innerHtml);
-    row.rss = innerHtml
-    row.cookies = JSON.stringify(await page.cookies(), null, '\t')
-    let sql, arr;
-    sql = 'UPDATE `freeok` SET `cookies`=?, `rss` = ? WHERE `id` = ?'
-    arr = [row.cookies,row.rss,row.id]
-    sql = await pool.format(sql, arr)
-    //console.log(sql)
-    await pool.query(sql)
-    .then(async(result) => { console.log('changedRows', result[0].changedRows);await sleep(3000); })
-    .catch(async(error) => { console.log('UPDATEerror: ', error.message);await sleep(3000); })
-  
+    selecter = "#password"
+    await page.waitForSelector(selecter,{ timeout: 30000 })
+    .catch(async (error)=>{await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))})
+    await sleep(1000)
+    //return
+    console.info(`➞ wait`);
+    await page.waitForSelector(selecter,{ timeout: 30000 })
+    .catch(async (error)=>{await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))})
+    await sleep(1000)
+    await page.waitForSelector(selecter,{ timeout: 30000 })
+    await page.type('#password', pwd)
+    await page.type('#repasswd', pwd)
+    await page.click("#reset")
+    await page.waitForNavigation({ timeout: 5000 }).catch((err) => console.log('重置超时'));
+    await sleep(1000)
+    await login(row, page, pool)  
+}
+async function reset(browser,resetUrl,pwd){
+  const page = await browser.newPage()
+  page.on('dialog', async dialog => {
+    //console.info(`➞ ${dialog.message()}`);
+    await dialog.dismiss();
+  });
+  await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))
+  let selecter, innerHtml
+  selecter = "#password"
+  await page.waitForSelector(selecter,{ timeout: 30000 })
+  .catch(async (error)=>{await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))})
+  await sleep(1000)
+  //return
+  console.info(`➞ wait`);
+  await page.waitForSelector(selecter,{ timeout: 30000 })
+  .catch(async (error)=>{await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))})
+  await sleep(1000)
+  await page.waitForSelector(selecter,{ timeout: 30000 })
+  await page.type('#password', pwd)
+  await page.type('#repasswd', pwd)
+  await page.click("#reset")
+  await page.waitForNavigation({ timeout: 3000 }).catch((err) => console.log('重置超时'));
+  await sleep(1000)
+  await page.close()
+}
+function getResetUrl() {
+  let since = dayjs.tz().subtract(3, 'day').toISOString()
+  //var fs = require("fs")
+  var Imap = require('imap')
+  var MailParser = require("mailparser").MailParser
+  var imap = new Imap({
+      user: 'dgfwvj520@qq.com', //你的邮箱账号
+      password: 'ktuqswqfgrjobgfc', //你的邮箱密码
+      host: 'imap.qq.com', //邮箱服务器的主机地址
+      port: 993, //邮箱服务器的端口地址
+      tls: true, //使用安全传输协议
+      //tlsOptions: { rejectUnauthorized: false } //禁用对证书有效性的检查
+  });
+
+  function openInbox(cb) {
+      imap.openBox('INBOX', false, cb);
+  }
+
+  imap.once('ready', function () {
+      openInbox(function (err, box) {
+          console.log("打开邮箱");
+          if (err) throw err;
+          imap.search(['UNSEEN', ['SINCE', since], ['HEADER', 'SUBJECT', 'okgg.top']], function (err, results) {//搜寻2017-05-20以后未读的邮件
+              try {
+                  imap.setFlags(results, ['\\Seen'], function (err) {
+                      if (!err) {
+                          console.log("marked as read");
+                      } else {
+                          console.log(JSON.stringify(err, null, 2));
+                      }
+                  });
+                  var f = imap.fetch(results, { bodies: '' });//抓取邮件（默认情况下邮件服务器的邮件是未读状态）
+
+                  f.on('message', function (msg, seqno) {
+
+                      var mailparser = new MailParser();
+
+                      msg.on('body', function (stream, info) {
+
+                          stream.pipe(mailparser);//将为解析的数据流pipe到mailparser
+
+                          //邮件头内容
+                          mailparser.on("headers", function (headers) {
+                              console.log("邮件头信息>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                              console.log("邮件主题: " + headers.get('subject'));
+                              console.log("发件人: " + headers.get('from').text);
+                              console.log("收件人: " + headers.get('to').text);
+                          });
+
+                          //邮件内容
+
+                          mailparser.on("data", function (data) {
+                              if (data.type === 'text') {//邮件正文
+                                  console.log("邮件内容信息>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                                  //console.log("邮件内容: " + data.html);
+                                  const regex = /(https?|http):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/g;
+                                  let myArray = [];
+                                  while ((myArray = regex.exec(data.html)) !== null) {
+                                      //console.log(`Found ${myArray[0]}. Next starts at ${regex.lastIndex}.`)
+                                      if (myArray[0].includes('okgg.top/password')) {
+                                          resetUrl = myArray[0];
+                                          //console.log(resetUrl)
+                                          break;
+                                      }
+                                  }
+
+                              }
+                              /*                         if (data.type === 'attachment') {//附件
+                                                          console.log("邮件附件信息>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                                                          console.log("附件名称:"+data.filename);//打印附件的名称
+                                                          data.content.pipe(fs.createWriteStream(data.filename));//保存附件到当前目录下
+                                                          data.release();
+                                                      } */
+                          });
+
+                      });
+                      msg.once('end', function () {
+                          console.log(seqno + '完成');
+                      });
+                  });
+                  f.once('error', function (err) {
+                      console.log('抓取出现错误: ' + err);
+                  });
+                  f.once('end', function () {
+                      console.log('所有邮件抓取完成!');
+                      imap.end();
+                  });
+              }catch(err){
+                  console.log(err)
+              }
+
+          });
+
+
+      });
+  });
+
+  imap.once('error', function (err) {
+      console.log(err);
+  });
+
+  imap.once('end', function () {
+      console.log('关闭邮箱');
+      return (resetUrl)
+  });
+
+  imap.connect();
 }
 async function main() {
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -87,7 +231,7 @@ async function main() {
              FROM freeok 
              WHERE err = 1 and site = "okgg"
              order by id asc 
-             limit 30;`
+             limit 1;`
    //sql = "SELECT * FROM freeok WHERE  level = 4;"
   let r = await pool.query(sql);
   let i = 0;
@@ -97,17 +241,17 @@ async function main() {
     i++;
     console.log("user:", i, row.id, row.usr);
     if (i % 3 == 0) await sleep(3000)
-    if (row.usr && row.pwd) await freeokBuy(row, page)
+    if (row.usr && row.pwd) await resetMM(row, page)
        .then(async () => {
         console.log("成功")   
       })
-      .catch(async (error) => {
+/*       .catch(async (error) => {
         console.log('error: ', error.message)
-      })
+      }) */
   } 
   await pool.end()
   if (runId ? true : false) await browser.close();
-  await browser.close();
+  //await browser.close();
 }
 main()
 
