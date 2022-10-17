@@ -68,7 +68,7 @@ function getResetUrl() {
                                         //console.log(`Found ${myArray[0]}. Next starts at ${regex.lastIndex}.`)
                                         if (myArray[0].includes('okgg.top/password/')) {
                                             resetUrl = myArray[0];
-                                            //console.log(resetUrl)
+                                            console.log(resetUrl)
                                             break;
                                         }
                                     }
