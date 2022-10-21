@@ -14,7 +14,8 @@ let timezone = require('dayjs/plugin/timezone')
 dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
-let resetUrl = '';
+let resetUrl = ''
+let resetUrlArr = []
 let runId = process.env.runId;
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
@@ -38,17 +39,26 @@ async function resetMM(row,page,pool) {
     await page.click('#reset');
     await page.waitForNavigation({ timeout: 3000 }).catch((err) => console.log('跳转超时'));
     await sleep(500);
-    await clearBrowser(page) //clear all cookies
+    //await clearBrowser(page) //clear all cookies
     let pwd = setup.pwd;
     let i = 0
     do {
-        getResetUrl()
+        getResetUrl(page)
         await sleep(10000)
         i++
     } while (resetUrl == '' && i < 10)
     console.log("getResetUrl:", resetUrl)
     if (resetUrl == "") return Promise.reject(new Error('重置链接获取失败'));
-    //await reset(browser,resetUrl,pwd)
+    i = 0;
+    while (i < resetUrlArr.length) {
+        console.log(i,resetUrlArr[i]);
+        await resetPWDaction(page,resetUrlArr[i],"780830lp")
+        await sleep(3000)
+        i++;
+    }
+}
+async function resetPWDaction(page,resetUrl,pwd){
+    await clearBrowser(page) //clear all cookies
     await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))
     let selecter, innerHtml
     selecter = "#password"
@@ -65,36 +75,10 @@ async function resetMM(row,page,pool) {
     await page.type('#repasswd', pwd)
     await page.click("#reset")
     await page.waitForNavigation({ timeout: 5000 }).catch((err) => console.log('重置超时'));
-    await sleep(1000)
-    await login(row, page, pool)  
-}
-async function reset(browser,resetUrl,pwd){
-  const page = await browser.newPage()
-  page.on('dialog', async dialog => {
-    //console.info(`➞ ${dialog.message()}`);
-    await dialog.dismiss();
-  });
-  await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))
-  let selecter, innerHtml
-  selecter = "#password"
-  await page.waitForSelector(selecter,{ timeout: 30000 })
-  .catch(async (error)=>{await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))})
-  await sleep(1000)
-  //return
-  console.info(`➞ wait`);
-  await page.waitForSelector(selecter,{ timeout: 30000 })
-  .catch(async (error)=>{await page.goto(resetUrl, { timeout: 8000 }).catch((err) => console.log('网页超时'))})
-  await sleep(1000)
-  await page.waitForSelector(selecter,{ timeout: 30000 })
-  await page.type('#password', pwd)
-  await page.type('#repasswd', pwd)
-  await page.click("#reset")
-  await page.waitForNavigation({ timeout: 3000 }).catch((err) => console.log('重置超时'));
-  await sleep(1000)
-  await page.close()
+    await sleep(5000)
 }
 function getResetUrl() {
-  let since = dayjs.tz().subtract(3, 'day').toISOString()
+  let since = dayjs.tz().subtract(1, 'day').toISOString()
   //var fs = require("fs")
   var Imap = require('imap')
   var MailParser = require("mailparser").MailParser
@@ -115,7 +99,7 @@ function getResetUrl() {
       openInbox(function (err, box) {
           console.log("打开邮箱");
           if (err) throw err;
-          imap.search(['UNSEEN', ['SINCE', since], ['HEADER', 'SUBJECT', 'okgg.top']], function (err, results) {//搜寻2017-05-20以后未读的邮件
+          imap.search([['SINCE', since], ['HEADER', 'SUBJECT', 'okgg.top']],function (err, results) {//搜寻2017-05-20以后未读的邮件
               try {
                   imap.setFlags(results, ['\\Seen'], function (err) {
                       if (!err) {
@@ -144,7 +128,7 @@ function getResetUrl() {
 
                           //邮件内容
 
-                          mailparser.on("data", function (data) {
+                          mailparser.on("data",function (data) {
                               if (data.type === 'text') {//邮件正文
                                   console.log("邮件内容信息>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
                                   //console.log("邮件内容: " + data.html);
@@ -153,9 +137,10 @@ function getResetUrl() {
                                   while ((myArray = regex.exec(data.html)) !== null) {
                                       //console.log(`Found ${myArray[0]}. Next starts at ${regex.lastIndex}.`)
                                       if (myArray[0].includes('okgg.top/password')) {
-                                          resetUrl = myArray[0];
-                                          //console.log(resetUrl)
-                                          break;
+                                          resetUrl = myArray[0]
+                                          resetUrlArr.push(myArray[0])
+                                          console.log("push:",resetUrl)
+                                          //break;
                                       }
                                   }
 
@@ -232,7 +217,7 @@ async function main() {
              WHERE err = 1 and site = "okgg"
              order by id asc 
              limit 1;`
-   //sql = "SELECT * FROM freeok WHERE  level = 4;"
+   sql = "SELECT * FROM freeok WHERE  id = 799;"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要ResetPwd`)

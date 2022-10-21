@@ -1,11 +1,9 @@
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const mysql = require('mysql2/promise');
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const runId = github.context.runId;
+const runId = process.env.runId;
 const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
 //Date.prototype.format = tFormat;
@@ -28,7 +26,7 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset:'utf8' //字符集设置
 });
-async function regFreeok(page){
+async function regFreeok(page,invite){
   await clearBrowser(page); //clear all cookies
   let cookies = [], ck = '', msg = '';
   let usr = '', pwd = setup.pwd;
@@ -41,7 +39,7 @@ async function regFreeok(page){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + "@appls.eu.org";
   //usr = 'eroslp.99@gmail.com';
   console.log(usr);
-  await page.goto('https://okgg.xyz/auth/register?code=bL6w', { timeout: 15000 })
+  await page.goto(`https://okgg.xyz/auth/register?code=${invite}`, { timeout: 15000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
   await page.waitForFunction(
@@ -195,9 +193,13 @@ async function main() {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-
+  let sql =  "SELECT invite FROM freeok where site = 'okgg' and level = 1 and balance < 150  and id < 300 order BY RAND() limit 1;"
+  //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
+  r = await pool.query(sql);
+  let invite = r[0][0].invite;
+  console.log(invite);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
-  await regFreeok(page)
+  await regFreeok(page,invite)
   .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
   await pool.end();

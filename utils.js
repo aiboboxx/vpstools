@@ -204,7 +204,7 @@ function getResetUrl() {
                                       if (myArray[0].includes('okgg.top/password')) {
                                           resetUrl = myArray[0];
                                           //console.log(resetUrl)
-                                          break;
+                                          //break;
                                       }
                                   }
 
@@ -350,8 +350,8 @@ exports.login = async function login(row, page, pool) {
           await pool.query("UPDATE freeok SET level = 0  WHERE id = ?", [row.id]);
           console.log('账户置0')
         }else{
+          await pool.query("UPDATE freeok SET err = 1  WHERE id = ?", [row.id]);
           await resetMM(row, page, pool)
-          //await pool.query("UPDATE freeok SET err = 1  WHERE id = ?", [row.id]);
           return
         }
         return Promise.reject(new Error('请尝试重置密码'));

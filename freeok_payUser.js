@@ -1,7 +1,5 @@
 //专注于购买套餐
 const fs = require("fs");
-const core = require('@actions/core');
-const github = require('@actions/github');
 const puppeteer = require('puppeteer-extra');
 // add stealth plugin and use defaults (all evasion techniques)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
@@ -10,7 +8,7 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } =
 const { sbFreeok, login, loginWithCookies, resetPwd,resetRss  } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
-const runId = github.context.runId;
+const runId =process.env.runId;
 let browser;
 let setup = {};
 if (!runId) {

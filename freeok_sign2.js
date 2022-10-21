@@ -101,7 +101,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -124,12 +124,12 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies
              FROM freeok 
-             where site = 'okgg' and level > 1 and (sign_time < date_sub(now(), interval 2 hour) or sign_time is null)
+             where site = 'okgg' and level > 1 and (sign_time < date_sub(now(), interval 1 hour) or sign_time is null)
              order by sign_time asc 
              limit 25;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=605"
+  sql = "SELECT * FROM freeok where id=15"
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
