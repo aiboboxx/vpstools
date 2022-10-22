@@ -210,6 +210,7 @@ steps: # 定义管道的执行步骤
       #- node ssrsub_sign.js
       #- node ssrsub_reg6.js  
       #- node freeok_regAuto.js
+      - node v2raya_hour.js
 
 trigger:
   event:
