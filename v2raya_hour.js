@@ -96,7 +96,7 @@ async function main() {
   console.log(`*****************开始bjd签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd
              FROM freeok 
-             where site = 'v2raya' and level = 1 and (reset_time < date_sub(now(), interval 6 hour) or reset_time IS NULL) 
+             where site = 'v2raya' and level = 1 and (reset_time < date_sub(now(), interval 8 hour) or reset_time IS NULL) 
              limit 1;`
   let r = await pool.query(sql, []);
   let i = 0;
@@ -110,7 +110,7 @@ async function main() {
       .then(async () => {
         //console.log(JSON.stringify(row));    
         let sql, arr;
-        sql = 'UPDATE `freeok` SET `rss`=?,`reset_time` = NOW() WHERE `id`=?';
+        sql = 'UPDATE `freeok` SET `rss`=?, `count`=0,`reset_time`=NOW() WHERE `id`=?';
         arr = [row.rss, row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
