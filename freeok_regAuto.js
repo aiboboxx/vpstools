@@ -129,7 +129,7 @@ async function regFreeok(page,invite){
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
   innerHtml = innerHtml.split(' ')[0];
   //console.log( "余额: " + innerHtml);
-  if (innerHtml !== '') {
+  if (innerHtml == '0.99') {
     cookies = await page.cookies();
     ck = JSON.stringify(cookies, null, '\t');
     let sql, arr;
