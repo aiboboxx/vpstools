@@ -106,9 +106,9 @@ async function main() {
     console.log(`*****************开始查看payUser ${Date()}*******************\n`);
     let sql = `SELECT id,usr,pwd,cookies
              FROM freeok 
-             WHERE site = "okgg" and balance >1 
+             WHERE site = "okgg" and id <100 
              order by id;`
-    sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level=8 order by update_time asc;"
+    //sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level=8 order by update_time asc;"
     let r = await pool.query(sql);
     let i = 0;
     console.log(`共有${r[0].length}个payUser`);
