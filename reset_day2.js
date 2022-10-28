@@ -54,6 +54,7 @@ async function freeokBuy(row, page) {
     let selecter, innerHtml
       await resetPwd(row,browser,pool)
       console.log("reset.pwd")
+      await page.bringToFront()
       await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
       await page.waitForFunction(
         'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
