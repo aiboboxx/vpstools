@@ -89,7 +89,7 @@ async function main() {
   console.log(`*****************开始Reset ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies 
              FROM freeok 
-             WHERE id = 24
+             WHERE id = 976
             ;`
   //sql = "SELECT id,usr,pwd,cookies FROM freeok WHERE level = 0 order by update_time asc ;"
   let r = await pool.query(sql);
