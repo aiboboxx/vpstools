@@ -191,6 +191,7 @@ async function main() {
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=18"
+  //console.log(sql);
   let r = await pool.query(sql, []);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);

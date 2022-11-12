@@ -136,8 +136,8 @@ async function main() {
       })
   } 
   await pool.end()
-  if (runId ? true : false) await browser.close();
-  await browser.close();
+  //if (runId ? true : false) await browser.close()
+  await browser.close()
 }
 main()
 
