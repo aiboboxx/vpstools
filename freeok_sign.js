@@ -23,7 +23,7 @@ const pool = mysql.createPool({
   database: setup.mysql.database,
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
-  queueLimit: 0, //可以等待的连接的个数
+  queueLimit: 10, //可以等待的连接的个数
   timezone: '+08:00',//时区配置
   charset: 'utf8' //字符集设置
 });
@@ -162,7 +162,7 @@ async function freeokSign(row, page) {
 async function main() {
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -185,14 +185,14 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time
              FROM freeok 
-             where site = 'okgg' and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
+             WHERE site = "okgg" and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok where level = 1 and count = 1 order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=18"
   //console.log(sql);
-  let r = await pool.query(sql, []);
+  let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);
   //console.log(JSON.stringify(r));
@@ -226,7 +226,7 @@ async function main() {
   }
   //sqlite.close();
   await pool.end();
-  if (runId ? true : false) await browser.close();
-  //await browser.close();
+  //if (runId ? true : false) await browser.close();
+  await browser.close();
 }
 main();

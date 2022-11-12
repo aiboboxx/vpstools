@@ -1,54 +1,13 @@
 {
-    "version": "0.2.0",
     "configurations": [
-
-
-
-
-        {
-            "type": "pwa-node",
-            "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}\\freeok_sign.js"
-        },
-        {
-            "type": "pwa-node",
-            "name": "freeok_buy",
-            "request": "launch",
-            "program": "${workspaceFolder}\\freeok_buy.js"
-        },
-        {
-            "type": "pwa-node",
-            "name": "freeok_getrss",
-            "request": "launch",
-            "program": "${workspaceFolder}\\freeok_getrss.js"
-        },
-        {
-            "type": "pwa-node",
-            "name": "matters_post",
-            "request": "launch",
-            "program": "${workspaceFolder}\\matters_post.js"
-        },
-        {
-            "type": "pwa-node",
-            "name": "fqd_post",
-            "request": "launch",
-            "program": "${workspaceFolder}\\fqd_post.js"
-        },
-        {
-            "type": "pwa-node",
-            "name": "test",
-            "request": "launch",
-            "program": "${workspaceFolder}\\test.js"
-        },
-        {
-            "type": "pwa-node",
-            "name": "mysqltest",
-            "request": "launch",
-            "program": "${workspaceFolder}\\mysqltest.js"
-        }
+    {
+        "name": "Launch Program",
+        "program": "${workspaceFolder}/app.js",
+        "request": "launch",
+        "skipFiles": [
+            "<node_internals>/**"
+        ],
+        "type": "node"
+    }
     ]
 }
