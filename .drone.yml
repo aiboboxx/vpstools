@@ -124,7 +124,7 @@ steps: # 定义管道的执行步骤
       #- ls
       - node reset_day.js
       - node v2raya_day.js
-      #- node freeok_regAuto.js
+      - node freeok_regAuto.js
 trigger:
   event:
   - cron
