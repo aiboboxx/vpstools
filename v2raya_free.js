@@ -96,7 +96,7 @@ async function main() {
   console.log(`*****************开始bjd签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd
              FROM freeok 
-             where site = 'v2raya' and level = 1 and (reset_time < date_sub(now(), interval 8 hour) or reset_time IS NULL) 
+             where site = 'v2raya' and level = 1 and (reset_time < date_sub(now(), interval 23 hour) or reset_time IS NULL) 
              limit 1;`
   let r = await pool.query(sql, []);
   let i = 0;
