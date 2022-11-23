@@ -117,7 +117,7 @@ async function main() {
   console.log(`*****************开始monthlyReset ${Date()}*******************\n`)
   let sql = `SELECT id,usr,pwd,cookies,reset_time 
              FROM freeok 
-             WHERE level = 7 and site = "okgg" and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
+             WHERE level = 6 and site = "okgg" and (reset_time < date_sub(now(), interval 30 day) or reset_time IS NULL) 
              order by reset_time asc 
              limit 30;`
   //let sql = "SELECT * FROM freeok WHERE id>40 order by update_time asc limit 2;"
