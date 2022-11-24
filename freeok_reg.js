@@ -178,8 +178,8 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip,
-      //runId ? '' : setup.proxy.normal
+      //runId ? '' : setup.proxy.changeip,
+      runId ? '' : setup.proxy.normal
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
@@ -197,7 +197,7 @@ async function main() {
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);
   let invite = r[0][0].invite;
-  invite = "9dZz"
+  invite = "dPwq"
   console.log(invite);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await regFreeok(page,invite)

@@ -216,4 +216,4 @@ trigger:
   event:
   - cron
   cron:
-  - chinag
+  - daily
