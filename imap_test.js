@@ -13,7 +13,7 @@ function getResetUrl() {
     var Imap = require('imap')
     var MailParser = require("mailparser").MailParser
     var imap = new Imap({
-        user: 'dgfwvj520@qq.com', //你的邮箱账号
+        user: '437385458@qq.com', //你的邮箱账号
         password: 'ktuqswqfgrjobgfc', //你的邮箱密码
         host: 'imap.qq.com', //邮箱服务器的主机地址
         port: 993, //邮箱服务器的端口地址

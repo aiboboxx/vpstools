@@ -197,7 +197,7 @@ async function main() {
   //sql =  "SELECT invite FROM freeok where id < 20 order by balance asc limit 1;"
   r = await pool.query(sql);
   let invite = r[0][0].invite;
-  invite = "dPwq"
+  invite = "uwc0"
   console.log(invite);
   console.log(`*****************开始freeok注册 ${Date()}*******************\n`);
   await regFreeok(page,invite)
