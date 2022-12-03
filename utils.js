@@ -253,8 +253,8 @@ function getResetUrl() {
 async function resetMM(row,page,pool) {
   console.log("重置密码：resetMM")
   await clearBrowser(page) //clear all cookies
-  await page.goto('https://okgg.xyz/password/reset', { timeout: 8000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 5000 })
+  await page.goto('https://okgg.xyz/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+  await page.waitForSelector("#email", { timeout: 15000 })
   await page.type('#email', row.usr, { delay: 20 });
   await page.click('#reset');
   await page.waitForNavigation({ timeout: 3000 }).catch((err) => console.log('跳转超时'));
@@ -292,8 +292,8 @@ exports.login = async function login(row, page, pool) {
   let cookies = []
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/auth/login', { timeout: 8000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 5000 })
+  await page.goto('https://okgg.xyz/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+  await page.waitForSelector("#email", { timeout: 15000 })
   .then(async () => {
     //cookies = await page.cookies();
     //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
@@ -362,7 +362,7 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/user', { timeout: 10000 });
+  await page.goto('https://okgg.xyz/user', { timeout: 20000 });
   //console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
