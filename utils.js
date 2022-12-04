@@ -256,7 +256,10 @@ async function resetMM(row,page,pool) {
   await page.goto('https://okgg.top/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'))
   await page.waitForSelector("#email", { timeout: 10000 })
   .catch(async (error)=>{
-    await page.goto('https://okgg.top/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+    let selecter
+    selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
+    //await page.goto('https://okgg.top/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+    await page.reload({ timeout: 15000 })
     await page.waitForSelector("#email", { timeout: 10000 })
   })
   await page.type('#email', row.usr, { delay: 20 });
@@ -294,14 +297,24 @@ async function resetMM(row,page,pool) {
 }
 exports.login = async function login(row, page, pool) {
   let cookies = []
+  let isLogin = false
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
   await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'))
   await page.waitForSelector("#email", { timeout: 8000 })
   .catch(async (error)=>{
-    await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'))
-    await page.waitForSelector("#email", { timeout: 10000 })
+    let selecter
+    selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
+    await page.waitForSelector(selecter, { timeout: 8000 })
+    .then(async () => isLogin = true)
+    .catch(async (error)=>{})
+    //await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时')) 
+    if(!isLogin){
+      await page.reload({ timeout: 15000 })
+      await page.waitForSelector("#email", { timeout: 10000 }).catch(async (error)=>{console.log('error: ', error.message);})
+    }
   })
+  if (isLogin) return
   await sleep(1000)
   await page.type('#email', row.usr, { delay: 20 });
   await page.waitForSelector("#passwd", { timeout: 5000 })
@@ -366,9 +379,9 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.top/user', { timeout: 15000 });
+  await page.goto('https://okgg.top/user', { timeout: 15000 })
   //console.log('开始cookie登录');
-  await page.waitForFunction(
+/*   await page.waitForFunction(
     (selecter) => {
       if (document.querySelector(selecter)) {
         return document.querySelector(selecter).innerText.includes("用户面板");
@@ -378,10 +391,14 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
     },
     { timeout: 8000 },
     'body'
-  )
-  //.then(async () => { console.log("无需验证"); await sleep(1000); });
+  ) */
   let selecter, innerHtml;
   selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
+  await page.waitForSelector(selecter, { timeout: 8000 })
+  .catch(async (error)=>{
+    await page.reload({ timeout: 15000 })
+    //await page.goto('https://okgg.top/user', { timeout: 15000 })
+  })
   await page.waitForSelector(selecter, { timeout: 8000 })
     .then(
       async () => {
@@ -409,7 +426,8 @@ exports.selectAsiaGroup = async function selectAsiaGroup(browser) {
   await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
   await page.waitForSelector('#group',{ timeout: 10000 })
   .catch(async (error)=>{
-    await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
+    await page.reload({ timeout: 15000 })
+    //await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
     await page.waitForSelector('#group',{ timeout: 10000 })
   })
   await sleep(1000);
@@ -424,32 +442,10 @@ exports.selectAsiaGroup = async function selectAsiaGroup(browser) {
   await sleep(1000);
   await page.close();
 }
-exports.resetPwd = async function resetPwd(row,browser,pool) {
-  const page = await browser.newPage();
-  page.on('dialog', async dialog => {
-    //console.info(`➞ ${dialog.message()}`);
-    await dialog.dismiss();
-  });
-  await page.goto('https://okgg.top/user/edit',{ timeout: 15000 });
-/*   if (row.leveel > 0){
-    await page.waitForSelector('#group')
-    await page.click('#group')
-    await sleep(1000);
-    await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
-    await page.click('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
-    await sleep(1000);
-    await page.waitForSelector('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
-    await page.click('.card-inner > .card-inner > .cardbtn-edit > #group-update > .icon')
-    await page.waitForNavigation()
-    await sleep(1000);
-  }  */
+exports.resetPwd = async function resetPwd(row,page,pool) {
   let selecter;
   selecter = '#sspwd';
-  await page.waitForSelector(selecter, { timeout: 10000 })
-  .catch(async (error)=>{
-    await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
-    await page.waitForSelector(selecter, { timeout: 10000 })
-  })
+  await page.waitForSelector(selecter, { timeout: 8000 })
   await sleep(1000);
   await page.type(selecter, Math.random().toString(36).slice(-12));
   await sleep(1000);
@@ -459,13 +455,15 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
         .then(async () => {
           console.log('修改v2ray密码成功',row.id);
           if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
-          //.catch((err) => console.log('重置count失败'));
-          //await page.goto('https://okgg.top/user');
-        })
+          selecter = "#result_ok"
+          await sleep(1000);
+          await page.waitForSelector(selecter, { timeout: 8000 })
+          await page.click(selecter)
+          })
 
     });
   await sleep(3000);
-  await page.close();
+  //await page.close();
 }
 exports.resetRss = async function resetRss(browser){
   const page = await browser.newPage()

@@ -38,12 +38,14 @@ async function freeokSign(row, page) {
   }
   //cookies = await page.cookies();
   //row.cookies = JSON.stringify(cookies, null, '\t');
+  await sleep(1000)
   while (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
-    await sleep(1000);
+    await sleep(2000);
     console.log('账户解除限制');
-    await page.goto('https://okgg.top/user');
+    await page.goto('https://okgg.top/user',{ timeout: 15000 })
+    .catch(async (error)=>{console.log('error: ', error.message)})
   }
   //await sleep(3000);
   let selecter, innerHtml;
@@ -129,7 +131,7 @@ async function main() {
              limit 20;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
-  //sql = "SELECT * FROM freeok where id=10"
+  //sql = "SELECT * FROM freeok where id=8"
   let r = await pool.query(sql);
   let i = 0;
   console.log(`共有${r[0].length}个账户要签到`);

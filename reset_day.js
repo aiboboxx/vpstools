@@ -57,12 +57,24 @@ async function freeokBuy(row, page) {
       await page.goto('https://okgg.top/user')
     }
     await sleep(2000)
-
     let selecter, innerHtml
-      await resetPwd(row,browser,pool)
+      selecter = "#ui_menu_detect > li:nth-child(2) > a"
+      await page.waitForSelector(selecter, { timeout: 8000 })
+      await page.click(selecter)
+      await sleep(1000)
+      selecter = '#sspwd';
+      await page.waitForSelector(selecter, { timeout: 8000 })
+      await resetPwd(row,page,pool)
       console.log("reset.pwd")
-      await page.bringToFront()
-      await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
+      //await page.bringToFront()
+      //await page.reload({ timeout: 15000 })
+      selecter = '#ui_menu_me > li:nth-child(1) > a';
+      await page.waitForSelector(selecter, { timeout: 8000 })
+      await page.click(selecter)
+      await sleep(1000)
+      selecter = "body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a"
+      await page.waitForSelector(selecter, { timeout: 8000 })
+      await page.click(selecter)
       await page.waitForFunction(
         'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
         { timeout: 5000 }
@@ -90,7 +102,7 @@ async function freeokBuy(row, page) {
 async function main() {
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

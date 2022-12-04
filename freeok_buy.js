@@ -31,6 +31,7 @@ const pool = mysql.createPool({
 
 async function freeokBuy(row, page) {
   let cookies = [];
+  let selecter, innerHtml;
   await clearBrowser(page); //clear all cookies
   if (row.cookies == null) {
     await login(row, page, pool);
@@ -44,14 +45,10 @@ async function freeokBuy(row, page) {
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
-    if (row.level === 1) {
-      await resetPwd(row,browser,pool);
-      await resetRss(browser);
-    }
     await page.goto('https://okgg.top/user',{ timeout: 8000 });
   }
   await sleep(1000);
-  let selecter, innerHtml;
+
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter, { timeout: 8000 })
     .then(async () => {

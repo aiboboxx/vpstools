@@ -44,10 +44,6 @@ async function freeokBuy(row, page) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
     await sleep(1000);
-    if (row.level === 1) {
-      await resetPwd(row,browser,pool);
-      await resetRss(browser);
-    }
     console.log('账户解除限制');
   }
   await page.goto('https://okgg.top/user/invite',{ timeout: 8000 });
@@ -135,7 +131,7 @@ async function main() {
   //level,balance必须有
   let sql = `SELECT id,usr,pwd,cookies,level,balance,level_end_time
              FROM freeok  
-             where  site = "okgg" and level > 0  and (invite_refresh_time < date_sub(now(), interval 8 hour) or invite_refresh_time is null) 
+             where  site = "okgg" and level > 0  and (invite_refresh_time < date_sub(now(), interval 4 hour) or invite_refresh_time is null) 
              order by invite_refresh_time asc 
              limit 25;` //必须要有level，不然level置0
   //sql = "SELECT id,usr,pwd,cookies,level,balance,level_end_time from freeok where id = 1075";

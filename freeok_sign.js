@@ -43,15 +43,12 @@ async function freeokSign(row, page) {
   }
   //cookies = await page.cookies();
   //row.cookies = JSON.stringify(cookies, null, '\t');
+  await sleep(1000)
   while (await page.$('#reactive')) {
     await page.type('#email', row.usr);
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
-    if (row.level === 1) {
-      await resetPwd(row, browser, pool);
-      await resetRss(browser);
-    }
     await page.goto('https://okgg.top/user',{ timeout: 8000 });
   }
   //await sleep(3000);
@@ -115,13 +112,29 @@ async function freeokSign(row, page) {
       }
     }
   }
+  //cookies = await page.cookies();
   if (reset.pwd) {
-    await resetPwd(row, browser, pool);
-    console.log("reset.pwd");
+    selecter = "#ui_menu_detect > li:nth-child(2) > a"
+    await page.waitForSelector(selecter, { timeout: 8000 })
+    await page.click(selecter)
+    await sleep(1000)
+    selecter = '#sspwd';
+    await page.waitForSelector(selecter, { timeout: 8000 })
+    await resetPwd(row,page,pool)
+    console.log("reset.pwd")
+    //await page.bringToFront()
+    //await page.reload({ timeout: 15000 })
+    selecter = '#ui_menu_me > li:nth-child(1) > a';
+    await page.waitForSelector(selecter, { timeout: 8000 })
+    await page.click(selecter)
+    await sleep(1000)
   }
-  await page.bringToFront()
+  //await page.bringToFront()
+  //await page.reload({ timeout: 15000 })
+  //await page.waitForSelector(selecter, { timeout: 8000 })
   if (reset.rss) {
-    await page.bringToFront()
+    //await page.bringToFront()
+    await sleep(2500);
     await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
     await page.waitForFunction(
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
@@ -132,6 +145,7 @@ async function freeokSign(row, page) {
       console.log("reset.rss");
     });
   }
+  selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div'
   //余额
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
   innerHtml = innerHtml.split(' ')[0];
@@ -168,7 +182,7 @@ async function main() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip,
+      //runId ? '' : setup.proxy.changeip,
       //runId ? '' :setup.proxy.normal
       //setup.proxy.changeip,
     ],
@@ -177,6 +191,7 @@ async function main() {
   });
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
+  //await page.setUserAgent('Mozilla/5.0 (Windows NT 5.1; rv:5.0) Gecko/20100101 Firefox/5.0')
   await page.authenticate({ username: setup.proxy.usr, password: setup.proxy.pwd });
   page.on('dialog', async dialog => {
     //console.info(`➞ ${dialog.message()}`);
