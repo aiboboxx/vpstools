@@ -18,7 +18,7 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node freeok_buy.js
+      #- node freeok_buy.js
 trigger:
   event:
   - cron
@@ -44,7 +44,7 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node freeok_sign.js
+      #- node freeok_sign.js
 trigger:
   event:
   - cron
@@ -70,7 +70,7 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node freeok_sign2.js
+      #- node freeok_sign2.js
 trigger:
   event:
   - cron
@@ -96,7 +96,7 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node freeok_invite.js
+      #- node freeok_invite.js
 trigger:
   event:
   - cron
@@ -122,9 +122,9 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node reset_day.js
+      #- node reset_day.js
       - node v2raya_day.js
-      - node freeok_regAuto.js
+      #- node freeok_regAuto.js
 trigger:
   event:
   - cron
@@ -150,7 +150,7 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node reset_month.js
+      #- node reset_month.js
       - node v2raya_month.js
 trigger:
   event:
@@ -177,8 +177,8 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      - node reset_year.js
-      - node reset_halfyear.js
+      #- node reset_year.js
+      #- node reset_halfyear.js
       - node v2raya_year.js
       - node sq_reset.js
 
