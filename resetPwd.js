@@ -33,7 +33,7 @@ const pool = mysql.createPool({
 });
 async function resetMM(row,page,pool) {
     await clearBrowser(page) //clear all cookies
-    await page.goto('https://okgg.xyz/password/reset', { timeout: 8000 }).catch((err) => console.log('首页超时'));
+    await page.goto('https://okgg.top/password/reset', { timeout: 8000 }).catch((err) => console.log('首页超时'));
     await page.waitForSelector("#email", { timeout: 5000 })
     await page.type('#email', row.usr, { delay: 20 });
     await page.click('#reset');

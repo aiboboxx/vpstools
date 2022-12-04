@@ -43,7 +43,7 @@ async function freeokSign(row, page) {
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.top/user');
   }
   //await sleep(3000);
   let selecter, innerHtml;
@@ -85,7 +85,7 @@ async function freeokSign(row, page) {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
         .then(async () => {
           console.log('签到成功', await page.evaluate(() => document.querySelector('#msg').innerHTML));
-          //await page.goto('https://okgg.xyz/user');
+          //await page.goto('https://okgg.top/user');
         })
         .catch((err) => console.log('签到超时'));
     })

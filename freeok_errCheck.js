@@ -54,7 +54,7 @@ async function freeokSign(row, page) {
       await resetRss(browser);
     }
 
-    await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
+    await page.goto('https://okgg.top/user',{ timeout: 8000 });
   }
   //await sleep(3000);
   let selecter, innerHtml;

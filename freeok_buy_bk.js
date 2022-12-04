@@ -46,7 +46,7 @@ async function freeokBuy(row, page) {
     await page.click('#reactive');
     await sleep(1000);
     console.log('账户解除限制');
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.top/user');
   }
   await sleep(3000);
   let selecter, innerHtml;
@@ -54,7 +54,7 @@ async function freeokBuy(row, page) {
   await page.waitForSelector(selecter, { timeout: 15000 })
     .then(async () => {
       console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-      //await page.goto('https://okgg.xyz/user');
+      //await page.goto('https://okgg.top/user');
     });
   //////////do something
 
@@ -84,7 +84,7 @@ async function freeokBuy(row, page) {
   date = new Date(row.level_end_time);
   if ((date.getTime() < Date.now()) || row['balance' == 0.99]) {
     //await page.waitFor(1500);
-    await page.goto('https://okgg.xyz/user/shop');
+    await page.goto('https://okgg.top/user/shop');
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
       delay: 500
     })
@@ -103,12 +103,12 @@ async function freeokBuy(row, page) {
     else
       console.log("购买套餐结果: " + innerHtml);
     await sleep(2000);
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.top/user');
     selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
     await page.waitForSelector(selecter, { timeout: 10000 })
       .then(async () => {
         console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-        //await page.goto('https://okgg.xyz/user');
+        //await page.goto('https://okgg.top/user');
       });
     //等级过期时间 xpath
     innerHtml = await page.evaluate(() => document.evaluate('/html/body/main/div[2]/section/div[1]/div[6]/div[1]/div/div/dl/dd[1]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.innerHTML);

@@ -106,7 +106,7 @@ async function freeokSign(row, page) {
       await page.waitForFunction('document.querySelector("body").innerText.includes("获得了")', { timeout: 6000 })
         .then(async () => {
           console.log('签到成功');
-          //await page.goto('https://okgg.xyz/user');
+          //await page.goto('https://okgg.top/user');
         })
         .catch((err) => console.log('签到超时'));
     })
@@ -258,7 +258,7 @@ async function loginWithCookies(row, page, pool) {
     await page.waitForSelector(selecter, { timeout: 10000 })
       .then(async () => {
         //console.log('进入页面：修改资料');
-        //await page.goto('https://okgg.xyz/user');
+        //await page.goto('https://okgg.top/user');
       });
     await page.type(selecter, Math.random().toString(36).slice(-12));
     await sleep(1500);
@@ -268,7 +268,7 @@ async function loginWithCookies(row, page, pool) {
           .then(async () => {
             console.log('修改v2ray密码成功');
             await pool.query("UPDATE freeok SET count = 0,reset_time = now()  WHERE id = ?", [row.id]);
-            //await page.goto('https://okgg.xyz/user');
+            //await page.goto('https://okgg.top/user');
           })
           .catch((err) => console.log('修改v2ray密码失败'));
       });

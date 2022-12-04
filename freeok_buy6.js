@@ -50,7 +50,7 @@ async function freeokBuy(row, page) {
       await resetPwd(row,browser,pool);
       await resetRss(browser);
     }
-    await page.goto('https://okgg.xyz/user');
+    await page.goto('https://okgg.top/user');
   }
   await sleep(3000);
   let selecter, innerHtml;
@@ -58,7 +58,7 @@ async function freeokBuy(row, page) {
   await page.waitForSelector(selecter, { timeout: 15000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-      //await page.goto('https://okgg.xyz/user');
+      //await page.goto('https://okgg.top/user');
     });
   //////////do something
 
@@ -70,7 +70,7 @@ async function freeokBuy(row, page) {
   //购买套餐
   if ( row['balance'] > 156) {
     //await page.waitFor(1500);
-    await page.goto('https://okgg.xyz/user/shop')
+    await page.goto('https://okgg.top/user/shop')
     await page.waitForSelector('.content-inner > .shop-flex > .card:nth-child(8) > .card-main > .btn')
     await page.click('.content-inner > .shop-flex > .card:nth-child(8) > .card-main > .btn')
       .catch(async (err) => {
@@ -92,12 +92,12 @@ async function freeokBuy(row, page) {
     }
     await sleep(1000);
   }
-  await page.goto('https://okgg.xyz/user')
+  await page.goto('https://okgg.top/user')
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter, { timeout: 10000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-      //await page.goto('https://okgg.xyz/user');
+      //await page.goto('https://okgg.top/user');
     })
   //rss
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());

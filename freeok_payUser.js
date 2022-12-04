@@ -44,7 +44,7 @@ async function freeokBuy(row, page) {
         await page.click('#reactive');
         await sleep(1000);
         console.log('账户解除限制');
-        await page.goto('https://okgg.xyz/user');
+        await page.goto('https://okgg.top/user');
     }
     await sleep(3000);
     let selecter, innerHtml;
@@ -52,7 +52,7 @@ async function freeokBuy(row, page) {
     await page.waitForSelector(selecter, { timeout: 15000 })
         .then(async () => {
             //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-            //await page.goto('https://okgg.xyz/user');
+            //await page.goto('https://okgg.top/user');
         });
     //////////do something
     let vip,balance,used

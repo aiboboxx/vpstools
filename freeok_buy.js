@@ -48,7 +48,7 @@ async function freeokBuy(row, page) {
       await resetPwd(row,browser,pool);
       await resetRss(browser);
     }
-    await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
+    await page.goto('https://okgg.top/user',{ timeout: 8000 });
   }
   await sleep(1000);
   let selecter, innerHtml;
@@ -56,7 +56,7 @@ async function freeokBuy(row, page) {
   await page.waitForSelector(selecter, { timeout: 8000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-      //await page.goto('https://okgg.xyz/user');
+      //await page.goto('https://okgg.top/user');
     });
   //////////do something
 
@@ -74,7 +74,7 @@ async function freeokBuy(row, page) {
   //date = dayjs.tz(row.level_end_time);
   if ((dayjs.tz(row.level_end_time).unix() < dayjs.tz().unix()) || row['balance'] == 0.99) {
     //await page.waitFor(1500);
-    await page.goto('https://okgg.xyz/user/shop',{ timeout: 8000 });
+    await page.goto('https://okgg.top/user/shop',{ timeout: 8000 });
     await page.click('body > main > div.container > div > section > div.shop-flex > div:nth-child(2) > div > a', {
       delay: 500
     })
@@ -97,12 +97,12 @@ async function freeokBuy(row, page) {
     }
     await sleep(1000);
   }
-  await page.goto('https://okgg.xyz/user',{ timeout: 8000 })
+  await page.goto('https://okgg.top/user',{ timeout: 8000 })
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div';
   await page.waitForSelector(selecter, { timeout: 8000 })
     .then(async () => {
       //console.log('进入页面：', await page.evaluate((selecter) => document.querySelector(selecter).innerHTML, selecter));
-      //await page.goto('https://okgg.xyz/user');
+      //await page.goto('https://okgg.top/user');
     })
   //rss
   innerHtml = await page.evaluate(() => document.querySelector('#all_v2rayn > div.float-clear > input').value.trim());

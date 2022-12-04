@@ -55,7 +55,7 @@ async function freeokBuy(row, page) {
       await page.click('#reactive')
       await sleep(1000)
       console.log('账户解除限制')
-      await page.goto('https://okgg.xyz/user')
+      await page.goto('https://okgg.top/user')
     }
     await sleep(2000)
 

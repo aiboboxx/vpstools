@@ -253,8 +253,12 @@ function getResetUrl() {
 async function resetMM(row,page,pool) {
   console.log("重置密码：resetMM")
   await clearBrowser(page) //clear all cookies
-  await page.goto('https://okgg.xyz/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 15000 })
+  await page.goto('https://okgg.top/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+  await page.waitForSelector("#email", { timeout: 10000 })
+  .catch(async (error)=>{
+    await page.goto('https://okgg.top/password/reset', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+    await page.waitForSelector("#email", { timeout: 10000 })
+  })
   await page.type('#email', row.usr, { delay: 20 });
   await page.click('#reset');
   await page.waitForNavigation({ timeout: 3000 }).catch((err) => console.log('跳转超时'));
@@ -292,12 +296,12 @@ exports.login = async function login(row, page, pool) {
   let cookies = []
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
-  await page.waitForSelector("#email", { timeout: 15000 })
-  .then(async () => {
-    //cookies = await page.cookies();
-    //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
-  });
+  await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+  await page.waitForSelector("#email", { timeout: 8000 })
+  .catch(async (error)=>{
+    await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+    await page.waitForSelector("#email", { timeout: 10000 })
+  })
   await sleep(1000)
   await page.type('#email', row.usr, { delay: 20 });
   await page.waitForSelector("#passwd", { timeout: 5000 })
@@ -362,7 +366,7 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.xyz/user', { timeout: 20000 });
+  await page.goto('https://okgg.top/user', { timeout: 15000 });
   //console.log('开始cookie登录');
   await page.waitForFunction(
     (selecter) => {
@@ -402,9 +406,13 @@ exports.selectAsiaGroup = async function selectAsiaGroup(browser) {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://okgg.xyz/user/edit',{ timeout: 8000 });
+  await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
+  await page.waitForSelector('#group',{ timeout: 10000 })
+  .catch(async (error)=>{
+    await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
+    await page.waitForSelector('#group',{ timeout: 10000 })
+  })
   await sleep(1000);
-  await page.waitForSelector('#group')
   await page.click('#group')
   await sleep(1000);
   await page.waitForSelector('.card-inner > .open > .dropdown-menu > li:nth-child(2) > .dropdown-option')
@@ -422,8 +430,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://okgg.xyz/user/edit',{ timeout: 8000 });
-  await sleep(1000);
+  await page.goto('https://okgg.top/user/edit',{ timeout: 15000 });
 /*   if (row.leveel > 0){
     await page.waitForSelector('#group')
     await page.click('#group')
@@ -438,11 +445,12 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
   }  */
   let selecter;
   selecter = '#sspwd';
-  await page.waitForSelector(selecter, { timeout: 8000 })
-    .then(async () => {
-      //console.log('进入页面：修改资料');
-      //await page.goto('https://okgg.xyz/user');
-    });
+  await page.waitForSelector(selecter, { timeout: 10000 })
+  .catch(async (error)=>{
+    await page.goto('https://okgg.top/user/edit',{ timeout: 15000 })
+    await page.waitForSelector(selecter, { timeout: 10000 })
+  })
+  await sleep(1000);
   await page.type(selecter, Math.random().toString(36).slice(-12));
   await sleep(1000);
   await page.click('#ss-pwd-update')
@@ -452,7 +460,7 @@ exports.resetPwd = async function resetPwd(row,browser,pool) {
           console.log('修改v2ray密码成功',row.id);
           if (row.level === 1) await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
           //.catch((err) => console.log('重置count失败'));
-          //await page.goto('https://okgg.xyz/user');
+          //await page.goto('https://okgg.top/user');
         })
 
     });
@@ -465,11 +473,15 @@ exports.resetRss = async function resetRss(browser){
     //console.info(`➞ ${dialog.message()}`);
     await dialog.dismiss();
   });
-  await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
-  await sleep(1000);
+  await page.goto('https://okgg.top/user',{ timeout: 15000 })
   let selecter;
   selecter = "body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a";
-  await page.waitForSelector(selecter, { timeout: 8000 })
+  await page.waitForSelector(selecter, { timeout: 10000 })
+  .catch(async (error)=>{
+    await page.goto('https://okgg.top/user',{ timeout: 15000 })
+    await page.waitForSelector(selecter, { timeout: 10000 })
+  })
+  await sleep(1000);
     await page.click(selecter)
     await page.waitForFunction(
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',

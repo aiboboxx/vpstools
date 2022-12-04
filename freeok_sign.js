@@ -52,7 +52,7 @@ async function freeokSign(row, page) {
       await resetPwd(row, browser, pool);
       await resetRss(browser);
     }
-    await page.goto('https://okgg.xyz/user',{ timeout: 8000 });
+    await page.goto('https://okgg.top/user',{ timeout: 8000 });
   }
   //await sleep(3000);
   let selecter, innerHtml;
@@ -115,17 +115,17 @@ async function freeokSign(row, page) {
       }
     }
   }
-
   if (reset.pwd) {
     await resetPwd(row, browser, pool);
     console.log("reset.pwd");
   }
+  await page.bringToFront()
   if (reset.rss) {
     await page.bringToFront()
     await page.click("body > main > div.container > section > div.ui-card-wrap > div.col-xx-12.col-sm-8 > div.card.quickadd > div > div > div.cardbtn-edit > div.reset-flex > a")
     await page.waitForFunction(
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
-      { timeout: 5000 }
+      { timeout: 10000 }
     ).then(async () => {
       //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
       await sleep(2500);
@@ -148,7 +148,7 @@ async function freeokSign(row, page) {
       await page.waitForFunction('document.querySelector("#msg").innerText.includes("获得了")', { timeout: 3000 })
         .then(async () => {
           console.log('签到成功', await page.evaluate(() => document.querySelector('#msg').innerHTML));
-          //await page.goto('https://okgg.xyz/user');
+          //await page.goto('https://okgg.top/user');
         })
         .catch((err) => console.log('签到超时'));
     })
@@ -162,7 +162,7 @@ async function freeokSign(row, page) {
 async function main() {
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    headless: true,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -185,7 +185,7 @@ async function main() {
   console.log(`*****************开始freeok签到 ${Date()}*******************\n`);
   let sql = `SELECT id,usr,pwd,cookies,rss_refresh_time,level,fetch_time
              FROM freeok 
-             WHERE site = "okgg" and level = 1 and (sign_time < date_sub(now(), interval 3 hour) or sign_time is null)
+             WHERE site = "okgg" and level = 1 and (sign_time < date_sub(now(), interval 2 hour) or sign_time is null)
              order by sign_time asc 
              limit 20;`
   //sql = "SELECT * FROM freeok where site = 'okgg' and err=1 order by fetch_time asc;"
