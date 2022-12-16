@@ -13,6 +13,7 @@ dayjs.tz.setDefault("Asia/Hong_Kong")
 let resetUrl = ''
 const mysql = require('mysql2/promise');
 let runId = process.env.runId;
+console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
@@ -184,7 +185,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
       //runId ? '' :setup.proxy.normal
-      //setup.proxy.changeip,
+      setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

@@ -104,15 +104,15 @@ async function freeokBuy(row, page) {
 async function main() {
   console.log("runId:",runId);
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.normal,
-      runId ? '' : setup.proxy.changeip
+      //runId ? '' : setup.proxy.changeip
       //setup.proxy.changeip
     ],
     defaultViewport: null,

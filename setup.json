@@ -1,7 +1,7 @@
 {
 	"mysql": {
-		"host": "51.79.225.65",
-		"user": "freeok",
+		"host": "mysql.appls.eu.org",
+		"user": "root",
 		"password": "780830-aiboboxx",  
 		"port": "3306",  
 		"database": "freeok"

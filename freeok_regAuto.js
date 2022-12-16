@@ -3,11 +3,12 @@ const fs = require("fs");
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
-const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } = require('./common.js');
+const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, waitForString } = require('./common.js');
 const { sbFreeok } = require('./utils.js');
 const mysql = require('mysql2/promise');
 //Date.prototype.format = tFormat;
-let runId = process.env.runId;
+let runId = process.argv[2];
+console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
@@ -34,10 +35,11 @@ async function regFreeok(page,invite){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 30000 })
+  await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
     .catch(async (error) => { console.log('error: ', error.message); });
   // console.log("a");
-  await page.waitForFunction(
+    await waitForString(page,'body',"确认注册",20000)
+/*     await page.waitForFunction(
     (selecter) => {
       if (document.querySelector(selecter)) {
         return document.querySelector(selecter).innerText.includes("确认注册");
@@ -47,11 +49,23 @@ async function regFreeok(page,invite){
     },
     { timeout: 60000 },
     'body'
-  ).then(async () => { console.log("过5秒盾"); await sleep(1000); });
-  await page.waitForSelector('#name', { timeout: 60000 });
-  //cookies = await page.cookies();
-  //fs.writeFileSync('./cookies.json', JSON.stringify(cookies, null, '\t'));
-  //console.log("保存cookies");
+  ).then(async () => { console.log("过5秒盾"); await sleep(1000); }) */
+  .catch(async (error)=>{
+    await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
+    .catch(async (error) => { console.log('error: ', error.message); });
+    await waitForString(page,'body',"确认注册",30000)
+    .catch(async (error)=>{
+      await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
+      .catch(async (error) => { console.log('error: ', error.message); });
+      await waitForString(page,'body',"确认注册",40000)
+        .catch(async (error)=>{
+          await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
+          .catch(async (error) => { console.log('error: ', error.message); });
+          await waitForString(page,'body',"确认注册",50000)
+        })
+    })
+  })
+  await page.waitForSelector('#name', { timeout: 15000 })
   await page.type('#name', usr);
   //await sleep (100);
   await page.type('#email', usr);
@@ -173,7 +187,8 @@ async function main() {
   if ( r[0][0].Number >= 100 ) {
     console.log('已有level=1账户',r[0][0].Number);
     await pool.end();
-    if (runId ? true : false) await browser.close();
+    //if (runId ? true : false) await browser.close();
+    await browser.close();
     return;
   }
   console.log('已有账户：',r[0][0].Number);
@@ -184,15 +199,16 @@ async function main() {
   let invite = r[0][0].invite;
   console.log(invite);
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    headless: true,
+    headless: false,
+    //headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip,
-      //runId ? '' :setup.proxy.normal
+      //runId ? '' : setup.proxy.changeip,
+      //runId ? '' :setup.proxy.normal,
+      setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
@@ -235,7 +251,8 @@ await page.evaluateOnNewDocument(() => {
   .catch(async (error) => { console.log('error: ', error.message); });
   console.log(`*****************freeok注册结束 ${Date()}*******************\n`);
   await pool.end();
-  if (runId ? true : false) await browser.close();
+  //if (runId) await browser.close();
+  await browser.close();
 }
 main()
 
