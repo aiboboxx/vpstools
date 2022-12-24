@@ -12,7 +12,7 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 let resetUrl = ''
 const mysql = require('mysql2/promise');
-let runId = process.env.runId;
+let runId = process.argv[2];
 console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
@@ -176,8 +176,8 @@ async function freeokSign(row, page) {
 
 async function main() {
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -185,7 +185,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
       //runId ? '' :setup.proxy.normal
-      setup.proxy.changeip,
+      //setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true

@@ -14,7 +14,8 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 const mysql = require('mysql2/promise');
-let runId = process.env.runId;
+let runId = process.argv[2];
+console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
@@ -102,7 +103,7 @@ async function freeokBuy(row, page) {
 }
 
 async function main() {
-  console.log("runId:",runId);
+  //console.log("runId:",runId);
   browser = await puppeteer.launch({
     //headless: runId ? true : false,
     headless: false,

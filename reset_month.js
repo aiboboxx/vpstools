@@ -8,7 +8,8 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } =
 const { sbFreeok, login, loginWithCookies, resetPwd } = require('./utils.js');
 //Date.prototype.format =Format;
 const mysql = require('mysql2/promise');
-let runId = process.env.runId;
+let runId = process.argv[2];
+console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
@@ -103,8 +104,8 @@ async function freeokBuy(row, page) {
 async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

@@ -36,30 +36,18 @@ async function freeokSign(row, page) {
   await page.waitForSelector(selecter)
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   console.log("流量: " , innerHtml);
-  await page.goto("https://www.v2raya.eu.org/#/subscribe",{ timeout: 6000})
-  selecter = '#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-outline-primary.btn-rounded.px-3.mr-1.my-1.ant-dropdown-trigger';
+  await page.goto("https://www.v2raya.eu.org/#/dashboard",{ timeout: 6000})
+  selecter = '#main-container > div > div:nth-child(3) > div > div > div.block-content.p-0 > div > div > div:nth-child(2)';
   await page.waitForSelector(selecter, { timeout: 5000 })
-  await page.click(selecter)
-  await sleep(500)
-  selecter = "body > div:nth-child(7) > div > div > ul > li:nth-child(2)"
-  await page.waitForSelector(selecter, { timeout: 5000 })
-  await sleep(500)
   await page.click(selecter)
   await sleep(1000)
-  selecter = "body > div:nth-child(9) > div > div.ant-modal-wrap > div > div.ant-modal-content > div > div > div.ant-modal-confirm-btns > button.ant-btn.ant-btn-primary"
-  // xpath = "/html/body/div[4]/div/div[2]/div/div[2]/div/div/div[2]/button[2]"
+  //selecter = "body > div:nth-child(8) > div > div.ant-modal-wrap.ant-modal-centered > div > div.ant-modal-content > div > div > div.item___yrtOv.subsrcibe-for-link > div:nth-child(2)"
+  selecter = ".item___yrtOv.subsrcibe-for-link div:last-child"
   await page.waitForSelector(selecter, { timeout: 5000 })
+  await sleep(1000)
   await page.click(selecter)
-  await sleep(1500)
-  //rss
-  selecter = "#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-primary.btn-rounded.px-3.mr-1.my-1"
-  await page.waitForSelector(selecter, { timeout: 5000 })
-  await page.click(selecter)
-  await sleep(500)
-  selecter = "body > div:nth-child(10) > div > div.ant-modal-wrap.ant-modal-centered > div > div.ant-modal-content > div > div > div.item___yrtOv.subsrcibe-for-link > div:nth-child(2)"
-  await page.waitForSelector(selecter, { timeout: 5000 })
-  await page.click(selecter)
-  await sleep(500)
+  await sleep(1000)
+
   const text =await page.evaluate(() => navigator.clipboard.readText());
   console.log(text);
   row.rss = text
@@ -71,7 +59,7 @@ async function main() {
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
     headless: runId ? true : false,
-    //headless: true,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

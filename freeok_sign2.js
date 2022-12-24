@@ -7,7 +7,8 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } =
 const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
 
 const mysql = require('mysql2/promise');
-let runId = process.env.runId;
+let runId = process.argv[2];
+console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
 const pool = mysql.createPool({
@@ -102,8 +103,8 @@ async function main() {
 
   //console.log(await sqlite.open('./freeok.db'))
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',

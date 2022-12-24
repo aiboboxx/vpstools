@@ -104,8 +104,8 @@ async function freeokBuy(row, page) {
 async function main() {
   //await v2raya();
   browser = await puppeteer.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
