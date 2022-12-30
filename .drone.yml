@@ -6,9 +6,12 @@ volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
       path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: racknerd
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -16,11 +19,11 @@ steps: # 定义管道的执行步骤
     commands: # 当前步骤执行的命令
       - export runId=123456
       - pwd # 查看当前目录
-      - apt-get update
-      - apt-get install xvfb
       - npm install # 安装node_modules包
       #- ls
-      - xvfb-run --server-args="-screen 0 1920x1080x16" node freeok_buy.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7
+      - node freeok_buy.js
 trigger:
   event:
   - cron
@@ -33,10 +36,13 @@ name: sign
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: racknerd
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -44,11 +50,11 @@ steps: # 定义管道的执行步骤
     commands: # 当前步骤执行的命令
       - export runId=123456
       - pwd # 查看当前目录
-      - apt update
-      - apt install xvfb
       - npm install # 安装node_modules包
       #- ls
-      - xvfb-run --server-args="-screen 0 1920x1080x16" node freeok_sign.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7
+      - node freeok_sign.js
 trigger:
   event:
   - cron
@@ -61,10 +67,13 @@ name: sign2
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: desivps
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -74,7 +83,9 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      #- node freeok_sign2.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7
+      - node freeok_sign2.js
 trigger:
   event:
   - cron
@@ -87,10 +98,13 @@ name: invite
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: hp
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -100,7 +114,9 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      #- node freeok_invite.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7  
+      - node freeok_invite.js
 trigger:
   event:
   - cron
@@ -113,10 +129,13 @@ name: reset_day
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: racknerd
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -126,7 +145,9 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      #- node reset_day.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7
+      - node reset_day.js
       - node v2raya_day.js
       #- node freeok_regAuto.js
 trigger:
@@ -141,10 +162,13 @@ name: reset_month
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: racknerd
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -154,7 +178,10 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      #- node reset_month.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7
+      - node freeok_sign2.js
+      - node reset_month.js
       - node v2raya_month.js
 trigger:
   event:
@@ -168,10 +195,13 @@ name: reset_year
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: racknerd
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
@@ -181,8 +211,10 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
-      #- node reset_year.js
-      #- node reset_halfyear.js
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7
+      - node reset_year.js
+      - node reset_halfyear.js
       - node v2raya_year.js
       - node sq_reset.js
 
@@ -198,10 +230,13 @@ name: daily
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /var/tmp/node_modules # 宿主机目录    #绝对路径
+      path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
+node:
+  a: racknerd
+  c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
-    image: satantime/puppeteer-node:14-bullseye # 当前步骤使用的镜像
+    image: aiboboxx/node:latest # 当前步骤使用的镜像
     depends_on: [clone] # 依赖的步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称

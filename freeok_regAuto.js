@@ -208,7 +208,7 @@ async function main() {
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
       //runId ? '' :setup.proxy.normal,
-      setup.proxy.changeip
+      //setup.proxy.changeip
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,

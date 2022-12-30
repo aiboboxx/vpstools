@@ -126,7 +126,8 @@ exports.sbFreeok = async function sbFreeok(page) {
       if (
         text.includes("怪物吃了拼图") ||
         text.includes("拖动滑块将悬浮图像正确拼合") ||
-        text.includes("网络不给力请点击重试")
+        text.includes("网络不给力请点击重试") ||
+        text.includes("请完成验证")
       ) {
         await sleep(2500);
         await page.click("#embed-captcha > div > div.geetest_btn > div.geetest_radar_btn > div.geetest_radar_tip");
@@ -135,11 +136,7 @@ exports.sbFreeok = async function sbFreeok(page) {
         step = await _getDistance();
         count ++
         await btnSlider(step);
-      } else if (text.includes("请完成验证")) {
-        step = await _getDistance();
-        count ++
-        await btnSlider(step);
-      }
+      } 
   }
 }
 function getResetUrl() {
