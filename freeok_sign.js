@@ -140,11 +140,16 @@ async function freeokSign(row, page) {
     await page.waitForFunction(
       'document.querySelector("#msg").innerText.includes("已重置您的订阅链接")',
       { timeout: 10000 }
-    ).then(async () => {
-      //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
-      await sleep(2500);
-      console.log("reset.rss");
-    });
+    )
+      .then(async () => {
+        //console.log('重置订阅链接',await page.evaluate(()=>document.querySelector('#msg').innerHTML));
+        await sleep(2500);
+        console.log("reset.rss");
+      })
+      .catch(async (error)=>{
+        console.log('reset.rss error: ', error.message)
+        await sleep(5000)
+      })
   }
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div'
   //余额
