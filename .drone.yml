@@ -100,7 +100,7 @@ volumes: # 声明数据卷（此为服务器中的实际目录）
     host: # Host Volume
       path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
 node:
-  a: hp
+  a: desivps
   c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
@@ -246,6 +246,8 @@ steps: # 定义管道的执行步骤
       - pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
+      - Xvfb -ac :7 -screen 0 1280x1024x8 &
+      - export DISPLAY=:7    
       #- node ssrsub_sign.js
       #- node ssrsub_reg6.js  
       #- node freeok_regAuto.js
