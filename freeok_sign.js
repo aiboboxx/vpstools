@@ -148,10 +148,10 @@ async function freeokSign(row, page) {
       })
       .catch(async (error)=>{
         console.log('reset.rss error: ', error.message)
+        await page.goto('https://okgg.top/user',{ timeout: 8000 });
         await sleep(2000)
       })
   }
-  //await page.goto('https://okgg.top/user',{ timeout: 8000 });
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div'
   //余额
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
