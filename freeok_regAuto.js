@@ -7,7 +7,7 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString, wa
 const { sbFreeok } = require('./utils.js');
 const mysql = require('mysql2/promise');
 //Date.prototype.format = tFormat;
-let runId = process.argv[2];
+let runId = process.env.runId;
 console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));

@@ -7,7 +7,7 @@ const { tFormat, sleep, clearBrowser, getRndInteger, randomOne, randomString } =
 const { sbFreeok, login, loginWithCookies, resetPwd, resetRss } = require('./utils.js');
 
 const mysql = require('mysql2/promise');
-let runId = process.argv[2];
+let runId = process.env.runId;
 console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));

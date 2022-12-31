@@ -12,7 +12,7 @@ dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 let resetUrl = ''
 const mysql = require('mysql2/promise');
-let runId = process.argv[2];
+let runId = process.env.runId;
 console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
@@ -148,9 +148,10 @@ async function freeokSign(row, page) {
       })
       .catch(async (error)=>{
         console.log('reset.rss error: ', error.message)
-        await sleep(5000)
+        await sleep(2000)
       })
   }
+  await page.goto('https://okgg.top/user',{ timeout: 8000 });
   selecter = 'body > main > div.container > section > div.ui-card-wrap > div:nth-child(1) > div > div.user-info-main > div.nodemain > div.nodehead.node-flex > div'
   //余额
   innerHtml = await page.evaluate(() => document.querySelector('body > main > div.container > section > div.ui-card-wrap > div:nth-child(2) > div > div.user-info-main > div.nodemain > div.nodemiddle.node-flex > div').innerHTML.trim());
@@ -234,14 +235,14 @@ async function main() {
       })
       .catch(async (error) => {
         console.error('signerror: ', error.message)
-/*         let sql, arr;
+        let sql, arr;
         sql = 'UPDATE `freeok` SET `sign_time`=NOW() WHERE `id`=?';
         arr = [row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
           .then(async (reslut) => { console.error('changedRows2', reslut[0].changedRows); await sleep(3000); })
-          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(3000); }); */
+          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(3000); }); 
       });
   }
   //sqlite.close();

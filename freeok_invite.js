@@ -14,7 +14,7 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault("Asia/Hong_Kong")
 const mysql = require('mysql2/promise');
-let runId = process.argv[2];
+let runId = process.env.runId;
 console.log("runId",runId)
 let browser;
 let setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
