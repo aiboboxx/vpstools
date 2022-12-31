@@ -235,14 +235,14 @@ async function main() {
       })
       .catch(async (error) => {
         console.error('signerror: ', error.message)
-        let sql, arr;
+/*         let sql, arr;
         sql = 'UPDATE `freeok` SET `sign_time`=NOW() WHERE `id`=?';
         arr = [row.id];
         sql = await pool.format(sql, arr);
         //console.log(sql);
         await pool.query(sql)
           .then(async (reslut) => { console.error('changedRows2', reslut[0].changedRows); await sleep(3000); })
-          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(3000); });
+          .catch(async (error) => { console.error('UPDATEerror2: ', error.message); await sleep(3000); }); */
       });
   }
   //sqlite.close();
