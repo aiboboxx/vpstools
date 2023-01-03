@@ -36,30 +36,18 @@ async function freeokSign(row, page) {
   await page.waitForSelector(selecter)
   innerHtml = await page.evaluate((selecter) => document.querySelector(selecter).innerText, selecter);
   console.log("流量: " , innerHtml);
-  await page.goto("https://v2r.yydsvpn.top/#/subscribe",{ timeout: 6000})
-  selecter = '#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-outline-primary.btn-rounded.px-3.mr-1.my-1.ant-dropdown-trigger';
+  await page.goto("https://s7.gay/#/dashboard",{ timeout: 6000})
+  selecter = '#main-container > div > div:nth-child(3) > div > div > div.block-content.p-0 > div > div > div:nth-child(2)';
   await page.waitForSelector(selecter, { timeout: 5000 })
-  await page.click(selecter)
-  await sleep(500)
-  selecter = "body > div:nth-child(7) > div > div > ul > li:nth-child(3)"
-  await page.waitForSelector(selecter, { timeout: 5000 })
-  await sleep(500)
   await page.click(selecter)
   await sleep(1000)
-  selecter = "body > div:nth-child(9) > div > div.ant-modal-wrap > div > div.ant-modal-content > div > div > div.ant-modal-confirm-btns > button.ant-btn.ant-btn-primary"
-  // xpath = "/html/body/div[4]/div/div[2]/div/div[2]/div/div/div[2]/button[2]"
+  //selecter = "body > div:nth-child(8) > div > div.ant-modal-wrap.ant-modal-centered > div > div.ant-modal-content > div > div > div.item___yrtOv.subsrcibe-for-link > div:nth-child(2)"
+  selecter = ".item___yrtOv.subsrcibe-for-link div:last-child"
+  await page.waitForSelector(selecter, { timeout: 5000 })
+  await sleep(1000)
   await page.click(selecter)
   await sleep(1000)
-  //await page.goto("https://v2r.yydsvpn.top/#/subscribe",{timeout: 5000})
-  //rss
-  selecter = "#main-container > div > div.block.block-rounded.mb-4 > div > div > div.p-1.p-md-3.col-md-6.col-xs-12.text-md-right > a.btn.btn-sm.btn-primary.btn-rounded.px-3.mr-1.my-1"
-  await page.waitForSelector(selecter, { timeout: 5000 })
-  await page.click(selecter)
-  await sleep(500)
-  selecter = "body > div:nth-child(10) > div > div.ant-modal-wrap.ant-modal-centered > div > div.ant-modal-content > div > div > div.item___yrtOv.subsrcibe-for-link > div:nth-child(2)"
-  await page.waitForSelector(selecter, { timeout: 5000 })
-  await page.click(selecter)
-  await sleep(500)
+
   const text =await page.evaluate(() => navigator.clipboard.readText());
   console.log(text);
   row.rss = text
@@ -85,7 +73,7 @@ async function main() {
     ignoreHTTPSErrors: true
   });
   const context = browser.defaultBrowserContext();
-  context.overridePermissions("https://v2r.yydsvpn.top", ['clipboard-read'])
+  context.overridePermissions("https://s7.gay/", ['clipboard-read'])
   const page = await browser.newPage();
   await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36');
   await page.authenticate({ username: setup.proxy.usr, password: setup.proxy.pwd });
@@ -131,7 +119,7 @@ async function login(row, page, pool) {
   let cookies = []
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
-  await page.goto('https://v2r.yydsvpn.top/#/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+  await page.goto('https://s7.gay/#/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
   await page.waitForSelector(".row > .col-md-12 > .block-content > .form-group:nth-child(2) > .form-control", { timeout: 10000 })
    await page.type('.row > .col-md-12 > .block-content > .form-group:nth-child(2) > .form-control', row.usr, { delay: 20 });
   await page.type('.row > .col-md-12 > .block-content > .form-group:nth-child(3) > .form-control', row.pwd, { delay: 20 });
