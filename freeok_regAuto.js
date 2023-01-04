@@ -35,36 +35,20 @@ async function regFreeok(page,invite){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
-    .catch(async (error) => { console.log('error: ', error.message); });
-  // console.log("a");
-    await waitForString(page,'body',"确认注册",20000)
-/*     await page.waitForFunction(
-    (selecter) => {
-      if (document.querySelector(selecter)) {
-        return document.querySelector(selecter).innerText.includes("确认注册");
-      } else {
-        return false;
-      }
-    },
-    { timeout: 60000 },
-    'body'
-  ).then(async () => { console.log("过5秒盾"); await sleep(1000); }) */
-  .catch(async (error)=>{
+  let t=0,isLoop=true
+  while(t<4 && isLoop){
     await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
     .catch(async (error) => { console.log('error: ', error.message); });
-    await waitForString(page,'body',"确认注册",30000)
-    .catch(async (error)=>{
-      await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
-      .catch(async (error) => { console.log('error: ', error.message); });
-      await waitForString(page,'body',"确认注册",40000)
-        .catch(async (error)=>{
-          await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
-          .catch(async (error) => { console.log('error: ', error.message); });
-          await waitForString(page,'body',"确认注册",50000)
-        })
+    await waitForString(page,'body',"确认注册",20000)
+    .then(async ()=>{
+      isLoop = false
+      console.log("waitForString:确认注册")
     })
-  })
+    .catch(async (error)=>{
+      console.log(await page.$eval('body', el => el.innerText))
+    })
+    t++
+  }
   await page.waitForSelector('#name', { timeout: 15000 })
   await page.type('#name', usr);
   //await sleep (100);
