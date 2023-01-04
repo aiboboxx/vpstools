@@ -43,12 +43,15 @@ async function regFreeok(page,invite){
     .then(async ()=>{
       isLoop = false
       console.log("waitForString:确认注册")
+      console.log(await page.$eval('body', el => el.innerText))
     })
     .catch(async (error)=>{
-      console.log(await page.$eval('body', el => el.innerText))
+      console.error("waitForString:确认注册 error")
+      console.error(await page.$eval('body', el => el.innerText))
     })
     t++
   }
+  await sleep(3000)
   await page.waitForSelector('#name', { timeout: 15000 })
   await page.type('#name', usr);
   //await sleep (100);
