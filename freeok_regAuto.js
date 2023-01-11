@@ -107,7 +107,7 @@ async function regFreeok(page,invite){
   ); */
   await sleep(1000);
   await Promise.all([
-    page.waitForNavigation({ timeout: 5000 }),
+    page.waitForNavigation({ timeout: 25000 }),
     page.click('#login'),
   ])
     .then(
@@ -194,7 +194,7 @@ async function main() {
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
       //runId ? '' : setup.proxy.changeip,
-      //runId ? '' :setup.proxy.normal,
+      runId ? '' :setup.proxy.normal,
       //setup.proxy.changeip
     ],
     defaultViewport: null,
