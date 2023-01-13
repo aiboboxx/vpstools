@@ -1,5 +1,4 @@
 const fs = require("fs");
-
 const puppeteer = require('puppeteer-extra');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 puppeteer.use(StealthPlugin());
@@ -35,38 +34,40 @@ async function regFreeok(page,invite){
   usr = randomString(6, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') + randomString(3, '0123456789') + randomOne(aEmails);
   //usr = '437385458@qq.com';
   console.log(usr);
-  let t=0,isLoop=true
-  while(t<4 && isLoop){
+  let t=0
+  while(t<4){
+    isContinue = false
     await page.goto(`https://okgg.top/auth/register?code=${invite}`, { timeout: 20000 })
     .catch(async (error) => { console.log('error: ', error.message); });
     await waitForString(page,'body',"确认注册",20000)
     .then(async ()=>{
-      isLoop = false
       console.log("waitForString:确认注册")
       //console.log(await page.$eval('body', el => el.innerText))
     })
     .catch(async (error)=>{
       console.error("waitForString:确认注册 error")
       console.error(await page.$eval('body', el => el.innerText))
+      isContinue = true
+      t++
     })
-    t++
+    if (!isContinue) break
   }
   await sleep(3000)
   await page.waitForSelector('#name', { timeout: 15000 })
   await page.type('#name', usr);
-  //await sleep (100);
+  await sleep (500);
   await page.type('#email', usr);
-  //await sleep (100);
+  await sleep (500);
   await page.type('#passwd', pwd);
-  //await sleep (100);
+  await sleep (500);
   await page.type('#repasswd', pwd);
-  //await sleep (300);
+  await sleep (500);
   await page.type('#wechat', randomString(10, '0123456789'));
   //await sleep (300);
   await page.click('#imtype');
-  await sleep(100);
+  await sleep(500);
   await page.click('body > div.authpage.auth-reg > div > section > div > div:nth-child(6) > div > div > ul > li:nth-child(4) > a');
-  await sleep(100);
+  await sleep(500);
   await page.waitForSelector('#embed-captcha > div')
     .catch((error) => { console.log(error.message); sleep(2000); });
   await page.click('#embed-captcha > div');
@@ -78,19 +79,31 @@ async function regFreeok(page,invite){
     { timeout: 60000 },
     '#embed-captcha > div'
   );
-  await sleep(1000);
+  await sleep(1500);
   await page.waitForSelector( '#tos',{visible: true} )
-  await sleep(1000);
+  await sleep(1500);
   await page.click('#tos');
-  await sleep(1000);
+  await sleep(1500);
   await page.waitForSelector( '#reg',{visible: true} )
-  await sleep(1000);
+  await sleep(1500);
   await page.click('#reg');
   await sleep(3000);
 
-  await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
-  await sleep(1500);
-  await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon");
+  t=0
+  while(t<4){
+    isContinue = false
+    await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
+    await sleep(1500);
+    await page.waitForSelector("body > div.authpage > div > form > div > div.auth-help.auth-row > div > div > label > span.checkbox-circle-icon.icon")
+    .catch(async (error)=>{
+      console.error("waitForSelector error")
+      console.error(await page.$eval('body', el => el.innerText))
+      isContinue = true
+      t++
+    })
+    if (!isContinue) break
+  }
+  //await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'));
   await page.type('#email', usr);
   await page.type('#passwd', pwd);
   await sleep(200);
