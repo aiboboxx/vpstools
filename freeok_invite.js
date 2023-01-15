@@ -66,7 +66,7 @@ async function freeokBuy(row, page) {
   row.score = Number(innerHtml);
   console.log("score: " + innerHtml);
   let array = [1,2,3,8]
-  if (row.score > 3.3) {
+  if (row.score > 3.5) {
     if (row.balance < 1 && array.includes(row.level) && row.id > 200) {
       row.level = 0;
     }
