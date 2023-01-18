@@ -88,7 +88,7 @@ async function freeokSign(row, page) {
   row.used = innerHtml;
   console.log("今日已用: " + innerHtml, Number(innerHtml.slice(0, innerHtml.length - 2)));
   if (row.used === "0B") {
-    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 3 : 24) && row.level === 1 && row.count !== 0) {
+    if ((dayjs.tz().unix() - Math.max(...unixtimes)) / (60 * 60) > (unixtimes[0] < unixtimes[1] ? 6 : 24) && row.level === 1 && row.count !== 0) {
       reset.pwd = true;
       reset.rss = true;
       await pool.query("UPDATE freeok SET count = 0  WHERE id = ?", [row.id])
