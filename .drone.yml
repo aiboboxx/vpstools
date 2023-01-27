@@ -148,7 +148,7 @@ steps: # 定义管道的执行步骤
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       - node reset_day.js
-      #- node v2raya_day.js
+      - node v2raya_day.js
       #- node freeok_regAuto.js
 trigger:
   event:
