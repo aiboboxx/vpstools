@@ -12,6 +12,7 @@ console.log(dayjs().format('YYYY-MM-DD HH:mm:ss'),dayjs.tz().format('YYYY-MM-DD 
 console.log(dayjs.tz().format('YYYY-MM-DD HH:mm:ss'))
 console.log(dayjs('2016-05-03 22:15:01').utc().format())
 console.log(dayjs.tz().startOf('date').format('YYYY-MM-DD HH:mm:ss'))
+console.log(dayjs.tz().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
 
 
 //console.log(dayjs("2022-06-10 04:49:53").tz("America/New_York").format('YYYY-MM-DD HH:mm:ss'))
