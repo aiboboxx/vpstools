@@ -20,7 +20,7 @@ const pool = mysql.createPool({
   waitForConnections: true, //连接超额是否等待
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 10, //可以等待的连接的个数
-  timezone: '+08:00',//时区配置
+  //timezone: '+08:00',//时区配置
   charset: 'utf8' //字符集设置
 });
 
@@ -45,8 +45,9 @@ async function freeokSign(row, page) {
     await page.click('#reactive');
     await sleep(2000);
     console.log('账户解除限制');
-    await page.goto('https://okgg.top/user',{ timeout: 15000 })
-    .catch(async (error)=>{console.log('error: ', error.message)})
+    await sleep(15000);
+    //await page.goto('https://okgg.top/user',{ timeout: 15000 })
+    //.catch(async (error)=>{console.log('error: ', error.message)})
   }
   //await sleep(3000);
   let selecter, innerHtml;
@@ -129,7 +130,7 @@ async function main() {
              FROM freeok 
              where site = "okgg" and level > 1 and (sign_time < date_sub(now(), interval 2 hour) or sign_time is null)
              order by sign_time asc 
-             limit 20;`
+             limit 15;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=8"

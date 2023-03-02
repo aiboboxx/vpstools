@@ -298,6 +298,28 @@ exports.login = async function login(row, page, pool) {
   //cookies = JSON.parse(fs.readFileSync('./cookies.json', 'utf8'));
   //await page.setCookie(...cookies);
   await page.goto('https://okgg.top/auth/login', { timeout: 15000 }).catch((err) => console.log('首页超时'))
+  let i=0
+  while (i<3){
+    let isBreak = false
+    await page.waitForSelector("#email", { timeout: 15000 })
+    .then(async () => {
+      isBreak = true
+    })
+    .catch(async (error)=>{
+      //console.log(await page.$eval('body', el => el.innerHTML));
+      let e = await page.$('#challenge-stage > div > input')
+      if (e){
+        console.log("click #challenge-stage")
+        e.click()
+        await page.waitForNavigation()
+      }else{
+        await page.reload({ timeout: 15000 })
+      }
+    //await page.goto('https://okgg.top/user', { timeout: 15000 })
+    })
+      i++
+      if (isBreak) break
+  }
   await page.waitForSelector("#email", { timeout: 8000 })
   .catch(async (error)=>{
     let selecter
@@ -376,7 +398,7 @@ exports.login = async function login(row, page, pool) {
 exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
   let cookies = JSON.parse(row.cookies);
   await page.setCookie(...cookies);
-  await page.goto('https://okgg.top/user', { timeout: 15000 })
+  await page.goto('https://okgg.top/user', { timeout: 20000 })
   //console.log('开始cookie登录');
 /*   await page.waitForFunction(
     (selecter) => {
@@ -389,14 +411,31 @@ exports.loginWithCookies = async function loginWithCookies(row, page, pool) {
     { timeout: 8000 },
     'body'
   ) */
-  let selecter, innerHtml;
-  selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a'; //退出
-  await page.waitForSelector(selecter, { timeout: 8000 })
-  .catch(async (error)=>{
-    await page.reload({ timeout: 15000 })
+  let selecter
+  let i=0
+  while (i<3){
+    let isBreak = false
+    selecter = 'body > header > ul.nav.nav-list.pull-right > div > ul > li:nth-child(2) > a' //退出
+    await page.waitForSelector(selecter, { timeout: 15000 })
+    .then(async () => {
+      isBreak = true
+    })
+    .catch(async (error)=>{
+      //console.log(await page.$eval('body', el => el.innerHTML));
+      let e = await page.$('#challenge-stage > div > input')
+      if (e){
+        console.log("click #challenge-stage")
+        e.click()
+        await page.waitForNavigation()
+      }else{
+        await page.reload({ timeout: 15000 })
+      }
     //await page.goto('https://okgg.top/user', { timeout: 15000 })
-  })
-  await page.waitForSelector(selecter, { timeout: 8000 })
+    })
+      i++
+      if (isBreak) break
+  }
+  await page.waitForSelector(selecter, { timeout: 10000 })
     .then(
       async () => {
         //console.log('cookie登录成功');
