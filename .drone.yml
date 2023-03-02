@@ -69,7 +69,7 @@ volumes: # 声明数据卷（此为服务器中的实际目录）
     host: # Host Volume
       path: /home/drone/freeok/node_modules # 宿主机目录    #绝对路径
 node:
-  a: desivps
+  a: racknerd
   c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
