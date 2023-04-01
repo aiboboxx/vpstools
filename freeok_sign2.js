@@ -45,7 +45,9 @@ async function freeokSign(row, page) {
     await page.click('#reactive');
     await sleep(2000);
     console.log('账户解除限制');
-    await sleep(15000);
+    await sleep(5000);
+    await page.click('#ui_menu_me > li:nth-child(1) > a')
+    await sleep(5000);
     //await page.goto('https://okgg.top/user',{ timeout: 15000 })
     //.catch(async (error)=>{console.log('error: ', error.message)})
   }
@@ -130,7 +132,7 @@ async function main() {
              FROM freeok 
              where site = "okgg" and level > 1 and (sign_time < date_sub(now(), interval 2 hour) or sign_time is null)
              order by sign_time asc 
-             limit 15;`
+             limit 20;`
   //sql = "SELECT * FROM freeok where err=1 order by fetch_time asc;"
   //sql = "SELECT * FROM freeok  order by fetch_time asc limit 25;"
   //sql = "SELECT * FROM freeok where id=8"
