@@ -25,7 +25,8 @@ steps: # 定义管道的执行步骤
       - export DISPLAY=:7
       - node autolink.js
 trigger:
+  branch:
+  - main
   event:
-  - cron
-  cron:
-  - yearly
+  - push
+
