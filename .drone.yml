@@ -28,4 +28,4 @@ trigger:
   event:
   - cron
   cron:
-  - buy
+  - yearly
