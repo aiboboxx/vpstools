@@ -5,7 +5,7 @@ name: getsite
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /home/drone/autolink/node_modules # 宿主机目录    #绝对路径
+      path: /root/.drone/autolink/node_modules # 宿主机目录    #绝对路径
   - name: cache
     host:
       path: /root/.cache
@@ -24,8 +24,6 @@ steps: # 定义管道的执行步骤
     commands: # 当前步骤执行的命令
       - export runId=123456
       - pwd # 查看当前目录
-      - apt-get update
-      - apt-get install ttf-wqy-zenhei -y
       - npm install # 安装node_modules包
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
