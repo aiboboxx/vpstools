@@ -1,1 +1,0 @@
-D:\networks\v2rayN-Core\v2ray.exe -config=D:\networks\v2rayN-Core\configs\config231.json

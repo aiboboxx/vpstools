@@ -1,1 +1,0 @@
-taskkill /F /IM v2rayn.exe

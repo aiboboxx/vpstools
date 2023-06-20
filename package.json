@@ -1,26 +1,5 @@
 {
-  "name": "dailyjob",
-  "version": "1.0.0",
-  "main": "freeok_sign_db.js",
-  "private": true,
-  "scripts": {
-    "test": "node test.js",
-    "sqlite3": "node sqlite-test.js"
-  },
-  "author": "<aiboboxx@gmail.com> (https://www.aiboboxx.ml)",
-  "license": "ISC",
-  "description": "freeok自动签到续费",
-  "homepage": "https://www.aiboboxx.ml",
-  "repository": "github:aiboboxx/dailyjob",
-  "bugs": "https://github.com/aiboboxx/dailyjob/issues",
-  "dependencies": {
-    "axios": "^0.27.2",
-    "dayjs": "^1.11.2",
-    "imap": "^0.8.19",
-    "mailparser": "^3.5.0",
-    "mysql2": "^2.3.3",
-    "puppeteer": "^13.1.3",
-    "puppeteer-extra": "^3.3.4",
-    "puppeteer-extra-plugin-stealth": "^2.11.1"
+  "devDependencies": {
+    "playwright": "^1.35.1"
   }
 }
