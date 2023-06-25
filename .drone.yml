@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: getsite
+name: autolink
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
@@ -9,9 +9,9 @@ volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: cache
     host:
       path: /root/.cache
-node:
-  a: racknerd
-  c: d
+# node:
+#   a: racknerd
+#   c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
     image: aiboboxx/node:latest # 当前步骤使用的镜像
@@ -22,16 +22,22 @@ steps: # 定义管道的执行步骤
       - name: cache
         path: /root/.cache
     commands: # 当前步骤执行的命令
-      - export runId=123456
-      - pwd # 查看当前目录
+      #- export runId=123456
+      #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
-      - node autolink.js
+      - node collectSite.js
+      - node collectLink.js     
+      - node applyLink.js
+      - node comment.js
 trigger:
   branch:
   - main
   event:
   - push
+  - cron
+  cron:
+  - daily
 
