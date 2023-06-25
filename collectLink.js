@@ -46,20 +46,27 @@ async function collectLink(row,page){
     .or(page.getByRole('link', { name: 'freinds',includeHidden: true }))
   //console.log('links个数：',await links.count())
   //console.log(JSON.stringify(links))
-/*   for (const link of await links.all()){
-      console.log('link:',await link.evaluate (node => node.outerHTML))
-      console.log('link:',await link.innerHTML())
-      console.log(await link.evaluate (node => node.href))
-  } */
-  let href = await links.first().evaluate (node => node.href)
-    .catch(async (error)=>{console.log('error: ', error.message);})
-  console.log('友情链接:',href)
-  if (href.indexOf('http') == 0) await pool.query("INSERT IGNORE INTO link( url ) VALUES (?)", [href])
+  for (const link of await links.all()){
+    let href = await link.evaluate (node => node.href)
+    //console.log('link:',await link.innerHTML())
+    if (href.indexOf('http') === 0) {
+      console.log('友情链接:',href)
+      await pool.query("INSERT IGNORE INTO link( url ) VALUES (?)", [href])
+      break
+    }
+  } 
+
   //抓取留言板链接
   links =  page.getByRole('link', { name: '留言',includeHidden: true })
-  href = await links.first().evaluate (node => node.href)
-  console.log('留言板:',href)
-  if (href.indexOf('http') == 0) await pool.query("INSERT IGNORE INTO comment( url ) VALUES (?)", [href])
+  for (const link of await links.all()){
+    let href = await link.evaluate (node => node.href)
+    //console.log('link:',await link.innerHTML())
+    if (href.indexOf('http') === 0) {
+      console.log('留言板:',href)
+      await pool.query("INSERT IGNORE INTO comment( url ) VALUES (?)", [href])
+      break
+    }
+  } 
   console.log('All done, collectLink. ✨')
 }
 async function main() {
@@ -74,17 +81,17 @@ console.log(`*****************开始collectLink*******************\n`);
              order by id asc 
              limit 50;`
   //console.log(sql);
-let  r = await pool.query(sql)
+  let  r = await pool.query(sql)
   console.log(`共有${r[0].length}个账户要collectLind`);
   for (let row of r[0]) {
     console.log(row.id, row.url);
     if (row.url) await collectLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
   }
-/*   let row ={}
-  row.id = 1
-  row.url = "https://blog.zhheo.com" 
-  await collectLink(row) 
-*/
+  // let row ={}
+  // row.id = 1
+  // row.url = "https://lhliang.com" 
+  // await collectLink(row,page) 
+
   await page.close()
   await pool.end()
   await context.close()
