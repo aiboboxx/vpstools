@@ -33,10 +33,7 @@ steps: # 定义管道的执行步骤
       - node applyLink.js
       - node comment.js
 trigger:
-  branch:
-  - main
   event:
-  - push
   - cron
   cron:
   - daily
