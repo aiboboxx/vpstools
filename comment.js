@@ -17,8 +17,7 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset:'utf8' //字符集设置
 });
-const linkList = ["clashfree"]
-const item = randomOne(linkList)
+const item = randomOne(setup.workflow)
 let runId = process.env.runId
 let browser
 async function launchBrowser() {
