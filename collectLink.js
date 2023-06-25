@@ -81,15 +81,15 @@ console.log(`*****************开始collectLink*******************\n`);
              order by id asc 
              limit 50;`
   //console.log(sql);
-  let  r = await pool.query(sql)
-  console.log(`共有${r[0].length}个账户要collectLind`);
-  for (let row of r[0]) {
-    console.log(row.id, row.url);
-    if (row.url) await collectLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
-  }
+    let  r = await pool.query(sql)
+    console.log(`共有${r[0].length}个账户要collectLind`);
+    for (let row of r[0]) {
+      console.log(row.id, row.url);
+      if (row.url) await collectLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+    }
   // let row ={}
   // row.id = 1
-  // row.url = "https://lhliang.com" 
+  // row.url = "https://www.hin.cool/" 
   // await collectLink(row,page) 
 
   await page.close()
