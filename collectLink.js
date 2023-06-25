@@ -52,18 +52,14 @@ async function collectLink(row,page){
       console.log(await link.evaluate (node => node.href))
   } */
   let href = await links.first().evaluate (node => node.href)
-    .then(async () => {
-      console.log('友情链接:',href)
-      if (href.indexOf('http') == 0) await pool.query("INSERT IGNORE INTO link( url ) VALUES (?)", [href])
-    })
     .catch(async (error)=>{console.log('error: ', error.message);})
+  console.log('友情链接:',href)
+  if (href.indexOf('http') == 0) await pool.query("INSERT IGNORE INTO link( url ) VALUES (?)", [href])
   //抓取留言板链接
   links =  page.getByRole('link', { name: '留言',includeHidden: true })
   href = await links.first().evaluate (node => node.href)
-    .then(async () => {
-      console.log('留言板:',href)
-      if (href.indexOf('http') == 0) await pool.query("INSERT IGNORE INTO comment( url ) VALUES (?)", [href])
-    })
+  console.log('留言板:',href)
+  if (href.indexOf('http') == 0) await pool.query("INSERT IGNORE INTO comment( url ) VALUES (?)", [href])
   console.log('All done, collectLink. ✨')
 }
 async function main() {
