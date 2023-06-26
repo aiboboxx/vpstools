@@ -17,7 +17,7 @@ const pool = mysql.createPool({
   timezone: '+08:00',//时区配置
   charset:'utf8' //字符集设置
 });
-const item = randomOne(setup.workflow)
+let item 
 let runId = process.env.runId
 let browser
 async function launchBrowser() {
@@ -51,6 +51,7 @@ async function comment(row,page){
     let nick = randomOne(setup[item].nick)
     let links =   await page.locator('input[name="nick"]')
         .or(page.locator('input[name="author"]'))
+        .or(page.getByPlaceholder('昵称'))
         .fill(nick)
     //console.log('nick:',randomOne(setup[item].nick))
   //  for (const link of await links.all()){
@@ -60,16 +61,30 @@ async function comment(row,page){
   // } 
     await page.locator('input[name="mail"]')
       .or(page.locator('input[name="email"]'))
+      .or(page.getByPlaceholder('电子邮件'))
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
+      .or(page.getByPlaceholder('网站'))
       .fill(setup[item].site)
-    await page.locator('textarea').fill(randomOne(setup["comment"]))
-    await page.getByRole('button', { name: '发送' })
-          .or(page.getByRole('button', { name: '提交' }))
-          .or(page.getByRole('button', { name: '发表评论' }))
-          .or(page.getByRole('button', { name: '发送评论' }))
-          .click()
+    let content =  randomOne(setup["comment"])
+    let locators =page.locator('textarea')
+    for (const locator of await locators.all()){
+      //await page.waitForTimeout(2000)
+      //console.log('locator:',await locator.evaluate (node => node.outerHTML))
+      await locator.fill(content)
+    }
+  locators =page.getByRole('button').filter({ hasNotText : '登录' })
+    for (const locator of await locators.all()){
+      //console.log('locator:',await locator.evaluate (node => node.outerHTML))
+      //console.log('textContent:',await locator.textContent())
+      if (await locator.textContent()) await locator.click()
+    }
+    //await page.getByRole('button')
+          // .or(page.getByRole('button', { name: '提交' }))
+          // .or(page.getByRole('button', { name: '发表评论' }))
+          // .or(page.getByRole('button', { name: '发送评论' }))
+          //.click()
     await page.waitForTimeout(5000);
   }else{
     console.log('已有留言')
@@ -82,21 +97,26 @@ async function main() {
   const page = await browser.newPage()
   page.setDefaultTimeout(20000);
 console.log(`*****************comment*******************\n`);  
-  sql = `SELECT id,url
+  for (let i=0;i<5;i++){
+    item = randomOne(setup.workflow)
+    console.log("item:",item)
+  let sql = `SELECT id,url
              FROM comment 
              WHERE ${item} = 0
-             order by id asc 
-             limit 10;`
+             ORDER BY RAND() 
+             limit 2;`
   //console.log(sql);
   let  r = await pool.query(sql)
   console.log(`共有${r[0].length}个账户要comment`);
   for (let row of r[0]) {
     console.log(row.id, row.url);
     if (row.url) await comment(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+    }
   }
   // let row ={}
   // row.id = 1
   // row.url = "https://easyf12.top/friends/" 
+  // item = randomOne(setup.workflow)
   // await comment(row,page) 
   await pool.end()
   await page.close()
