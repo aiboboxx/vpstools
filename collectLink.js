@@ -35,29 +35,32 @@ async function launchBrowser() {
 }
 async function collectLink(row,page){
   await pool.query("UPDATE site SET collected = 1  WHERE id = ?", [row.id])
-  let isError = false
   await page.goto(row.url)
-  .catch(async (error)=>{console.log('goto error: ', error.message);isError=true})
+  .catch(async (error)=>{console.log('goto error: ', error.message)})
   //if (isError) return Promise.reject(new Error('出错返回。'))
-  //抓取友情链接
-  let links = page.getByRole('link', { name: '友情链接',includeHidden: true })
+  try {
+    //抓取友情链接
+    let links = page.getByRole('link', { name: '友情链接',includeHidden: true })
     .or(page.getByRole('link', { name: /友链$/,includeHidden: true }))
     .or(page.getByRole('link', { name: '友人帐',includeHidden: true }))
     .or(page.getByRole('link', { name: 'freinds',includeHidden: true }))
-  //console.log('links个数：',await links.count())
-  //console.log(JSON.stringify(links))
-  for (const link of await links.all()){
-    let href = await link.evaluate (node => node.href)
-    //console.log('link:',await link.innerHTML())
-    if (href.indexOf('http') === 0) {
-      console.log('友情链接:',href)
-      await pool.query("INSERT IGNORE INTO link( url ) VALUES (?)", [href])
-      break
-    }
-  } 
+    //console.log('links个数：',await links.count())
+    //console.log(JSON.stringify(links))
+    for (const link of await links.all()){
+      let href = await link.evaluate (node => node.href)
+      //console.log('link:',await link.innerHTML())
+      if (href.indexOf('http') === 0) {
+        console.log('友情链接:',href)
+        await pool.query("INSERT IGNORE INTO link( url ) VALUES (?)", [href])
+        break
+      }
+    } 
+  } catch (error) {
+    console.log('error: ', error.message)
+  }
 
   //抓取留言板链接
-  links =  page.getByRole('link', { name: '留言',includeHidden: true })
+  let links =  page.getByRole('link', { name: '留言',includeHidden: true })
   for (const link of await links.all()){
     let href = await link.evaluate (node => node.href)
     //console.log('link:',await link.innerHTML())

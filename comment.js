@@ -4,7 +4,7 @@ const stealth = require('puppeteer-extra-plugin-stealth')()
 chromium.use(stealth)
 const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, randomString, findFrames, findFrame, md5 } = require('./common.js');
 const mysql = require('mysql2/promise')
-const setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
+const setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -37,14 +37,9 @@ async function launchBrowser() {
 async function comment(row,page){
   //console.log(`UPDATE comment SET ${item} = 1  WHERE id = ?`)
   await pool.query(`UPDATE comment SET ${item} = 1  WHERE id = ?`, [row.id])
-  let isError = false
   await page.goto(row.url)
   .catch(async (error)=>{console.log('goto error: ', error.message);isError=true})
-  //if (isError) return Promise.reject(new Error('出错返回。'))
   //抓取友情链接
-  //let links = page.getByRole('link', { name: /友链$/,includeHidden: true })
-  //fs.writeFileSync('body.txt', await page.locator('body').innerHTML())
-  //fs.writeFileSync('body2.txt', await page.$eval('body', e => e.outerHTML))
   //fs.writeFileSync('html.txt', await page.content())
   await page.waitForTimeout(3000);
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
@@ -107,7 +102,7 @@ console.log(`*****************comment*******************\n`);
              limit 2;`
   //console.log(sql);
   let  r = await pool.query(sql)
-  console.log(`共有${r[0].length}个账户要comment`);
+  console.log(`共有${r[0].length}个账户要comment`)
   for (let row of r[0]) {
     console.log(row.id, row.url);
     if (row.url) await comment(row,page).catch(async (error)=>{console.log('error: ', error.message);})
