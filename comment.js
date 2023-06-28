@@ -80,7 +80,7 @@ async function comment(row,page){
           // .or(page.getByRole('button', { name: '发表评论' }))
           // .or(page.getByRole('button', { name: '发送评论' }))
           //.click()
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(1000);
   }else{
     console.log('已有留言')
   }
@@ -90,7 +90,7 @@ async function main() {
   await launchBrowser()
   const context = await browser.newContext()
   const page = await browser.newPage()
-  page.setDefaultTimeout(20000);
+  page.setDefaultTimeout(15000);
 console.log(`*****************comment*******************\n`);  
   for (let i=0;i<5;i++){
     item = randomOne(setup.workflow)

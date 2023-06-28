@@ -76,7 +76,7 @@ async function main() {
   await launchBrowser()
   const context = await browser.newContext()
   const page = await browser.newPage()
-  page.setDefaultTimeout(20000);
+  page.setDefaultTimeout(15000);
 console.log(`*****************开始collectLink*******************\n`);  
   sql = `SELECT id,url
              FROM site 

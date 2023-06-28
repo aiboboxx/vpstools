@@ -72,20 +72,20 @@ async function applyLink(row,page){
     for (const locator of await locators.all()){
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.fill(content)
+      await locator.fill(content).catch(async (error)=>{console.log('fill error');})
     }
   locators =page.getByRole('button').filter({ hasNotText : '登录' })
     for (const locator of await locators.all()){
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
       //console.log('textContent:',await locator.textContent())
-      if (await locator.textContent()) await locator.click()
+      if (await locator.textContent()) await locator.click().catch(async (error)=>{console.log('click error');})
     }
     //await page.getByRole('button')
           // .or(page.getByRole('button', { name: '提交' }))
           // .or(page.getByRole('button', { name: '发表评论' }))
           // .or(page.getByRole('button', { name: '发送评论' }))
           //.click()
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(10000);
   }else{
     console.log('已有友链')
   }
@@ -95,7 +95,7 @@ async function main() {
   await launchBrowser()
   const context = await browser.newContext()
   const page = await browser.newPage()
-  page.setDefaultTimeout(20000);
+  page.setDefaultTimeout(15000);
 console.log(`*****************开始applyLink*******************\n`);  
   for (let i=0;i<5;i++){
     item = randomOne(setup.workflow)
