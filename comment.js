@@ -46,7 +46,8 @@ async function comment(row,page){
     let nick = randomOne(setup[item].nick)
     let links =   await page.locator('input[name="nick"]')
         .or(page.locator('input[name="author"]'))
-        .or(page.getByPlaceholder('昵称'))
+        .or(page.locator('input:has-text("昵称")'))
+        //.or(page.getByPlaceholder('昵称'))
         .fill(nick)
     //console.log('nick:',randomOne(setup[item].nick))
   //  for (const link of await links.all()){
@@ -56,18 +57,20 @@ async function comment(row,page){
   // } 
     await page.locator('input[name="mail"]')
       .or(page.locator('input[name="email"]'))
-      .or(page.getByPlaceholder('电子邮件'))
+      .or(page.locator('input:has-text("电子邮件")'))
+      //.or(page.getByPlaceholder('电子邮件'))
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
-      .or(page.getByPlaceholder('网站'))
+      .or(page.locator('input:has-text("网站")'))
+      //.or(page.getByPlaceholder('网站'))
       .fill(setup[item].site)
     let content =  randomOne(setup["comment"])
     let locators =page.locator('textarea')
     for (const locator of await locators.all()){
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.fill(content)
+      await locator.fill(content).catch(async (error)=>{console.log('fill error');})
     }
   locators =page.getByRole('button').filter({ hasNotText : '登录' })
     for (const locator of await locators.all()){
@@ -110,9 +113,9 @@ console.log(`*****************comment*******************\n`);
   }
   // let row ={}
   // row.id = 1
-  // row.url = "https://easyf12.top/friends/" 
+  // row.url = "https://ximfem.asia/messageboard/" 
   // item = randomOne(setup.workflow)
-  // await comment(row,page) 
+  // await comment(row,page).catch(async (error)=>{console.log('error: ', error.message);})
   await pool.end()
   await page.close()
   await context.close()

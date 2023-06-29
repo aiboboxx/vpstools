@@ -4,7 +4,7 @@ const stealth = require('puppeteer-extra-plugin-stealth')()
 chromium.use(stealth)
 const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, randomString, findFrames, findFrame, md5 } = require('./common.js');
 const mysql = require('mysql2/promise')
-const setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'));
+const setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
 const pool = mysql.createPool({
   host: setup.mysql.host,
   user: setup.mysql.user,
@@ -51,7 +51,8 @@ async function applyLink(row,page){
     let nick = randomOne(setup[item].nick)
     let links =   await page.locator('input[name="nick"]')
         .or(page.locator('input[name="author"]'))
-        .or(page.getByPlaceholder('昵称'))
+        .or(page.locator('input:has-text("昵称")'))
+        //.or(page.getByPlaceholder('昵称'))
         .fill(nick)
     //console.log('nick:',randomOne(setup[item].nick))
   //  for (const link of await links.all()){
@@ -61,11 +62,13 @@ async function applyLink(row,page){
   // } 
     await page.locator('input[name="mail"]')
       .or(page.locator('input[name="email"]'))
-      .or(page.getByPlaceholder('电子邮件'))
+      .or(page.locator('input:has-text("电子邮件")'))
+      //.or(page.getByPlaceholder('电子邮件'))
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
-      .or(page.getByPlaceholder('网站'))
+      .or(page.locator('input:has-text("网站")'))
+      //.or(page.getByPlaceholder('网站'))
       .fill(setup[item].site)
     let content =  setup[item].content.replace("xxxxxx",nick)
     let locators =page.locator('textarea')
