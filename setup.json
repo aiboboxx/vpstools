@@ -27,6 +27,7 @@
 		"网站做的很好！"
 	],
 	"workflow": ["clashfree","v2rayfree"],
+	"workflow_comment": ["clashfree","v2rayfree"],
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
 		"changeip":  "--proxy-server=socks5://192.168.0.104:7899"

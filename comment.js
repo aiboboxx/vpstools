@@ -96,7 +96,7 @@ async function main() {
   page.setDefaultTimeout(15000);
 console.log(`*****************comment*******************\n`);  
   for (let i=0;i<5;i++){
-    item = randomOne(setup.workflow)
+    item = randomOne(setup.workflow_comment)
     console.log("item:",item)
   let sql = `SELECT id,url
              FROM comment 
@@ -114,7 +114,7 @@ console.log(`*****************comment*******************\n`);
   // let row ={}
   // row.id = 1
   // row.url = "https://ximfem.asia/messageboard/" 
-  // item = randomOne(setup.workflow)
+  // item = randomOne(setup.workflow_comment)
   // await comment(row,page).catch(async (error)=>{console.log('error: ', error.message);})
   await pool.end()
   await page.close()
