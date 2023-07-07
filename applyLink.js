@@ -110,7 +110,7 @@ console.log(`*****************开始applyLink*******************\n`);
       limit 2;`
     ////console.log(sql);
     let  r = await pool.query(sql)
-    console.log(`共有${r[0].length}个账户要collectLind`);
+    console.log(`共有${r[0].length}个账户要applyLink`);
     for (let row of r[0]) {
       console.log(row.id, row.url);
       if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})

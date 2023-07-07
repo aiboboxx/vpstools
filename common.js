@@ -146,3 +146,34 @@ function removeRepeatArray(arr) {
     return Array.from(new Set(arr))
 }
 exports.removeRepeatArray = removeRepeatArray;
+async function cloud_cookie( host, uuid, password )
+{
+  const fetch = require('cross-fetch');
+  const url = host+'/get/'+uuid;
+  const ret = await fetch(url);
+  const json = await ret.json();
+  let cookies = [];
+  if( json && json.encrypted )
+  {
+    const {cookie_data, local_storage_data} = cookie_decrypt(uuid, json.encrypted, password);
+    for( const key in cookie_data )
+    {
+      // merge cookie_data[key] to cookies
+      cookies = cookies.concat(cookie_data[key].map( item => {
+        if( item.sameSite ) delete item.sameSite ;
+        return item;
+      } ));
+    }
+  }
+  return cookies;
+}
+
+function cookie_decrypt( uuid, encrypted, password )
+{
+    const CryptoJS = require('crypto-js');
+    const the_key = CryptoJS.MD5(uuid+'-'+password).toString().substring(0,16);
+    const decrypted = CryptoJS.AES.decrypt(encrypted, the_key).toString(CryptoJS.enc.Utf8);
+    const parsed = JSON.parse(decrypted);
+    return parsed;
+}
+exports.cloud_cookie = cloud_cookie;

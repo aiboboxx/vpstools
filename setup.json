@@ -18,16 +18,31 @@
 		"site": "https://www.v2rayfree.eu.org",
 		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://www.v2rayfree.eu.org\n网站头像：https://www.v2rayfree.eu.org/images/avatar.png\n网站描述：免费公益v2ray节点订阅地址每日更新"
 	},
+	"v2rayfree_github": {
+		"nick": ["v2ray免费节点","免费节点","免费v2ray节点","v2ray节点"],
+		"mail": "v2rayfree@gmail.com",
+		"site": "https://github.com/aiboboxx/v2rayfree",
+		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://www.v2rayfree.eu.org\n网站头像：https://www.v2rayfree.eu.org/images/avatar.png\n网站描述：免费公益v2ray节点订阅地址每日更新"
+	},
+	"clashfree_github": {
+		"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
+		"mail": "clashfree.eu.org@gmail.com",
+		"site": "https://github.com/aiboboxx/clashfree",
+		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashfree.eu.org\n网站头像：https://clashfree.eu.org/wp-content/uploads/avatar.png\n网站描述：ssr/v2ray/clash免费节点分享"
+	},	
 	"comment": [
 		"感谢博主分享！",
 		"雁过留毛，人过留名。",
 		"学习了，谢谢！",
 		"感谢分享。。。",
-		"网站很漂亮！",
-		"网站做的很好！"
+		"感谢分享",
+		"多谢分享",
+		"感谢博主精彩分享，辛苦了",
+		"三克油思密达",
+		"谢谢分享🎉🎉🎉"
 	],
-	"workflow": ["clashfree","v2rayfree"],
-	"workflow_comment": ["clashfree","v2rayfree"],
+	"workflow": ["clashfree"],
+	"workflow_comment": ["clashfree","clashfree_github","v2rayfree_github"],
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
 		"changeip":  "--proxy-server=socks5://192.168.0.104:7899"
