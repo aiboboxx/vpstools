@@ -42,7 +42,7 @@ async function comment(row,page){
   //抓取友情链接
   //fs.writeFileSync('html.txt', await page.content())
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(3000)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
     let links =   await page.locator('input[name="nick"]')
@@ -71,8 +71,9 @@ async function comment(row,page){
     for (const locator of await locators.all()){
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.type(content).catch(async (error)=>{console.log('fill error');})
+      await locator.fill(content).catch(async (error)=>{console.log('fill error');})
     }
+    await page.waitForTimeout(1000)
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))
