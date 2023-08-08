@@ -39,6 +39,8 @@ async function collectSite(row,page){
   //console.log('collectSite...')
   await page.goto(row.url)
   .catch(async (error)=>{console.log('error: ', error.message);isError=true})
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForTimeout(3000);
   //if (isError) return Promise.reject(new Error('出错返回。'))
   let links = await page.$$eval('a',
   (links) => links.map((link) => link.href))

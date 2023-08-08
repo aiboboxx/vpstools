@@ -37,6 +37,8 @@ async function collectLink(row,page){
   await pool.query("UPDATE site SET collected = 1  WHERE id = ?", [row.id])
   await page.goto(row.url)
   .catch(async (error)=>{console.log('goto error: ', error.message)})
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForTimeout(3000);
   //if (isError) return Promise.reject(new Error('出错返回。'))
   try {
     //抓取友情链接

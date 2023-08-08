@@ -15,9 +15,9 @@ const pool = mysql.createPool({
   connectionLimit: 10, //一次创建的最大连接数
   queueLimit: 0, //可以等待的连接的个数
   timezone: '+08:00',//时区配置
-  charset:'utf8' //字符集设置
+  charset: 'utf8' //字符集设置
 });
-let item 
+let item
 let runId = process.env.runId
 let browser
 async function launchBrowser() {
@@ -29,67 +29,81 @@ async function launchBrowser() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-  ],
+    ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
   })
 }
-async function applyLink(row,page){
+async function applyLink(row, page) {
   console.log(`UPDATE link SET ${item} = 1  WHERE id = ?`)
   await pool.query(`UPDATE link SET ${item} = 1  WHERE id = ?`, [row.id])
   let isError = false
   await page.goto(row.url)
-  .catch(async (error)=>{console.log('goto error: ', error.message);isError=true})
+    .catch(async (error) => { console.log('goto error: ', error.message); isError = true })
   //if (isError) return Promise.reject(new Error('出错返回。'))
   //抓取友情链接
   //let links = page.getByRole('link', { name: /友链$/,includeHidden: true })
   //fs.writeFileSync('body.txt', await page.locator('body').innerHTML())
   //fs.writeFileSync('body2.txt', await page.$eval('body', e => e.outerHTML))
   //fs.writeFileSync('html.txt', await page.content())
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
   await page.waitForTimeout(3000);
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
-    let links =   await page.locator('input[name="nick"]')
-        .or(page.locator('input[name="author"]'))
-        .or(page.locator('input:has-text("昵称")'))
-        //.or(page.getByPlaceholder('昵称'))
-        .fill(nick)
+    let links = await page.locator('input[name="nick"]')
+      .or(page.locator('input[name="author"]'))
+      .or(page.locator('input:has-text("昵称")'))
+      //.or(page.getByPlaceholder('昵称'))
+      .type(nick)
     //console.log('nick:',randomOne(setup[item].nick))
-  //  for (const link of await links.all()){
-  //     console.log('link:',await link.evaluate (node => node.outerHTML))
-  //     //console.log('link:',await link.innerHTML())
-  //     //console.log(await link.evaluate (node => node.href))
-  // } 
+    //  for (const link of await links.all()){
+    //     console.log('link:',await link.evaluate (node => node.outerHTML))
+    //     //console.log('link:',await link.innerHTML())
+    //     //console.log(await link.evaluate (node => node.href))
+    // } 
     await page.locator('input[name="mail"]')
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       //.or(page.getByPlaceholder('电子邮件'))
-      .fill(setup[item].mail)
+      .type(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       //.or(page.getByPlaceholder('网站'))
-      .fill(setup[item].site)
-    let content =  setup[item].content.replace("xxxxxx",nick)
-    let locators =page.locator('textarea')
-    for (const locator of await locators.all()){
+      .type(setup[item].site)
+    let content = setup[item].content.replace("xxxxxx", nick)
+    let locators = page.locator('textarea')
+    for (const locator of await locators.all()) {
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.fill(content).catch(async (error)=>{console.log('fill error');})
+      await locator.type(content).catch(async (error) => { console.log('fill error'); })
     }
-  locators =page.getByRole('button').filter({ hasNotText : '登录' })
-    for (const locator of await locators.all()){
-      //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      //console.log('textContent:',await locator.textContent())
-      if (await locator.textContent()) await locator.click().catch(async (error)=>{console.log('click error');})
-    }
-    //await page.getByRole('button')
-          // .or(page.getByRole('button', { name: '提交' }))
-          // .or(page.getByRole('button', { name: '发表评论' }))
-          // .or(page.getByRole('button', { name: '发送评论' }))
-          //.click()
+    await page.getByRole('button', { name: '发送' })
+      .or(page.getByRole('button', { name: '提交' }))
+      .or(page.getByRole('button', { name: '评论' }))
+      .or(page.getByRole('button', { name: 'send' }))
+      .click()
+      .catch(async (error) => {
+        let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search/ })
+        for (const locator of await locators.all()) {
+          //console.log('locator:',await locator.evaluate (node => node.outerHTML))
+          //console.log('textContent:',await locator.textContent())
+          let str = await locator.textContent()
+          if (!str) {
+            try {
+              str = await locator.inputValue()
+            } catch (error) {
+            }
+          }
+          if (str) {
+            //console.log('locator:', await locator.evaluate(node => node.outerHTML))
+            await locator.click().catch(async (error) => { console.log('click error'); })
+          }
+        }
+
+      })
     await page.waitForTimeout(10000);
-  }else{
+  } else {
     console.log('已有友链')
   }
   console.log('All done, collectLink. ✨')
@@ -99,7 +113,7 @@ async function main() {
   const context = await browser.newContext()
   const page = await browser.newPage()
   page.setDefaultTimeout(15000);
-console.log(`*****************开始applyLink*******************\n`);  
+  console.log(`*****************开始applyLink*******************\n`);
   for (let i=0;i<5;i++){
     item = randomOne(setup.workflow)
     console.log("item:",item)
@@ -116,11 +130,11 @@ console.log(`*****************开始applyLink*******************\n`);
       if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
     }
   }
-  // let row ={}
+  // let row = {}
   // row.id = 1
-  // row.url = "https://blog.zerolacqua.top/link/" 
+  // row.url = "https://www.subera.net/72.html"
   // item = randomOne(setup.workflow)
-  // await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+  // await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
 
   await pool.end()
   await page.close()

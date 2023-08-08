@@ -41,6 +41,7 @@ async function comment(row,page){
   .catch(async (error)=>{console.log('goto error: ', error.message);isError=true})
   //抓取友情链接
   //fs.writeFileSync('html.txt', await page.content())
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
   await page.waitForTimeout(3000);
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
@@ -48,7 +49,7 @@ async function comment(row,page){
         .or(page.locator('input[name="author"]'))
         .or(page.locator('input:has-text("昵称")'))
         //.or(page.getByPlaceholder('昵称'))
-        .fill(nick)
+        .type(nick)
     //console.log('nick:',randomOne(setup[item].nick))
   //  for (const link of await links.all()){
   //     console.log('link:',await link.evaluate (node => node.outerHTML))
@@ -59,30 +60,43 @@ async function comment(row,page){
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       //.or(page.getByPlaceholder('电子邮件'))
-      .fill(setup[item].mail)
+      .type(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       //.or(page.getByPlaceholder('网站'))
-      .fill(setup[item].site)
+      .type(setup[item].site)
     let content =  randomOne(setup["comment"])
     let locators =page.locator('textarea')
     for (const locator of await locators.all()){
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.fill(content).catch(async (error)=>{console.log('fill error');})
+      await locator.type(content).catch(async (error)=>{console.log('fill error');})
     }
-  locators =page.getByRole('button').filter({ hasNotText : '登录' })
-    for (const locator of await locators.all()){
-      //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      //console.log('textContent:',await locator.textContent())
-      if (await locator.textContent()) await locator.click().catch(async (error)=>{console.log('click error');})
-    }
-    //await page.getByRole('button')
-          // .or(page.getByRole('button', { name: '提交' }))
-          // .or(page.getByRole('button', { name: '发表评论' }))
-          // .or(page.getByRole('button', { name: '发送评论' }))
-          //.click()
+    await page.getByRole('button', { name: '发送' })
+      .or(page.getByRole('button', { name: '提交' }))
+      .or(page.getByRole('button', { name: '评论' }))
+      .or(page.getByRole('button', { name: 'send' }))
+      .click()
+      .catch(async (error) => {
+        let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search/ })
+        for (const locator of await locators.all()) {
+          //console.log('locator:',await locator.evaluate (node => node.outerHTML))
+          //console.log('textContent:',await locator.textContent())
+          let str = await locator.textContent()
+          if (!str) {
+            try {
+              str = await locator.inputValue()
+            } catch (error) {
+            }
+          }
+          if (str) {
+            //console.log('locator:', await locator.evaluate(node => node.outerHTML))
+            await locator.click().catch(async (error) => { console.log('click error'); })
+          }
+        }
+
+      })
     await page.waitForTimeout(10000);
   }else{
     console.log('已有留言')
@@ -100,7 +114,7 @@ console.log(`*****************comment*******************\n`);
     console.log("item:",item)
   let sql = `SELECT id,url
              FROM comment 
-             WHERE ${item} = 0
+             WHERE (${item} = 0 or ${item} IS NULL)
              ORDER BY RAND() 
              limit 2;`
   //console.log(sql);
