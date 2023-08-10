@@ -21,8 +21,8 @@ let runId = process.env.runId;
 let browser
 async function launchBrowser() {
   browser = await chromium.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -38,9 +38,13 @@ async function collectLink(row,page){
   await pool.query("UPDATE site SET collected = 1  WHERE id = ?", [row.id])
   await page.goto(row.url)
   .catch(async (error)=>{console.log('goto error: ', error.message)})
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForTimeout(3000);
-  //if (isError) return Promise.reject(new Error('出错返回。'))
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+
   try {
     //抓取友情链接
     let links = page.getByRole('link', { name: '友情链接',includeHidden: true })
@@ -98,8 +102,8 @@ console.log(`*****************开始collectLink*******************\n`);
   // row.url = "https://www.hin.cool/" 
   // await collectLink(row,page) 
 
-  await page.close()
   await pool.end()
+  await page.close()
   await context.close()
   await browser.close()
 }

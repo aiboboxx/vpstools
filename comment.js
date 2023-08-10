@@ -22,8 +22,8 @@ let runId = process.env.runId
 let browser
 async function launchBrowser() {
   browser = await chromium.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -41,15 +41,20 @@ async function comment(row,page){
   .catch(async (error)=>{console.log('goto error: ', error.message);isError=true})
   //抓取友情链接
   //fs.writeFileSync('html.txt', await page.content())
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForTimeout(3000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  //console.log(`waitForTimeout`)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
     let links =   await page.locator('input[name="nick"]')
         .or(page.locator('input[name="author"]'))
         .or(page.locator('input:has-text("昵称")'))
         //.or(page.getByPlaceholder('昵称'))
-        .type(nick)
+      .fill(nick)
     //console.log('nick:',randomOne(setup[item].nick))
   //  for (const link of await links.all()){
   //     console.log('link:',await link.evaluate (node => node.outerHTML))
@@ -60,24 +65,28 @@ async function comment(row,page){
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       //.or(page.getByPlaceholder('电子邮件'))
-      .type(setup[item].mail)
+      .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       //.or(page.getByPlaceholder('网站'))
-      .type(setup[item].site)
+      .fill(setup[item].site)
     let content =  randomOne(setup["comment"])
     let locators =page.locator('textarea')
     for (const locator of await locators.all()){
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.fill(content).catch(async (error)=>{console.log('fill error');})
+      await locator.type(content).catch(async (error)=>{console.log('fill error');})
     }
+    //机器人
+    await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span').click()
+    .catch(async (error)=>{console.log('error: ', error.message);})
     await page.waitForTimeout(1000)
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))
       .or(page.getByRole('button', { name: 'send' }))
+      .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
       .click()
       .catch(async (error) => {
         let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search/ })
@@ -128,9 +137,10 @@ console.log(`*****************comment*******************\n`);
   }
   // let row ={}
   // row.id = 1
-  // row.url = "https://ximfem.asia/messageboard/" 
+  // row.url = "https://blog.dreamfall.cn/comments/" 
   // item = randomOne(setup.workflow_comment)
   // await comment(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+
   await pool.end()
   await page.close()
   await context.close()
