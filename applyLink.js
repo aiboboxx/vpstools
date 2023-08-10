@@ -61,7 +61,7 @@ async function applyLink(row, page) {
       .or(page.locator('input:has-text("昵称")'))
       //.or(page.getByPlaceholder('昵称'))
       .fill(nick)
-    //console.log('nick:',randomOne(setup[item].nick))
+    //console.log('nick:',nick)
     //  for (const link of await links.all()){
     //     console.log('link:',await link.evaluate (node => node.outerHTML))
     //     //console.log('link:',await link.innerHTML())
@@ -94,7 +94,7 @@ async function applyLink(row, page) {
       .or(page.getByRole('button', { name: 'send' }))
       .click()
       .catch(async (error) => {
-        let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search/ })
+        let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search|Login/ })
         for (const locator of await locators.all()) {
           //console.log('locator:',await locator.evaluate (node => node.outerHTML))
           //console.log('textContent:',await locator.textContent())
