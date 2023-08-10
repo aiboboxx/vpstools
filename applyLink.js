@@ -87,7 +87,7 @@ async function applyLink(row, page) {
     await page.waitForTimeout(1000)
         //机器人
         await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span').click()
-        .catch(async (error)=>{console.log('error: ', error.message);})
+        .catch(async (error)=>{})
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))

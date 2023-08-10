@@ -29,6 +29,7 @@ async function launchBrowser() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
+      runId ? '' : setup.proxy.changeip,
   ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
@@ -80,12 +81,13 @@ async function comment(row,page){
     }
     //机器人
     await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span').click()
-    .catch(async (error)=>{console.log('error: ', error.message);})
+    .catch(async (error)=>{})
     await page.waitForTimeout(1000)
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))
       .or(page.getByRole('button', { name: 'send' }))
+      .or(page.getByRole('button', { name: 'Submit' }))
       .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
       .click()
       .catch(async (error) => {
@@ -119,7 +121,7 @@ async function main() {
   const page = await browser.newPage()
   page.setDefaultTimeout(15000);
 console.log(`*****************comment*******************\n`);  
-  for (let i=0;i<5;i++){
+  for (let i=0;i<10;i++){
     item = randomOne(setup.workflow_comment)
     console.log("item:",item)
   let sql = `SELECT id,url
@@ -137,7 +139,7 @@ console.log(`*****************comment*******************\n`);
   }
   // let row ={}
   // row.id = 1
-  // row.url = "https://blog.dreamfall.cn/comments/" 
+  // row.url = "https://www.timochan.cn/message" 
   // item = randomOne(setup.workflow_comment)
   // await comment(row,page).catch(async (error)=>{console.log('error: ', error.message);})
 
