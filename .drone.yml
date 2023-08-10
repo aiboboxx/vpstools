@@ -22,7 +22,7 @@ steps: # 定义管道的执行步骤
       - name: cache
         path: /root/.cache
     commands: # 当前步骤执行的命令
-      #- export runId=123456
+      - export runId=123456
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       #- ls

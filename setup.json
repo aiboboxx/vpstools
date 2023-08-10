@@ -57,6 +57,6 @@
 	"workflow_comment": ["clashgithub","clash_github","clashfree_github","v2rayfree_github"],
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
-		"changeip":  "--proxy-server=socks5://192.168.0.104:7899"
+		"changeip":  "--proxy-server=socks5://127.0.0.1:7890"
 	}
 }

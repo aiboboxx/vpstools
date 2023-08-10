@@ -22,13 +22,14 @@ let runId = process.env.runId
 let browser
 async function launchBrowser() {
   browser = await chromium.launch({
-    headless: runId ? true : false,
-    //headless: true,
+    //headless: runId ? true : false,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
+      runId ? '' : setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,
@@ -46,8 +47,13 @@ async function applyLink(row, page) {
   //fs.writeFileSync('body.txt', await page.locator('body').innerHTML())
   //fs.writeFileSync('body2.txt', await page.$eval('body', e => e.outerHTML))
   //fs.writeFileSync('html.txt', await page.content())
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForTimeout(3000);
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  await page.locator('body').press('PageDown')
+  await page.waitForTimeout(1000)
+  //console.log(`waitForTimeout`)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
     let links = await page.locator('input[name="nick"]')
@@ -65,18 +71,18 @@ async function applyLink(row, page) {
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       //.or(page.getByPlaceholder('电子邮件'))
-      .type(setup[item].mail)
+      .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       //.or(page.getByPlaceholder('网站'))
-      .type(setup[item].site)
+      .fill(setup[item].site)
     let content = setup[item].content.replace("xxxxxx", nick)
     let locators = page.locator('textarea')
     for (const locator of await locators.all()) {
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
-      await locator.type(content).catch(async (error) => { console.log('fill error'); })
+      await locator.fill(content).catch(async (error) => { console.log('fill error'); })
     }
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
@@ -130,11 +136,11 @@ async function main() {
       if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
     }
   }
-  // let row = {}
-  // row.id = 1
-  // row.url = "https://www.subera.net/72.html"
-  // item = randomOne(setup.workflow)
-  // await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
+  let row = {}
+  row.id = 1
+  row.url = "https://xhhdd.cc/index.php/77.html"
+  item = randomOne(setup.workflow)
+  await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
 
   await pool.end()
   await page.close()
