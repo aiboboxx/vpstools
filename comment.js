@@ -79,10 +79,10 @@ async function comment(row,page){
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
       await locator.type(content).catch(async (error)=>{console.log('fill error');})
     }
-    //机器人
-    await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span').click()
-    .catch(async (error)=>{})
     await page.waitForTimeout(1000)
+        //机器人
+        await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span').click()
+        .catch(async (error)=>{})
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))
@@ -91,7 +91,7 @@ async function comment(row,page){
       .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
       .click()
       .catch(async (error) => {
-        let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search/ })
+        let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search|Login/ })
         for (const locator of await locators.all()) {
           //console.log('locator:',await locator.evaluate (node => node.outerHTML))
           //console.log('textContent:',await locator.textContent())

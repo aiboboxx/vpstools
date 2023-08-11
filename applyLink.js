@@ -122,7 +122,7 @@ async function main() {
   await launchBrowser()
   const context = await browser.newContext()
   const page = await browser.newPage()
-  page.setDefaultTimeout(15000);
+  page.setDefaultTimeout(20000);
   console.log(`*****************开始applyLink*******************\n`);
   for (let i=0;i<5;i++){
     item = randomOne(setup.workflow)
@@ -142,7 +142,7 @@ async function main() {
   }
   // let row = {}
   // row.id = 1
-  // row.url = "https://xhhdd.cc/index.php/77.html"
+  // row.url = "https://blog.dearxuan.com/friends/"
   // item = randomOne(setup.workflow)
   // await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
 
