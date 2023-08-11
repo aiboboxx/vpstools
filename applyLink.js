@@ -92,6 +92,8 @@ async function applyLink(row, page) {
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))
       .or(page.getByRole('button', { name: 'send' }))
+      .or(page.getByRole('button', { name: 'Submit' }))
+      .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
       .click()
       .catch(async (error) => {
         let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search|Login/ })
