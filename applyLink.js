@@ -56,11 +56,11 @@ async function applyLink(row, page) {
   //console.log(`waitForTimeout`)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
-    let links = await page.locator('input[name="nick"]')
+    await page.locator('input[name="nick"]')
       .or(page.locator('input[name="author"]'))
       .or(page.locator('input:has-text("昵称")'))
       //.or(page.getByPlaceholder('昵称'))
-      .fill(nick)
+      .type(nick)
     //console.log('nick:',nick)
     //  for (const link of await links.all()){
     //     console.log('link:',await link.evaluate (node => node.outerHTML))
@@ -144,7 +144,7 @@ async function main() {
   }
   // let row = {}
   // row.id = 1
-  // row.url = "https://blog.dearxuan.com/friends/"
+  // row.url = "https://oragekk.me/friend.html"
   // item = randomOne(setup.workflow)
   // await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
 

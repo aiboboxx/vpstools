@@ -28,8 +28,8 @@ steps: # 定义管道的执行步骤
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
-      - //node collectSite.js
-      - //node collectLink.js     
+      - node collectSite.js
+      - node collectLink.js     
       - node applyLink.js
       - node comment.js
 trigger:
