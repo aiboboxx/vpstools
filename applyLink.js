@@ -20,21 +20,7 @@ const pool = mysql.createPool({
 let item
 let runId = process.env.runId
 let browser
-async function launchBrowser() {
-  browser = await chromium.launch({
-    //headless: runId ? true : false,
-    headless: false,
-    args: [
-      '--window-size=1920,1080',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-blink-features=AutomationControlled',
-      runId ? '' : setup.proxy.changeip,
-    ],
-    defaultViewport: null,
-    ignoreHTTPSErrors: true,
-  })
-}
+
 async function applyLink(row, page) {
   console.log(`UPDATE link SET ${item} = 1  WHERE id = ?`)
   await pool.query(`UPDATE link SET ${item} = 1  WHERE id = ?`, [row.id])
@@ -59,8 +45,8 @@ async function applyLink(row, page) {
     await page.locator('input[name="nick"]')
       .or(page.locator('input[name="author"]'))
       .or(page.locator('input:has-text("昵称")'))
-      //.or(page.getByPlaceholder('昵称'))
-      .type(nick)
+      .or(page.getByPlaceholder('昵称'))
+      .fill(nick)
     //console.log('nick:',nick)
     //  for (const link of await links.all()){
     //     console.log('link:',await link.evaluate (node => node.outerHTML))
@@ -70,12 +56,12 @@ async function applyLink(row, page) {
     await page.locator('input[name="mail"]')
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
-      //.or(page.getByPlaceholder('电子邮件'))
+      .or(page.getByPlaceholder('邮箱'))
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
-      //.or(page.getByPlaceholder('网站'))
+      .or(page.getByPlaceholder('站点'))
       .fill(setup[item].site)
     let content = setup[item].content.replace("xxxxxx", nick)
     let locators = page.locator('textarea')
@@ -96,6 +82,7 @@ async function applyLink(row, page) {
       .or(page.getByRole('button', { name: 'send' }))
       .or(page.getByRole('button', { name: 'Submit' }))
       .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
+      .or(page.getByRole('link', { name: '提交' }))
       .click()
       .catch(async (error) => {
         let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search|Login/ })
@@ -120,7 +107,22 @@ async function applyLink(row, page) {
   } else {
     console.log('已有友链')
   }
-  console.log('All done, collectLink. ✨')
+  console.log('All done, applyLink. ✨')
+}
+async function launchBrowser() {
+  browser = await chromium.launch({
+    //headless: runId ? true : false,
+    headless: false,
+    args: [
+      '--window-size=1920,1080',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-blink-features=AutomationControlled',
+      runId ? '' : setup.proxy.changeip,
+    ],
+    defaultViewport: null,
+    ignoreHTTPSErrors: true,
+  })
 }
 async function main() {
   await launchBrowser()
@@ -128,31 +130,33 @@ async function main() {
   const page = await browser.newPage()
   page.setDefaultTimeout(20000);
   console.log(`*****************开始applyLink*******************\n`);
-  for (let i=0;i<5;i++){
-    item = randomOne(setup.workflow)
-    console.log("item:",item)
-    let sql = `SELECT id,url
-      FROM link 
-      WHERE (${item} = 0 or ${item} IS NULL)
-      ORDER BY RAND() 
-      limit 2;`
-    ////console.log(sql);
-    let  r = await pool.query(sql)
-    console.log(`共有${r[0].length}个账户要applyLink`);
-    for (let row of r[0]) {
-      console.log(row.id, row.url);
-      if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+  if (runId){
+    for (let i=0;i<5;i++){
+      item = randomOne(setup.workflow)
+      console.log("item:",item)
+      let sql = `SELECT id,url
+        FROM link 
+        WHERE (${item} = 0 or ${item} IS NULL)
+        ORDER BY RAND() 
+        limit 2;`
+      ////console.log(sql);
+      let  r = await pool.query(sql)
+      console.log(`共有${r[0].length}个账户要applyLink`);
+      for (let row of r[0]) {
+        console.log(row.id, row.url);
+        if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+      }
     }
+    await pool.end()
+    await page.close()
+    await context.close()
+    await browser.close()
+  }else{
+    let row = {}
+    row.id = 1
+    row.url = "https://misakamoe.com/links/"
+    item = randomOne(setup.workflow)
+    await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }
-  // let row = {}
-  // row.id = 1
-  // row.url = "https://misakamoe.com/links/"
-  // item = randomOne(setup.workflow)
-  // await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
-
-  await pool.end()
-  await page.close()
-  await context.close()
-  await browser.close()
 }
 main()
