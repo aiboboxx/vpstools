@@ -128,31 +128,31 @@ async function main() {
   const page = await browser.newPage()
   page.setDefaultTimeout(20000);
   console.log(`*****************开始applyLink*******************\n`);
-  // for (let i=0;i<5;i++){
-  //   item = randomOne(setup.workflow)
-  //   console.log("item:",item)
-  //   let sql = `SELECT id,url
-  //     FROM link 
-  //     WHERE (${item} = 0 or ${item} IS NULL)
-  //     ORDER BY RAND() 
-  //     limit 2;`
-  //   ////console.log(sql);
-  //   let  r = await pool.query(sql)
-  //   console.log(`共有${r[0].length}个账户要applyLink`);
-  //   for (let row of r[0]) {
-  //     console.log(row.id, row.url);
-  //     if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
-  //   }
-  // }
-  let row = {}
-  row.id = 1
-  row.url = "https://misakamoe.com/links/"
-  item = randomOne(setup.workflow)
-  await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
+  for (let i=0;i<5;i++){
+    item = randomOne(setup.workflow)
+    console.log("item:",item)
+    let sql = `SELECT id,url
+      FROM link 
+      WHERE (${item} = 0 or ${item} IS NULL)
+      ORDER BY RAND() 
+      limit 2;`
+    ////console.log(sql);
+    let  r = await pool.query(sql)
+    console.log(`共有${r[0].length}个账户要applyLink`);
+    for (let row of r[0]) {
+      console.log(row.id, row.url);
+      if (row.url) await applyLink(row,page).catch(async (error)=>{console.log('error: ', error.message);})
+    }
+  }
+  // let row = {}
+  // row.id = 1
+  // row.url = "https://misakamoe.com/links/"
+  // item = randomOne(setup.workflow)
+  // await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
 
-  // await pool.end()
-  // await page.close()
-  // await context.close()
-  // await browser.close()
+  await pool.end()
+  await page.close()
+  await context.close()
+  await browser.close()
 }
 main()
