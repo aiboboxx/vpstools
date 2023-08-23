@@ -80,9 +80,11 @@ async function comment(row,page){
       await locator.type(content).catch(async (error)=>{console.log('fill error');})
     }
     await page.waitForTimeout(1000)
-        //机器人
-        await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span').click()
-        .catch(async (error)=>{})
+    //机器人
+    await page.locator('label').filter({ hasText: '我不是机器人' }).locator('span')
+      .or(page.locator('label').filter({ hasText: '滴，学生卡' }).locator('span'))
+      .click()
+      .catch(async (error)=>{})
     await page.getByRole('button', { name: '发送' })
       .or(page.getByRole('button', { name: '提交' }))
       .or(page.getByRole('button', { name: '评论' }))
