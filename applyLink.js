@@ -46,6 +46,7 @@ async function applyLink(row, page) {
       .or(page.locator('input[name="author"]'))
       .or(page.locator('input:has-text("昵称")'))
       .or(page.getByPlaceholder('昵称'))
+      .first()
       .fill(nick)
     //console.log('nick:',nick)
     //  for (const link of await links.all()){
@@ -57,11 +58,13 @@ async function applyLink(row, page) {
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       .or(page.getByPlaceholder('邮箱'))
+      .first()
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       .or(page.getByPlaceholder('站点'))
+      .first()
       .fill(setup[item].site)
     let content = setup[item].content.replace("xxxxxx", nick)
     let locators = page.locator('textarea')
@@ -154,7 +157,7 @@ async function main() {
   }else{
     let row = {}
     row.id = 1
-    row.url = "https://misakamoe.com/links/"
+    row.url = "https://www.xkyfzs.top/link/"
     item = randomOne(setup.workflow)
     await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }
