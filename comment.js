@@ -27,12 +27,10 @@ async function comment(row, page) {
     .catch(async (error) => { console.log('goto error: ', error.message); isError = true })
   //抓取友情链接
   //fs.writeFileSync('html.txt', await page.content())
-  await page.locator('body').press('PageDown')
-  await page.waitForTimeout(1000)
-  await page.locator('body').press('PageDown')
-  await page.waitForTimeout(1000)
-  await page.locator('body').press('PageDown')
-  await page.waitForTimeout(1000)
+  for (let i=0;i<8;i++){
+    await page.locator('body').press('PageDown')
+    await page.waitForTimeout(500)
+  }
   //console.log(`waitForTimeout`)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)

@@ -33,12 +33,10 @@ async function applyLink(row, page) {
   //fs.writeFileSync('body.txt', await page.locator('body').innerHTML())
   //fs.writeFileSync('body2.txt', await page.$eval('body', e => e.outerHTML))
   //fs.writeFileSync('html.txt', await page.content())
-  await page.locator('body').press('PageDown')
-  await page.waitForTimeout(1000)
-  await page.locator('body').press('PageDown')
-  await page.waitForTimeout(1000)
-  await page.locator('body').press('PageDown')
-  await page.waitForTimeout(1000)
+  for (let i=0;i<8;i++){
+    await page.locator('body').press('PageDown')
+    await page.waitForTimeout(500)
+  }
   //console.log(`waitForTimeout`)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
     let nick = randomOne(setup[item].nick)
@@ -157,7 +155,7 @@ async function main() {
   }else{
     let row = {}
     row.id = 1
-    row.url = "https://www.xkyfzs.top/link/"
+    row.url = "https://blog.meta-code.top/link/"
     item = randomOne(setup.workflow)
     await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }
