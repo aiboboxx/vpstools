@@ -133,7 +133,7 @@ async function main() {
              FROM comment 
              WHERE (${item} = 0 or ${item} IS NULL)
              ORDER BY RAND() 
-             limit 2;`
+             limit 6;`
       //console.log(sql);
       let r = await pool.query(sql)
       console.log(`共有${r[0].length}个账户要comment`)
@@ -150,7 +150,7 @@ async function main() {
 
     let row = {}
     row.id = 1
-    row.url = "https://smiletoc.top/comments/"
+    row.url = "https://blog.meta-code.top/link/"
     item = randomOne(setup.workflow_comment)
     await comment(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }

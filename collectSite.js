@@ -73,7 +73,7 @@ async function main() {
              FROM link 
              WHERE collected = 0
              order by id asc 
-             limit 10;`
+             limit 30;`
   //console.log(sql);
   let r = await pool.query(sql)
   console.log(`共有${r[0].length}个账户要collectSite`);

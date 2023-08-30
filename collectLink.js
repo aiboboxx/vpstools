@@ -89,7 +89,7 @@ console.log(`*****************开始collectLink*******************\n`);
              FROM site 
              WHERE collected = 0
              order by id asc 
-             limit 50;`
+             limit 60;`
   //console.log(sql);
     let  r = await pool.query(sql)
     console.log(`共有${r[0].length}个账户要collectLind`);
