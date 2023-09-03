@@ -40,7 +40,21 @@
 		"nick": ["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
 		"mail": "clashgithub.com@gmail.com",
 		"site": "https://clashgithub.com",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashgithub.com\n网站头像：https://clashgithub.com/wp-content/themes/modown/static/img/logo.png\n网站描述：免费公益SSR/V2ray/Shadowrocket/Clash节点/小火箭订阅链接|科学上网|免费梯子"
+		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashgithub.com\n网站头像：https://clashgithub.com/wp-content/themes/modown/static/img/logo.png\n网站描述：免费公益SSR/V2ray/Shadowrocket/Clash节点/小火箭订阅链接|科学上网|免费梯子",
+		"ids":[
+			{
+				"nick":["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
+				"site": "https://clashgithub.com"
+			},
+			{
+				"nick":["clash for windows","clash for windows教程","clash for windows配置"],
+				"site": "https://clashgithub.com/category/clashforwindows"
+			},
+			{
+				"nick":["v2rayn","v2rayn教程","v2rayn配置"],
+				"site": "https://clashgithub.com/v2rayn.html"
+			}
+		]
 	},	
 	"comment": [
 		"感谢博主分享！",
@@ -54,7 +68,7 @@
 		"谢谢分享🎉🎉🎉"
 	],
 	"workflow": ["clashgithub"],
-	"workflow_comment": ["clashgithub","clash_github","clashfree_github","v2rayfree_github"],
+	"workflow_comment": ["clashgithub","clashfree_github","v2rayfree_github"],
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
 		"changeip":  "--proxy-server=socks5://127.0.0.1:7890"
