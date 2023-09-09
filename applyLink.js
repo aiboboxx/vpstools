@@ -44,6 +44,7 @@ async function applyLink(row, page) {
       .or(page.locator('input[name="author"]'))
       .or(page.locator('input:has-text("昵称")'))
       .or(page.getByPlaceholder('昵称'))
+      .locator('visible=true')
       .first()
       .fill(nick)
     //console.log('nick:',nick)
@@ -56,16 +57,19 @@ async function applyLink(row, page) {
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       .or(page.getByPlaceholder('邮箱'))
+      .locator('visible=true')
       .first()
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       .or(page.getByPlaceholder('站点'))
+      .locator('visible=true')
       .first()
       .fill(setup[item].site)
+      //console.log(setup[item].site)
     let content = setup[item].content.replace("xxxxxx", nick)
-    let locators = page.locator('textarea')
+    let locators = page.locator('textarea').locator('visible=true')
     for (const locator of await locators.all()) {
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
@@ -155,7 +159,7 @@ async function main() {
   }else{
     let row = {}
     row.id = 1
-    row.url = "https://blog.meta-code.top/link/"
+    row.url = "https://ifblog.cn/friends.html"
     item = randomOne(setup.workflow)
     await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }

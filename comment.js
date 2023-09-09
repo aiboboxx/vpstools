@@ -23,6 +23,12 @@ let browser
 async function comment(row, page) {
   //console.log(`UPDATE comment SET ${item} = 1  WHERE id = ?`)
   await pool.query(`UPDATE comment SET ${item} = 1  WHERE id = ?`, [row.id])
+  let id
+  if (setup[item]?.ids){
+    id = randomOne(setup[item].ids)
+  }else{
+    id = setup[item]
+  }
   await page.goto(row.url)
     .catch(async (error) => { console.log('goto error: ', error.message); isError = true })
   //抓取友情链接
@@ -33,11 +39,12 @@ async function comment(row, page) {
   }
   //console.log(`waitForTimeout`)
   if ((await page.locator('body').innerHTML()).indexOf(setup[item].site) === -1) {
-    let nick = randomOne(setup[item].nick)
+    let nick = randomOne(id.nick)
     await page.locator('input[name="nick"]')
       .or(page.locator('input[name="author"]'))
       .or(page.locator('input:has-text("昵称")'))
       .or(page.getByPlaceholder('昵称'))
+      .locator('visible=true')
       .first()
       .fill(nick)
     //console.log('nick:',randomOne(setup[item].nick))
@@ -50,16 +57,18 @@ async function comment(row, page) {
       .or(page.locator('input[name="email"]'))
       .or(page.locator('input:has-text("电子邮件")'))
       .or(page.getByPlaceholder('邮箱'))
+      .locator('visible=true')
       .first()
       .fill(setup[item].mail)
     await page.locator('input[name="link"]')
       .or(page.locator('input[name="url"]'))
       .or(page.locator('input:has-text("网站")'))
       .or(page.getByPlaceholder('站点'))
+      .locator('visible=true')
       .first()
-      .fill(setup[item].site)
+      .fill(id.site)
     let content = randomOne(setup["comment"])
-    let locators = page.locator('textarea')
+    let locators = page.locator('textarea').locator('visible=true')
     for (const locator of await locators.all()) {
       //await page.waitForTimeout(2000)
       //console.log('locator:',await locator.evaluate (node => node.outerHTML))
@@ -116,12 +125,12 @@ async function launchBrowser() {
       //runId ? '' : setup.proxy.changeip,
     ],
     defaultViewport: null,
-    ignoreHTTPSErrors: true,
+    ignoreHTTPSErrors: true 
   })
 }
 async function main() {
   await launchBrowser()
-  const context = await browser.newContext()
+  const context = await browser.newContext({ignoreHTTPSErrors: true })
   const page = await browser.newPage()
   page.setDefaultTimeout(15000);
   console.log(`*****************comment*******************\n`)
@@ -150,7 +159,7 @@ async function main() {
 
     let row = {}
     row.id = 1
-    row.url = "https://blog.meta-code.top/link/"
+    row.url = "https://u7u7.top/comments/"
     item = randomOne(setup.workflow_comment)
     await comment(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }
