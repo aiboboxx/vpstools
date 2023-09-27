@@ -144,7 +144,7 @@ async function main() {
         FROM link 
         WHERE (${item} = 0 or ${item} IS NULL)
         ORDER BY RAND() 
-        limit 2;`
+        limit 3;`
       ////console.log(sql);
       let  r = await pool.query(sql)
       console.log(`共有${r[0].length}个账户要applyLink`);
