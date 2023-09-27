@@ -19,6 +19,7 @@ const pool = mysql.createPool({
 });
 let item
 let runId = process.env.runId
+//runId = 123
 let browser
 async function comment(row, page) {
   //console.log(`UPDATE comment SET ${item} = 1  WHERE id = ?`)
@@ -87,6 +88,7 @@ async function comment(row, page) {
       .or(page.getByRole('button', { name: 'Submit' }))
       .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
       .or(page.getByRole('link', { name: '提交' }))
+      .or(page.locator('button[type="submit"]'))
       .click()
       .catch(async (error) => {
         let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search|Login/ })
@@ -142,7 +144,7 @@ async function main() {
              FROM comment 
              WHERE (${item} = 0 or ${item} IS NULL)
              ORDER BY RAND() 
-             limit 6;`
+             limit 2;`
       //console.log(sql);
       let r = await pool.query(sql)
       console.log(`共有${r[0].length}个账户要comment`)
@@ -159,7 +161,7 @@ async function main() {
 
     let row = {}
     row.id = 1
-    row.url = "https://u7u7.top/comments/"
+    row.url = "https://zigzagk.top/messages"
     item = randomOne(setup.workflow_comment)
     await comment(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }

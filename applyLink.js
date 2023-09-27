@@ -88,6 +88,7 @@ async function applyLink(row, page) {
       .or(page.getByRole('button', { name: 'Submit' }))
       .or(page.getByRole('button', { name: 'BiuBiuBiu~' }))
       .or(page.getByRole('link', { name: '提交' }))
+      .or(page.locator('button[type="submit"]'))
       .click()
       .catch(async (error) => {
         let locators = page.getByRole('button').filter({ hasNotText: /登录|预览|Search|Login/ })
@@ -159,7 +160,7 @@ async function main() {
   }else{
     let row = {}
     row.id = 1
-    row.url = "https://ifblog.cn/friends.html"
+    row.url = "https://rawchen.com/friend/comment-page-2"
     item = randomOne(setup.workflow)
     await applyLink(row, page).catch(async (error) => { console.log('error: ', error.message); })
   }
