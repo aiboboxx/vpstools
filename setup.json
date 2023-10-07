@@ -28,7 +28,21 @@
 		"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
 		"mail": "clashfree.eu.org@gmail.com",
 		"site": "https://github.com/aiboboxx/clashfree",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashfree.eu.org\n网站头像：https://clashfree.eu.org/wp-content/uploads/avatar.png\n网站描述：ssr/v2ray/clash免费节点分享"
+		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashfree.eu.org\n网站头像：https://clashfree.eu.org/wp-content/uploads/avatar.png\n网站描述：ssr/v2ray/clash免费节点分享",
+		"ids":[
+			{
+				"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
+				"site": "https://github.com/aiboboxx/clashfree"
+			},
+			{
+				"nick": ["v2ray免费节点","免费节点","免费v2ray节点","v2ray节点"],
+				"site": "https://github.com/aiboboxx/v2rayfree"
+			},
+			{
+				"nick": ["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
+				"site": "https://github.com/aiboboxx/kexueshangwang"
+			}
+		]
 	},
 	"clash_github": {
 		"nick": ["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
@@ -100,7 +114,7 @@
 		"谢谢分享🎉🎉🎉"
 	],
 	"workflow": ["clashgithub"],
-	"workflow_comment": ["clashgithub","clashfree_github","v2rayfree_github","proxysites"],
+	"workflow_comment": ["clashgithub","clashfree_github","proxysites"],
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
 		"changeip":  "--proxy-server=socks5://127.0.0.1:7890"
