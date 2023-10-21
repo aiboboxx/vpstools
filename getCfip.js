@@ -35,14 +35,14 @@ async function main() {
     .catch(async (error)=>{console.log('error: ', error.message);})
     await sleep(500)
     let urls = []
-    let links =   page.locator('div[id="J_domain"] a')
+    let links =  page.locator('div[id="J_domain"] a')
     //console.log('links个数：',await links.count())
     //console.log(JSON.stringify(links))
     urls = await links.evaluateAll(
       list => list.map(element => element.href.replace("https://ipchaxun.com/","").replace("/","")))
+      .then(async (result) => domains.push(...result))
       .catch(async (error)=>{console.log('error: ', error.message);})
     //console.log(urls.join('\n'))
-    domains.push(...urls)
   }
 
   fs.writeFileSync('domains.txt', removeRepeatArray(domains).join('\n'))
