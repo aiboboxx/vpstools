@@ -34,13 +34,15 @@ async function main() {
     await page.goto(`https://ipchaxun.com/${ip}/`)
     .catch(async (error)=>{console.log('error: ', error.message);})
     await sleep(500)
-    let urls = []
     let links =  page.locator('div[id="J_domain"] a')
     //console.log('links个数：',await links.count())
     //console.log(JSON.stringify(links))
-    urls = await links.evaluateAll(
+    await links.evaluateAll(
       list => list.map(element => element.href.replace("https://ipchaxun.com/","").replace("/","")))
-      .then(async (result) => domains.push(...result))
+      .then(async (result) => {
+      domains.push(...result)
+      console.log('取得域名：',result)
+      })
       .catch(async (error)=>{console.log('error: ', error.message);})
     //console.log(urls.join('\n'))
   }
