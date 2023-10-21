@@ -49,6 +49,7 @@ async function main() {
   let domains = []
   for (const ip of ips){
     await page.goto(`https://ipchaxun.com/${ip}/`)
+    .catch(async (error)=>{console.log('error: ', error.message);})
     await sleep(500)
     let urls = []
     let links =   page.locator('div[id="J_domain"] a')
