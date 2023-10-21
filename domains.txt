@@ -1,8 +1,10 @@
 www.bbqddq.com
 www.bthdtv.com
 touwa.eu.org
+bbqddq.com
 auto-dns.ljy2345.com
 movie.ljy2345.com
+csgohvh.org
 x.adorabletoad.tk
 static.touwa.test.cf.kakoyi.net
 ru02.nttkk.com
@@ -13,9 +15,7 @@ hexsen.com
 pve.hexsen.com
 sni.cloudfare.kakoyi.com
 bthdtv.com
-bbqddq.com
 movies.ljy2345.com
-csgohvh.org
 445533.xyz
 jp02.nttkk.com
 cf.yydsb.link

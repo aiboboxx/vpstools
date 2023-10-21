@@ -9,7 +9,7 @@ let browser
 async function launchBrowser() {
   browser = await chromium.launch({
     //headless: runId ? true : false,
-    headless: true,
+    headless: false,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
