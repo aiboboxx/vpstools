@@ -21,11 +21,10 @@ let item
 let runId = process.env.runId
 let browser
 
-
 async function launchBrowser() {
   browser = await chromium.launch({
     //headless: runId ? true : false,
-    headless: false,
+    headless: true,
     args: [
       '--window-size=1920,1080',
       '--no-sandbox',
@@ -62,9 +61,9 @@ async function main() {
 
   fs.writeFileSync('domains.txt', removeRepeatArray(domains).join('\n'))
   console.log('Done')
-  // await pool.end()
-  // await page.close()
-  // await context.close()
-  // await browser.close()
+  await pool.end()
+  await page.close()
+  await context.close()
+  await browser.close()
 }
 main()
