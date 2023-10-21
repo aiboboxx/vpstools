@@ -13,7 +13,7 @@ volumes: # 声明数据卷（此为服务器中的实际目录）
     host:
       path: /root/cfip/output
 node:
-    a: nn
+    a: b
     c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
