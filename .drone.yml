@@ -1,17 +1,17 @@
 ---
 kind: pipeline
 type: docker
-name: autolink
+name: cfdns
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
       path: /root/.drone/autolink/node_modules # 宿主机目录    #绝对路径
-  - name: cache
+  - name: output
     host:
-      path: /root/.cache
-# node:
-#   a: racknerd
-#   c: d
+      path: /root/cfip/output
+node:
+   a: n1
+   c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
     image: aiboboxx/node:latest # 当前步骤使用的镜像
@@ -19,8 +19,8 @@ steps: # 定义管道的执行步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
         path: /drone/src/node_modules # 容器内目录 绝对路径
-      - name: cache
-        path: /root/.cache
+      - name: output
+        path: /drone/src/output
     commands: # 当前步骤执行的命令
       - export runId=123456
       #- pwd # 查看当前目录
@@ -28,10 +28,8 @@ steps: # 定义管道的执行步骤
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
-      - node collectSite.js
-      - node collectLink.js     
-      - node applyLink.js
-      - node comment.js
+      - node getCfip.js
+      - node cfdns.js     
 trigger:
   event:
   - cron

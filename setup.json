@@ -4,7 +4,7 @@
 		"user": "root",
 		"password": "780830-aiboboxx",  
 		"port": "3306",  
-		"database": "autolink"
+		"database": "cfip"
 	},
 	"clashfree": {
 		"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
