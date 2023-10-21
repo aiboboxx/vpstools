@@ -10,8 +10,8 @@ volumes: # 声明数据卷（此为服务器中的实际目录）
     host:
       path: /root/cfip/output
 node:
-   a: UnixServ
-   c: d
+    a: UnixServ
+    c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
     image: aiboboxx/node:latest # 当前步骤使用的镜像
