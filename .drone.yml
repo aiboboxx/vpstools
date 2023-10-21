@@ -29,7 +29,7 @@ steps: # 定义管道的执行步骤
     commands: # 当前步骤执行的命令
       - export runId=123456
       #- pwd # 查看当前目录
-      - npx playwright install
+      #- npx playwright install  #如果 Executable doesn't exist 
       - npm install # 安装node_modules包
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
