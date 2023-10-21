@@ -26,7 +26,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npm install playwright
-      #- ls
+      - ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       - node getCfip.js
