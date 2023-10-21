@@ -31,7 +31,6 @@ async function launchBrowser() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      //runId ? '' : setup.proxy.changeip,
     ],
     defaultViewport: null,
     ignoreHTTPSErrors: true,

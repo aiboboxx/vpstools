@@ -5,7 +5,7 @@ name: cfdns
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /root/.drone/cfip/node_modules # 宿主机目录    #绝对路径
+      path: /root/.drone/autolink/node_modules # 宿主机目录    #绝对路径
   - name: output
     host:
       path: /root/cfip/output
