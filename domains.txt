@@ -8,6 +8,7 @@ static.touwa.test.cf.kakoyi.net
 ru02.nttkk.com
 ai.guju.com.cn
 www.woyou.net
+us02.nttkk.com
 hexsen.com
 pve.hexsen.com
 sni.cloudfare.kakoyi.com
@@ -22,7 +23,6 @@ lzcard.eu.org
 m.taijuz.com
 zh.myfw.us
 us02a.nttkk.com
-us02.nttkk.com
 www.230890.com
 m.daxue1g.cn
 www.0bt0.com
@@ -128,9 +128,9 @@ hk3.hhhhh.fn-node.site
 www.6080dy2.com
 skk.moe
 cdn.skk.moe
+cn.276811.xyz
 www.skk.moe
 cfip.201043.xyz
-cn.276811.xyz
 cfip3.cfcdn.kozow.com
 cf2.eryayun.tk
 oc.skk.moe

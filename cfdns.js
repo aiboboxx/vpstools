@@ -1,7 +1,7 @@
 const fs = require("fs")
 const dns = require('dns');
 const dnsPromises = dns.promises;
-const domains = fs.readFileSync('domainlist.txt','utf8').split('\n');
+const domains = fs.readFileSync('domains.txt','utf8').split('\n');
 
 (async function() {   
     for (const domain of domains){
