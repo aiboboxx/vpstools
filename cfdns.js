@@ -14,10 +14,8 @@ if (fs.existsSync('./output/domainlist.txt')) {
         .then((result) => { 
             console.log(result); 
             fs.appendFileSync('./output/domainlist.txt', domain + '\n')
-            for (const r of result){            
-                fs.appendFileSync('./output/domain2ip.txt', r + '\n')
-                fs.appendFileSync('./output/domain2ip.txt.info', domain + ' ' + r +'\n')
-            }
+            fs.appendFileSync('./output/domain2ip.txt', result[0] + '\n')
+            fs.appendFileSync('./output/domain2ip.txt.info', domain + ' ' + result[0] +'\n')
         })
         .catch((error)=>{console.log('error: ', error.message);})
     }
