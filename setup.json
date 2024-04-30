@@ -2,121 +2,16 @@
 	"mysql": {
 		"host": "mysql-sea.fly.dev",
 		"user": "root",
-		"password": "780830-aiboboxx",  
-		"port": "3306",  
-		"database": "cfip"
+		"password": "780830-aiboboxx",
+		"port": "3306",
+		"database": "cfnode"
 	},
-	"clashfree": {
-		"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
-		"mail": "clashfree.eu.org@gmail.com",
-		"site": "https://clashfree.eu.org",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashfree.eu.org\n网站头像：https://clashfree.eu.org/wp-content/uploads/avatar.png\n网站描述：ssr/v2ray/clash免费节点分享"
-	},
-	"v2rayfree": {
-		"nick": ["v2ray免费节点","免费节点","免费v2ray节点","v2ray节点"],
-		"mail": "v2rayfree@gmail.com",
-		"site": "https://www.v2rayfree.eu.org",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://www.v2rayfree.eu.org\n网站头像：https://www.v2rayfree.eu.org/images/avatar.png\n网站描述：免费公益v2ray节点订阅地址每日更新"
-	},
-	"v2rayfree_github": {
-		"nick": ["v2ray免费节点","免费节点","免费v2ray节点","v2ray节点"],
-		"mail": "v2rayfree@gmail.com",
-		"site": "https://github.com/aiboboxx/v2rayfree",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://www.v2rayfree.eu.org\n网站头像：https://www.v2rayfree.eu.org/images/avatar.png\n网站描述：免费公益v2ray节点订阅地址每日更新"
-	},
-	"clashfree_github": {
-		"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
-		"mail": "clashfree.eu.org@gmail.com",
-		"site": "https://github.com/aiboboxx/clashfree",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashfree.eu.org\n网站头像：https://clashfree.eu.org/wp-content/uploads/avatar.png\n网站描述：ssr/v2ray/clash免费节点分享",
-		"ids":[
-			{
-				"nick": ["clash免费节点","免费节点","免费clash节点","clash节点"],
-				"site": "https://github.com/aiboboxx/clashfree"
-			},
-			{
-				"nick": ["v2ray免费节点","免费节点","免费v2ray节点","v2ray节点"],
-				"site": "https://github.com/aiboboxx/v2rayfree"
-			},
-			{
-				"nick": ["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
-				"site": "https://github.com/aiboboxx/kexueshangwang"
-			}
-		]
-	},
-	"clash_github": {
-		"nick": ["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
-		"mail": "clashgithub.com@gmail.com",
-		"site": "https://github.com/aiboboxx/kexueshangwang",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashgithub.com\n网站头像：https://clashgithub.com/wp-content/uploads/avatar.png\n网站描述：免费公益SSR/V2ray/Shadowrocket/Clash节点/小火箭订阅链接|科学上网|免费梯子"
-	},
-	"clashgithub": {
-		"nick": ["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
-		"mail": "clashgithub.com@gmail.com",
-		"site": "https://clashgithub.com",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashgithub.com\n网站头像：https://clashgithub.com/wp-content/uploads/avatar.png\n网站描述：免费公益SSR/V2ray/Shadowrocket/Clash节点/小火箭订阅链接|科学上网|免费梯子",
-		"ids":[
-			{
-				"nick":["clash节点","免费节点","免费clash节点","科学上网","免费机场","免费梯子"],
-				"site": "https://clashgithub.com"
-			},
-			{
-				"nick":["clash for windows","clash for windows教程","clash for windows配置"],
-				"site": "https://clashgithub.com/category/clashforwindows"
-			},
-			{
-				"nick":["v2rayn","v2rayn教程","v2rayn配置"],
-				"site": "https://clashgithub.com/v2rayn.html"
-			}
-		]
-	},	
-	"proxysites": {
-		"nick": ["clash for windows","clash for windows教程","clash for windows配置","clash for windows常见问题","clash for windows下载"],
-		"mail": "clashgithub.com@gmail.com",
-		"site": "https://clashforwindows100.com/",
-		"content": "友链申请\n网站名称：xxxxxx\n网站链接：https://clashforwindows100.com/\n网站头像：https://clashforwindows100.com/wp-content/uploads/2022/09/1663501512-favicon-70x70.png\n网站描述：2023最新Clash for Windows使用教程，Clash for Windows配置教程，最新Clash for Windows下载，服务器链接教程，Clash for Windows客户端使用技巧及配置技巧，Clash for Windows从入门到精通。",
-		"ids":[
-			{
-				"nick":["clash for windows","clash for windows教程","clash for windows配置","clash for windows常见问题","clash for windows下载"],
-				"site": "https://clashforwindows100.com/"
-			},
-			{
-				"nick":["v2rayn","v2rayn教程","v2rayn配置","v2rayn常见问题","v2rayn下载"],
-				"site": "https://v2rayn100.com/"
-			},
-			{
-				"nick":["v2rayng","v2rayng教程","v2rayng配置","v2rayn常见问题","v2rayn下载"],
-				"site": "https://v2rayng100.com/"
-			},
-			{
-				"nick":["clash for android","clash for android教程","clash for android配置","clash for android常见问题","clash for android下载"],
-				"site": "https://clashforandroid100.com/"
-			},
-			{
-				"nick":["shadowrocket","shadowrocket教程","shadowrocket配置","shadowrocket常见问题","shadowrocket下载"],
-				"site": "https://shadowrocket100.com/"
-			},
-			{
-				"nick":["clashx","clashx教程","clashx配置","clashx常见问题","clashx下载"],
-				"site": "https://clashx100.com/"
-			}
-		]
-	},	
-	"comment": [
-		"感谢博主分享！",
-		"雁过留毛，人过留名。",
-		"学习了，谢谢！",
-		"感谢分享。。。",
-		"感谢分享",
-		"多谢分享",
-		"感谢博主精彩分享，辛苦了",
-		"三克油思密达",
-		"谢谢分享🎉🎉🎉"
-	],
-	"workflow": ["clashgithub"],
-	"workflow_comment": ["clashgithub","clashfree_github","proxysites"],
 	"proxy": {
 		"normal": "--proxy-server=socks5://127.0.0.1:7890",
-		"changeip":  "--proxy-server=socks5://127.0.0.1:7890"
+		"changeip": "--proxy-server=socks5://127.0.0.1:7890"
+	},
+	"iptxt": {
+		"line": 0,
+		"unix": 1714441395
 	}
 }

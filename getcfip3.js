@@ -43,7 +43,7 @@ async function main() {
   //过滤google广告
   await page.route('**/*', (route, request) => {
     // Block All Images
-    if (request.url().includes("googlevideo.com")) {
+    if (request.url().includes("pos.baidu.com")) {
         route.abort();
     } else if (request.resourceType() === 'video') {
         route.abort();
@@ -62,14 +62,17 @@ async function main() {
   //if (ipline >= ips.length) ipline = 0
   for (ipline;ipline < ips.length; ipline++){
     i++; if ( i > 20) break;
-    await page.goto(`https://ipchaxun.com/${ips[ipline]}/`)
+    await page.goto(`https://site.ip138.com/${ips[ipline]}/`)
     .catch(async (error)=>{console.log('error: ', error.message);})
     await sleep(500)
-    let links =  page.locator('div[id="J_domain"] a')
-    //console.log('links个数：',await links.count())
-    //console.log(JSON.stringify(links))
+    let links =  page.locator('#list a')
+    // console.log('links个数：',await links.count())
+    // for (const link of await links.all()){
+    //   console.log('link:',await link.evaluate (node => node.outerHTML))
+    // } 
+
     await links.evaluateAll(
-      list => list.map(element => element.href.replace("https://ipchaxun.com/","").replace("/","")))
+      list => list.map(element => element.innerHTML))
       .then(async (result) => {
       domains.push(...result)
       console.log(i,'取得域名：',result)
@@ -77,13 +80,14 @@ async function main() {
       .catch(async (error)=>{console.log('error: ', error.message);})
     await sleep(1000)
   }
+
   let arr = [...fs.readFileSync('domains.txt','utf8').split('\n'),...domains];
   //fs.writeFileSync('domains.txt', removeRepeatArray(domains).join('\n'))
   fs.writeFileSync('domains.txt', [...new Set(arr)].join('\n'))
   setup.iptxt.line = ipline
   setup.iptxt.unix = dayjs.tz().startOf('day').unix()
   fs.writeFileSync('setup.json', JSON.stringify(setup, null, '\t'))
-  console.log('getcfip Done')
+  console.log('getcfip3 Done')
   await page.close()
   await context.close()
   await browser.close()
