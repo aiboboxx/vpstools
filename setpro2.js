@@ -18,20 +18,20 @@ const pool = mysql.createPool({
     charset: 'utf8'      //字符集设置
 });
 const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr']
-let tags = []
-for (let zone of zones){
-    //console.log(zone)
-    for (let i=7; i<13; i++){
-        tags.push(zone + i.toString().padStart(2,0))
-    } 
-}
+let tags = [];
 (async () => {
+    for (let zone of zones){
+        //console.log(zone)
+        for (let i=7; i<10; i++){
+            tags.push(zone + i.toString().padStart(2,0))
+        } 
+    }
     let sql = `SELECT id,domain
         FROM domain
         WHERE ips = 2
-        ORDER BY update_time desc
+        ORDER BY update_time asc
         limit 54;`
-    //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
+
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
     //return
@@ -43,6 +43,23 @@ for (let zone of zones){
             console.log(index,`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
         }).catch( (error) => console.log(error))
     }
-    console.log('All done ✨')
     await pool.end()
+
+    for (let zone of zones){
+        //console.log(zone)
+        for (let i=10; i<13; i++){
+            tags.push(zone + i.toString().padStart(2,0))
+        } 
+    }
+    const cffdips = ['61.239.212.21','a6.nttkk.com','103.137.63.2']
+    for (let i=0; i<tags.length; i++) {
+        let index = i%cffdips.length
+        //console.log(index)
+        await axios.get(`${sethost_url}/sethost.php?host=${cffdips[index]}&tags=${tags[i]}&token=dzakYE8TAga7`)
+        .then( (response) => {
+            console.log(index,`${sethost_url}/sethost.php?host=${cffdips[index]}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
+        }).catch( (error) => console.log(error))
+    }
+    
+    console.log('All done ✨')
 })()

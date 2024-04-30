@@ -93,7 +93,7 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip 
-        WHERE (update_time < date_sub(now(), interval 7 day) or update_time is null)
+        WHERE (update_time < date_sub(now(), interval 3 day) or update_time is null)
         ORDER BY update_time asc
         limit 10;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
