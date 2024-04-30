@@ -1,19 +1,16 @@
 ---
 kind: pipeline
 type: docker
-name: cfdns
+name: daily
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
-      path: /root/.drone/cfip/node_modules # 宿主机目录    #绝对路径
+      path: /root/.drone/cfnode/node_modules # 宿主机目录    #绝对路径
   - name: cache   #不可修改，否者无法启动playwright
     host:
       path: /root/.cache
-  - name: output
-    host:
-      path: /root/cfip/output
 node:
-    a: contabo
+    a: ikhost
     c: d
 steps: # 定义管道的执行步骤
   - name: deploy # 步骤名称
@@ -24,18 +21,16 @@ steps: # 定义管道的执行步骤
         path: /drone/src/node_modules # 容器内目录 绝对路径
       - name: cache   #不可修改，否者无法启动playwright
         path: /root/.cache
-      - name: output
-        path: /drone/src/output
     commands: # 当前步骤执行的命令
       - export runId=123456
       #- pwd # 查看当前目录
-      #- npx playwright install  #如果 Executable doesn't exist 
+      - npx playwright install  #如果 Executable doesn't exist 
       - npm install # 安装node_modules包
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
-      - node getCfip.js
-      - node cfdns.js     
+      - node getprodomain.js
+      - node getproip.js     
 trigger:
   event:
   - cron
