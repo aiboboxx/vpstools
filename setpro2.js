@@ -48,11 +48,11 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     //tags = [];
     for (let zone of zones){
         //console.log(zone)
-        for (let i=7; i<11; i++){
+        for (let i=10; i<11; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
-    const cffdips = ['8.222.152.3','103.120.19.97','103.137.63.2','219.76.13.183']
+    const cffdips = ['ip.njyp.link']
     for (let i=0; i<tags.length; i++) {
         let index = i%cffdips.length
         //console.log(index)
