@@ -29,7 +29,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let sql = `SELECT id,domain
         FROM domain
         WHERE ips = 3
-        ORDER BY update_time asc
+        ORDER BY id asc
         limit 90;`
 
     let r = await pool.query(sql)
