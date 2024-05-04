@@ -39,7 +39,7 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: weekly
+name: threeday
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
@@ -63,14 +63,14 @@ steps: # 定义管道的执行步骤
       - export runId=123456
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
-      #- npx playwright install  #如果 Executable doesn't exist 
+      - npx playwright install  #如果 Executable doesn't exist 
       #- ls
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       #- node getprodomain.js
-      - node setpro2.js     
+      - node setpro.js     
 trigger:
   event:
   - cron
   cron:
-  - weekly
+  - threeday
