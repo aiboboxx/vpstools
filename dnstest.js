@@ -1,7 +1,7 @@
 const dns = require('dns');
 const dnsPromises = dns.promises;
 (async () => {
-    await dnsPromises.resolve('www.c333.net', 'A')
+    await dnsPromises.resolve('u5jj.com', 'A')
     .then(async (result) => {
         console.log(result);
     })

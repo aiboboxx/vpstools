@@ -22,15 +22,15 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let tags = []
     for (let zone of zones){
         //console.log(zone)
-        for (let i=1; i<10; i++){
+        for (let i=1; i<6; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
     let sql = `SELECT id,domain
         FROM domain
         WHERE ips = 3
-        ORDER BY id asc
-        limit 90;`
+        order by rand()
+        limit 20;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
@@ -43,6 +43,31 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             console.log(index,`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
         }).catch( (error) => console.log(error))
     }
+
+    tags = []
+    for (let zone of zones){
+        //console.log(zone)
+        for (let i=5; i<7; i++){
+            tags.push(zone + i.toString().padStart(2,0))
+        } 
+    }
+    sql = `SELECT id,domain
+        FROM domain
+        WHERE ips = 2
+        order by rand()
+        limit 18;`
+
+    r = await pool.query(sql)
+    console.log(`共有${r[0].length}个domain`);
+    //return
+    for (let i=0; i<tags.length; i++) {
+        let index = i%r[0].length
+        //console.log(index)
+        await axios.get(`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`)
+        .then( (response) => {
+            console.log(index,`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
+        }).catch( (error) => console.log(error))
+    }   
     await pool.end()  
     console.log('All done ✨')
 })()
