@@ -1,6 +1,6 @@
 const fs = require("fs");
 const axios = require('axios').default;
-const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5 } = require('./common.js');
+const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, getRndElements, md5 } = require('./common.js');
 const sethost_url = "http://sh.bzshare.com/"
 //"$sethost_url/sethost.php?host=$domain&tags=$tag$num&token=dzakYE8TAga7")
 const mysql = require('mysql2/promise')
@@ -26,10 +26,12 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
+    tags = getRndElements (tags,tags.length) //随机排序
+    console.log(tags)
     let sql = `SELECT id,domain
         FROM domain
         WHERE ips = 3
-        order by rand()
+        ORDER BY id asc
         limit 20;`
 
     let r = await pool.query(sql)
