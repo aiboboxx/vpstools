@@ -56,7 +56,7 @@ async function getIp(row, page) {
             }
         })
         .catch(async (error) => {
-                await pool.query(`UPDATE domain SET update_time = now(), off = 1  WHERE id = ?`, [row.id])
+                await pool.query(`UPDATE domain SET ips = 0, update_time = now(), off = 1  WHERE id = ?`, [row.id])
                 console.log('error: ', error.message); 
             })
     await sleep(1000)

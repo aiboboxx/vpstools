@@ -27,10 +27,10 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
         } 
     }
     tags = getRndElements (tags,tags.length) //随机排序
-    console.log(tags)
+    //console.log(tags)
     let sql = `SELECT id,domain
         FROM domain
-        WHERE ips = 3
+        WHERE ips = 3 and off = 0
         ORDER BY id asc
         limit 20;`
 
@@ -53,10 +53,11 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
+    tags = getRndElements (tags,tags.length) //随机排序
     sql = `SELECT id,domain
         FROM domain
         WHERE ips = 2
-        order by rand()
+        ORDER BY id asc
         limit 18;`
 
     r = await pool.query(sql)

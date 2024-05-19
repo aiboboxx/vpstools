@@ -26,11 +26,10 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
-
+    tags = getRndElements (tags,tags.length) //随机排序
     //const cffdips = ['ip.njyp.link','hkcf.sky2005.link','www.huangfeng.pp.ua','jp.opnv.link']
-    const fdips = fs.readFileSync('source-domains.txt', 'utf8').split('\n').filter(item => item)
-    const cffdips = getRndElements (fdips,fdips.length) //随机排序
-    console.log(cffdips)
+    const cffdips = fs.readFileSync('source-domains.txt', 'utf8').split('\n').filter(item => item)
+
     for (let i=0; i<tags.length; i++) {
         let index = i%cffdips.length
         //console.log(index)

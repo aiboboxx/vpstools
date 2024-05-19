@@ -1,6 +1,6 @@
 const fs = require("fs");
 const axios = require('axios').default;
-const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, randomString, md5 } = require('./common.js');
+const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, getRndElements, md5 } = require('./common.js');
 const sethost_url = "http://sh.bzshare.com/"
 //"$sethost_url/sethost.php?host=$domain&tags=$tag$num&token=dzakYE8TAga7")
 const mysql = require('mysql2/promise')
