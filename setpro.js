@@ -26,7 +26,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
-    tags = getRndElements (tags,tags.length) //随机排序
+    //tags = getRndElements (tags,tags.length) //随机排序
     //console.log(tags)
     let sql = `SELECT id,domain
         FROM domain
@@ -36,6 +36,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
+    r[0] = getRndElements (r[0],r[0].length) //随机排序
     //return
     for (let i=0; i<tags.length; i++) {
         let index = i%r[0].length
@@ -53,11 +54,11 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
-    tags = getRndElements (tags,tags.length) //随机排序
+    //tags = getRndElements (tags,tags.length) //随机排序
     sql = `SELECT id,domain
         FROM domain
         WHERE ips = 2
-        ORDER BY id asc
+        ORDER BY rand()
         limit 18;`
 
     r = await pool.query(sql)
