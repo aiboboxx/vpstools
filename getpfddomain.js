@@ -102,7 +102,7 @@ async function main() {
         FROM ip_fd 
         WHERE ( update_time < date_sub(now(), interval 3 day) or update_time is null ) and off = 0
         ORDER BY update_time asc
-        limit 10;`
+        limit 15;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个ip`);
