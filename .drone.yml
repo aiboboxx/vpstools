@@ -30,6 +30,7 @@ steps: # 定义管道的执行步骤
       - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
+      - node getproip.js   
       - node getprodomain.js
 trigger:
   event:
@@ -68,6 +69,8 @@ steps: # 定义管道的执行步骤
       - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
+      - node ipcheck.js
+      - node getfdip.js
       - node getfddomain.js
 trigger:
   event:
@@ -106,14 +109,12 @@ steps: # 定义管道的执行步骤
       - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
-      - node ipcheck.js
-      - node getfdip.js
-      - node getproip.js     
+  
 trigger:
   event:
   - cron
   cron:
-  - daily
+  - none
 ---
 kind: pipeline
 type: docker
