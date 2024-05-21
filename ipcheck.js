@@ -41,30 +41,17 @@ async function getDomain(row, page) {
     //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
     let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)).data
     console.log(data["anycast"],data["org"])
-    if ( data["anycast"] || data["org"].includes('Cloudflare')) {
-        await pool.query(`UPDATE ip_fd SET update_time = now(), off = 1  WHERE id = ?`, [row.id])
-    } else {
-        await pool.query(`UPDATE ip_fd SET update_time = now() WHERE id = ?`, [row.id])
-        await page.goto(`https://www.qvdv.net/tools/qvdv-gethost.html?ip=${row.ip}`)
-        .catch(async (error) => { console.log('error: ', error.message); })
-        await sleep(500)
-        let links = page.locator('p#gethost_out > .layui-table td:nth-of-type(1)')
-        //console.log('links个数：',await links.count())
-        //console.log(JSON.stringify(links))
-        await links.evaluateAll(
-            list => list.map(element => element.innerHTML))
-            .then(async (result) => {
-                console.log('取得域名：', result)
-                //console.log(Math.min(6,result.length))
-                for ( let i = 0; i < Math.min( 30,result.length ); i++) {
-                    if ( !isIncludeArrayElement( result[i],domainExcludes ) ) await pool.query(`INSERT INTO domain_fd ( domain ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
-                    .then((r) => { console.log('添加成功:', r[0].insertId, result[i]); sleep(200); })
-                }
-            })
-            //.catch(async (error) => { console.log('error: ', error.message); })
+    if (data["org"]) {
+        if ( data["anycast"] || data["org"].includes('Cloudflare')) {
+            await pool.query(`UPDATE ip_fd SET update_time = now(), off = 2  WHERE id = ?`, [row.id])
+        } else {
+            await pool.query(`UPDATE ip_fd SET update_time = now(), off = 1 WHERE id = ?`, [row.id])
+        }
+    }else{
+        await pool.query(`UPDATE ip_fd SET update_time = now(), off = 3 WHERE id = ?`, [row.id])
     }
-    await sleep(1000)
-    console.log('All done, getDomain. ✨')
+    await sleep(300)
+    //console.log('All done, getDomain. ✨')
   }
 
 async function launchBrowser() {
@@ -100,9 +87,8 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE ( update_time < date_sub(now(), interval 3 day) or update_time is null ) and off = 0
-        ORDER BY update_time asc
-        limit 15;`
+        WHERE ( update_time < date_sub(now(), interval 30 day) or update_time is null ) and off < 2
+        ORDER BY update_time asc;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个ip`);

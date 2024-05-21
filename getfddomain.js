@@ -1,5 +1,5 @@
 const fs = require("fs")
-//const axios = require('axios').default;
+const axios = require('axios').default;
 const { chromium } = require('playwright-extra')
 const stealth = require('puppeteer-extra-plugin-stealth')()
 chromium.use(stealth)
@@ -37,32 +37,36 @@ function isIncludeArrayElement(e,array) {
     }   
     return false
 }
-
-async function getIp(row, page) {
-    await dnsPromises.resolve(row.domain.trim(), 'A')
-        .then(async (result) => {
-            console.log(result);
-            if ( result.length < 6 ){
-                if ( !isIncludeArrayElement( result,ipExcludes ) ) {
-                    for (let i = 0; i < result.length; i++) {
-                        await pool.query(`INSERT INTO ip_fd ( ip ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
-                        .then((r) => { console.log('添加成功:', r[0].insertId, result[i]); sleep(200); })
-                    }
-                    await pool.query(`UPDATE domain_fd SET ips = ?, update_time = now()  WHERE id = ?`, [JSON.stringify(result, null, '\t'),row.id])
-                }else{
-                    await pool.query(`UPDATE domain_fd SET ips = ?, update_time = now(), off = 1  WHERE id = ?`, [JSON.stringify(result, null, '\t'),row.id])
+async function getDomain(row, page) {
+    //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
+    let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)).data
+    console.log(data["anycast"],data["org"])
+    if ( data["anycast"] || data["org"].includes('Cloudflare')) {
+        await pool.query(`UPDATE ip_fd SET update_time = now(), off = 1  WHERE id = ?`, [row.id])
+    } else {
+        await pool.query(`UPDATE ip_fd SET update_time = now() WHERE id = ?`, [row.id])
+        await page.goto(`https://www.qvdv.net/tools/qvdv-gethost.html?ip=${row.ip}`)
+        .catch(async (error) => { console.log('error: ', error.message); })
+        await sleep(500)
+        let links = page.locator('p#gethost_out > .layui-table td:nth-of-type(1)')
+        //console.log('links个数：',await links.count())
+        //console.log(JSON.stringify(links))
+        await links.evaluateAll(
+            list => list.map(element => element.innerHTML))
+            .then(async (result) => {
+                console.log('取得域名：', result)
+                //console.log(Math.min(6,result.length))
+                for ( let i = 0; i < Math.min( 30,result.length ); i++) {
+                    if ( !isIncludeArrayElement( result[i],domainExcludes ) ) await pool.query(`INSERT INTO domain_fd ( domain ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
+                    .then((r) => { console.log('添加成功:', r[0].insertId, result[i]); sleep(200); })
                 }
-            }else{
-                await pool.query(`UPDATE domain_fd SET ips = ?, update_time = now(), off = 1  WHERE id = ?`, [JSON.stringify(result, null, '\t'),row.id])
-            }
-        })
-        .catch(async (error) => {
-                await pool.query(`UPDATE domain_fd SET  update_time = now(), off = 1  WHERE id = ?`, [row.id])
-                console.log('error: ', error.message); 
             })
-    await sleep(300)
-    //console.log('All done, getIp. ✨')
-}
+            //.catch(async (error) => { console.log('error: ', error.message); })
+    }
+    await sleep(1000)
+    console.log('All done, getDomain. ✨')
+  }
+
 async function launchBrowser() {
     browser = await chromium.launch({
         headless: runId ? true : false,
@@ -94,17 +98,17 @@ async function main() {
             route.continue()
         }
     });
-    let sql = `SELECT id,domain
-        FROM domain_fd
-        WHERE (update_time < date_sub(now(), interval 3 day) or update_time is null) and off = 0
+    let sql = `SELECT id,ip
+        FROM ip_fd 
+        WHERE ( update_time < date_sub(now(), interval 3 day) or update_time is null ) and off = 1
         ORDER BY update_time asc
-        limit 100;`
-    //sql = `SELECT id,domain   FROM domain  WHERE off = 0 ORDER BY update_time asc  limit 1;`
+        limit 15;`
+    //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
-    console.log(`共有${r[0].length}个domain`);
+    console.log(`共有${r[0].length}个ip`);
     for (let row of r[0]) {
-        console.log(row.id, row.domain);
-        if (row.domain) await getIp(row, page).catch(async (error) => { console.log('error: ', error.message); })
+        console.log(row.id, row.ip);
+        if (row.ip) await getDomain(row, page).catch(async (error) => { console.log('error: ', error.message); })
     }
     //return
     console.log('All done ✨')
