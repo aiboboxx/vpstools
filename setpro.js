@@ -1,7 +1,7 @@
 const fs = require("fs");
 const axios = require('axios').default;
 const { removeRepeatArray, sleep, clearBrowser, getRndInteger, randomOne, getRndElements, md5 } = require('./common.js');
-const sethost_url = "http://sh.bzshare.com/"
+const sethost_url = "https://sh.bzshare.com/"
 //"$sethost_url/sethost.php?host=$domain&tags=$tag$num&token=dzakYE8TAga7")
 const mysql = require('mysql2/promise')
 const setup = JSON.parse(fs.readFileSync('./setup.json', 'utf8'))
