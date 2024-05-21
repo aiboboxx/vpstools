@@ -27,7 +27,7 @@ steps: # 定义管道的执行步骤
       - npm install # 安装node_modules包
       - npx playwright install  #如果 Executable doesn't exist 
       #- npx playwright install-deps
-      - curl 4.ipw.cn
+      - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
       - node getprodomain.js
@@ -64,7 +64,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #如果 Executable doesn't exist 
-      - curl 4.ipw.cn
+      - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
       - node getfddomain.js
@@ -101,7 +101,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #如果 Executable doesn't exist 
-      - curl 4.ipw.cn
+      - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       - node ipcheck.js
@@ -140,7 +140,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #解决 Executable doesn't exist 
-      - curl 4.ipw.cn
+      - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       #- node getprodomain.js
