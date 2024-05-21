@@ -39,7 +39,7 @@ function isIncludeArrayElement(e,array) {
 }
 async function getDomain(row, page) {
     //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
-    await pool.query(`UPDATE ip_fd SET update_time = now(), WHERE id = ?`, [row.id])
+    await pool.query(`UPDATE ip_fd SET update_time = now()  WHERE id = ?`, [row.id])
     await page.goto(`https://www.qvdv.net/tools/qvdv-gethost.html?ip=${row.ip}`)
     .catch(async (error) => { console.log('error: ', error.message); })
     await sleep(500)
@@ -95,7 +95,7 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE ( update_time < date_sub(now(), interval 3 day) or update_time is null ) and off = 1
+        WHERE ( update_time < date_sub(now(), interval 7 day) or update_time is null ) and  ( off = 1 )
         ORDER BY update_time asc
         limit 15;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`

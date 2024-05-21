@@ -48,16 +48,16 @@ async function getIp(row, page) {
                         await pool.query(`INSERT INTO ip_fd ( ip ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
                         .then((r) => { console.log('添加成功:', r[0].insertId, result[i]); sleep(200); })
                     }
-                    await pool.query(`UPDATE domain_fd SET ips = ?, update_time = now(), off = 1  WHERE id = ?`, [JSON.stringify(result, null, '\t'),row.id])
+                    await pool.query(`UPDATE domain_fd SET ips = ?, ip_count = ?, update_time = now(), off = 1  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
                 }else{
-                    await pool.query(`UPDATE domain_fd SET ips = ?, update_time = now(), off = 2  WHERE id = ?`, [JSON.stringify(result, null, '\t'),row.id])
+                    await pool.query(`UPDATE domain_fd SET ips = ?, ip_count = ?, update_time = now(), off = 2  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
                 }
             }else{
-                await pool.query(`UPDATE domain_fd SET ips = ?, update_time = now(), off = 2  WHERE id = ?`, [JSON.stringify(result, null, '\t'),row.id])
+                await pool.query(`UPDATE domain_fd SET ips = ?, ip_count = ?, update_time = now(), off = 2  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
             }
         })
         .catch(async (error) => {
-                await pool.query(`UPDATE domain_fd SET  update_time = now(), off = 3  WHERE id = ?`, [row.id])
+                await pool.query(`UPDATE domain_fd SET ips = ?, ip_count = 0, update_time = now(), off = 3  WHERE id = ?`, ["",row.id])
                 console.log('error: ', error.message); 
             })
     await sleep(300)
