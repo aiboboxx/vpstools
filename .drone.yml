@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: hourly
+name: getpro
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
@@ -36,11 +36,11 @@ trigger:
   event:
   - cron
   cron:
-  - hourly
+  - threehours
 ---
 kind: pipeline
 type: docker
-name: hourly2
+name: getfd
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
@@ -76,7 +76,7 @@ trigger:
   event:
   - cron
   cron:
-  - hourly
+  - threehours
 ---
 kind: pipeline
 type: docker
@@ -118,7 +118,7 @@ trigger:
 ---
 kind: pipeline
 type: docker
-name: threeday
+name: sethost
 volumes: # 声明数据卷（此为服务器中的实际目录）
   - name: node_modules # 数据卷名称
     host: # Host Volume
@@ -154,4 +154,4 @@ trigger:
   event:
   - cron
   cron:
-  - threeday
+  - sethost
