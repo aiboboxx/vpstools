@@ -96,7 +96,7 @@ async function main() {
     });
     let sql = `SELECT id,domain
         FROM domain_fd
-        WHERE (update_time < date_sub(now(), interval 3 day) or update_time is null) and off < 2
+        WHERE (update_time < date_sub(now(), interval 7 day) or update_time is null) and off < 2
         ORDER BY update_time asc
         limit 200;`
     //sql = `SELECT id,domain   FROM domain  WHERE off = 0 ORDER BY update_time asc  limit 1;`
