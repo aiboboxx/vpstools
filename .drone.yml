@@ -25,8 +25,8 @@ steps: # 定义管道的执行步骤
       - export runId=123456
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
-      - npx playwright install  #如果 Executable doesn't exist 
-      #- npx playwright install-deps
+      #- npx playwright install  #如果 Executable doesn't exist 
+      - npx playwright install-deps
       - curl -s 4.ipw.cn && echo ""
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
