@@ -47,20 +47,20 @@ async function getIp(row, page) {
                         await pool.query(`INSERT INTO ip ( ip ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
                         .then((r) => { console.log('添加成功:', r[0].insertId, result[i]); sleep(200); })
                     }
-                    await pool.query(`UPDATE domain SET ips = ?, update_time = now()  WHERE id = ?`, [result.length,row.id])
+                    await pool.query(`UPDATE domain SET ips = ?, ip_count = ?, update_time = now(), off = 1  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
                 }else{
-                    await pool.query(`UPDATE domain SET ips = ?, update_time = now(), off = 1  WHERE id = ?`, [result.length,row.id])
+                    await pool.query(`UPDATE domain SET ips = ?, ip_count = ?, update_time = now(), off = 2  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
                 }
             }else{
-                await pool.query(`UPDATE domain SET ips = ?, update_time = now(), off = 1  WHERE id = ?`, [result.length,row.id])
+                await pool.query(`UPDATE domain SET ips = ?, ip_count = ?, update_time = now(), off = 2  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
             }
         })
         .catch(async (error) => {
-                await pool.query(`UPDATE domain SET ips = 0, update_time = now(), off = 1  WHERE id = ?`, [row.id])
+                await pool.query(`UPDATE domain SET ips = ?, ip_count = 0, update_time = now(), off = 3  WHERE id = ?`, ["",row.id])
                 console.log('error: ', error.message); 
             })
     await sleep(1000)
-    console.log('All done, getIp. ✨')
+    //console.log('All done, getIp. ✨')
 }
 async function launchBrowser() {
     browser = await chromium.launch({
@@ -95,9 +95,9 @@ async function main() {
     });
     let sql = `SELECT id,domain
         FROM domain 
-        WHERE (update_time < date_sub(now(), interval 3 day) or update_time is null) and (off = 0 or ips = 2)
+        WHERE (update_time < date_sub(now(), interval 7 day) or update_time is null) and off < 2
         ORDER BY update_time asc
-        limit 50;`
+        limit 200;`
     //sql = `SELECT id,domain   FROM domain  WHERE off = 0 ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);

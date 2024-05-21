@@ -37,23 +37,54 @@ function isIncludeArrayElement(e,array) {
     }   
     return false
 }
-async function getDomain(row, page) {
+async function ipCfCheck(row, page) {
     //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
-    let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)).data
+    let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)
+    .catch(async (error)=>{
+        await pool.query(`UPDATE ip SET off = 3 WHERE id = ?`, [row.id]);
+    })
+    ).data
     console.log(data["anycast"],data["org"])
     if (data["org"]) {
-        if ( data["anycast"] || data["org"].includes('Cloudflare')) {
-            await pool.query(`UPDATE ip_fd SET update_time = now(), off = 2  WHERE id = ?`, [row.id])
+        if ( data["org"].includes('Cloudflare')) {
+            await pool.query(`UPDATE ip_fd SET off = 2  WHERE id = ?`, [row.id])
         } else {
-            await pool.query(`UPDATE ip_fd SET update_time = now(), off = 1 WHERE id = ?`, [row.id])
+            await pool.query(`UPDATE ip_fd SET off = 1 WHERE id = ?`, [row.id])
         }
     }else{
-        await pool.query(`UPDATE ip_fd SET update_time = now(), off = 3 WHERE id = ?`, [row.id])
+        await pool.query(`UPDATE ip_fd SET off = 3 WHERE id = ?`, [row.id])
     }
     await sleep(300)
     //console.log('All done, getDomain. ✨')
   }
 
+async function ipProCheck(row, page) {
+    //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
+    let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)
+        .catch(async (error)=>{
+            await pool.query(`UPDATE ip SET off = 3 WHERE id = ?`, [row.id]);
+        })
+    ).data
+    console.log(data["anycast"],data["org"])
+    if (data["org"]) {
+        if ( data["org"].includes('Cloudflare')) {
+            await pool.query(`UPDATE ip SET off = 1  WHERE id = ?`, [row.id])
+        } else {
+            await pool.query(`UPDATE ip SET off = 2 WHERE id = ?`, [row.id])
+            //await pool.query(`UPDATE domain SET update_time = now(), off = 4 WHERE LOCATE(?,ips) > 0`, [row.ip])
+        }
+
+    }else{
+        await pool.query(`UPDATE ip SET off = 3 WHERE id = ?`, [row.id])
+    }
+    await sleep(300)
+    //console.log('All done, getDomain. ✨')
+  }
+async function domainProCheck(row, page) {
+    await pool.query(`UPDATE domain SET off = 4 WHERE LOCATE(?,ips) > 0`, [row.ip])
+    await sleep(300)
+    //console.log('All done, getDomain. ✨')
+  }
 async function launchBrowser() {
     browser = await chromium.launch({
         headless: runId ? true : false,
@@ -88,16 +119,44 @@ async function main() {
     let sql = `SELECT id,ip
         FROM ip_fd 
         WHERE ( update_time < date_sub(now(), interval 30 day) or update_time is null ) and off < 2
-        ORDER BY update_time asc;`
+        ORDER BY update_time asc
+        limit 200;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
-    console.log(`共有${r[0].length}个ip`);
+    console.log(`共有${r[0].length}个ip ipCfCheck`);
     for (let row of r[0]) {
         console.log(row.id, row.ip);
-        if (row.ip) await getDomain(row, page).catch(async (error) => { console.log('error: ', error.message); })
+        if (row.ip) await ipCfCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
     }
     //return
-    console.log('All done ✨')
+    console.log('ipCfCheck done ✨')
+
+    sql = `SELECT id,ip
+    FROM ip
+    WHERE ( update_time < date_sub(now(), interval 30 day) or update_time is null ) and off < 2
+    ORDER BY update_time asc
+    limit 200;`
+    //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
+    r = await pool.query(sql)
+    console.log(`共有${r[0].length}个ip ipProCheck`);
+    for (let row of r[0]) {
+        console.log(row.id, row.ip);
+        if (row.ip) await ipProCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
+    }
+    //return
+    console.log('ipProCheck done ✨')  
+
+    sql = `SELECT id,ip
+    FROM ip
+    WHERE  off = 2
+    ORDER BY update_time asc;`
+    r = await pool.query(sql)
+    console.log(`共有${r[0].length}个ip domainProCheck`);
+    for (let row of r[0]) {
+        console.log(row.id, row.ip);
+        if (row.ip) await domainProCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
+    }
+    console.log('domainProCheck done ✨')  
     await pool.end()
     await page.close()
     await context.close()
