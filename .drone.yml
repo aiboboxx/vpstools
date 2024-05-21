@@ -26,7 +26,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #如果 Executable doesn't exist 
-      - ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"
+      - ip addr | awk '/^[0-9]+:/ {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}' 
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
       - node getprodomain.js
@@ -63,7 +63,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #如果 Executable doesn't exist 
-      - ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"
+      - ip addr | awk '/^[0-9]+:/ {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7 
       - node getfddomain.js
@@ -100,7 +100,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #如果 Executable doesn't exist 
-      - ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"
+      - ip addr | awk '/^[0-9]+:/ {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       - node ipcheck.js
@@ -139,7 +139,7 @@ steps: # 定义管道的执行步骤
       #- pwd # 查看当前目录
       - npm install # 安装node_modules包
       - npx playwright install  #解决 Executable doesn't exist 
-      - ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"
+      - ip addr | awk '/^[0-9]+:/ {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}'
       - Xvfb -ac :7 -screen 0 1280x1024x8 &
       - export DISPLAY=:7
       #- node getprodomain.js
