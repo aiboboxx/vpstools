@@ -44,5 +44,6 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
             console.log(index,`${sethost_url}/sethost.php?host=${r[0][index].ip}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
         }).catch( (error) => console.log(error))
     }
+    await pool.end()  
     console.log('All done ✨')
 })()

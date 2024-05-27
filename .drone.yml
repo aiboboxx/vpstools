@@ -98,8 +98,8 @@ steps: # 定义管道的执行步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
         path: /drone/src/node_modules # 容器内目录 绝对路径
-      - name: cache   #不可修改，否者无法启动playwright
-        path: /root/.cache
+      #- name: cache   #不可修改，否者无法启动playwright
+      #  path: /root/.cache
     commands: # 当前步骤执行的命令
       - export runId=123456
       #- pwd # 查看当前目录
@@ -136,8 +136,8 @@ steps: # 定义管道的执行步骤
     volumes: # 挂载数据卷（此为容器内的目录）
       - name: node_modules # 数据卷名称
         path: /drone/src/node_modules # 容器内目录 绝对路径
-      - name: cache   #不可修改，否者无法启动playwright
-        path: /root/.cache
+      #- name: cache   #不可修改，否者无法启动playwright
+      #  path: /root/.cache
     commands: # 当前步骤执行的命令
       - export runId=123456
       #- pwd # 查看当前目录
