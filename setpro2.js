@@ -28,8 +28,8 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     }
     let sql = `SELECT ip
         FROM ip_fd
-        WHERE good_count > 2 and off = 1
-        ORDER BY good_count_time desc
+        WHERE good_count > 3 and off = 1 and (good_count_time < date_sub(now(), interval 2 day)
+        ORDER BY good_count desc
         limit 8;`
 
     let r = await pool.query(sql)
