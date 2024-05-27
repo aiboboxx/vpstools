@@ -28,7 +28,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     }
     let sql = `SELECT ip
         FROM ip_fd
-        WHERE good_count > 3 and off = 1 and good_count_time > date_sub(now(), interval 15 hour)
+        WHERE good_count > 3 and off = 1 and good_count_time > date_sub(now(), interval 24 hour)
         ORDER BY good_count desc
         limit 12;`
 
