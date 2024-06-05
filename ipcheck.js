@@ -118,8 +118,8 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE ( update_time < date_sub(now(), interval 30 day) or update_time is null ) and off < 2
-        ORDER BY update_time asc
+        WHERE update_time is null
+        ORDER BY id asc
         limit 1000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
