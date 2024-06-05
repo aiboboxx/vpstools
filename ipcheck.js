@@ -37,7 +37,7 @@ function isIncludeArrayElement(e,array) {
     }   
     return false
 }
-async function ipCfCheck(row, page) {
+async function ipFdCheck(row, page) {
     //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
     let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)
     .catch(async (error)=>{
@@ -120,16 +120,16 @@ async function main() {
         FROM ip_fd 
         WHERE ( update_time < date_sub(now(), interval 30 day) or update_time is null ) and off < 2
         ORDER BY update_time asc
-        limit 200;`
+        limit 1000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
-    console.log(`共有${r[0].length}个ip ipCfCheck`);
+    console.log(`共有${r[0].length}个ip ipFdCheck`);
     for (let row of r[0]) {
         console.log(row.id, row.ip);
-        if (row.ip) await ipCfCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
+        if (row.ip) await ipFdCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
     }
     //return
-    console.log('ipCfCheck done ✨')
+    console.log('ipFdCheck done ✨')
 
     sql = `SELECT id,ip
     FROM ip
