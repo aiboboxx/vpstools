@@ -62,20 +62,20 @@ async function ipProCheck(row, page) {
     //console.log(`UPDATE ip SET update_time = now()  WHERE id = ?`)
     let data = (await axios.get(`https://ipinfo.io/${row.ip}?token=1d890b269ee157`)
         .catch(async (error)=>{
-            await pool.query(`UPDATE ip SET off = 3 WHERE id = ?`, [row.id]);
+            await pool.query(`UPDATE ip SET update_time = now(), off = 3 WHERE id = ?`, [row.id]);
         })
     ).data
     console.log(data["anycast"],data["org"])
     if (data["org"]) {
         if ( data["org"].includes('Cloudflare')) {
-            await pool.query(`UPDATE ip SET off = 1  WHERE id = ?`, [row.id])
+            await pool.query(`UPDATE ip update_time = now(), SET off = 1  WHERE id = ?`, [row.id])
         } else {
-            await pool.query(`UPDATE ip SET off = 2 WHERE id = ?`, [row.id])
+            await pool.query(`UPDATE ip update_time = now(), SET off = 2 WHERE id = ?`, [row.id])
             //await pool.query(`UPDATE domain SET update_time = now(), off = 4 WHERE LOCATE(?,ips) > 0`, [row.ip])
         }
 
     }else{
-        await pool.query(`UPDATE ip SET off = 3 WHERE id = ?`, [row.id])
+        await pool.query(`UPDATE ip SET update_time = now(), off = 3 WHERE id = ?`, [row.id])
     }
     await sleep(300)
     //console.log('All done, getDomain. ✨')

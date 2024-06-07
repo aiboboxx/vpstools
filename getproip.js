@@ -41,7 +41,7 @@ async function getIp(row, page) {
     await dnsPromises.resolve(row.domain.trim(), 'A')
         .then(async (result) => {
             console.log(result);
-            if ( result.length ==3 ){
+            if ( [2,3].includes(result.length) ){  //ip个数为2或3
                 if ( !isIncludeArrayElement( result,ipExcludes ) ) {
                     for (let i = 0; i < result.length; i++) {
                         await pool.query(`INSERT INTO ip ( ip ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)

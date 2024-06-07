@@ -57,7 +57,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     //tags = getRndElements (tags,tags.length) //随机排序
     sql = `SELECT id,domain
         FROM domain
-        WHERE ip_count = 2 and off = 2
+        WHERE ip_count = 2 and off = 1
         ORDER BY rand()
         limit 18;`
 
