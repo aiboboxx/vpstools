@@ -118,7 +118,7 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE update_time is null
+        WHERE update_time is null and off = 0
         ORDER BY id asc
         limit 1000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
