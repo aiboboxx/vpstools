@@ -31,8 +31,8 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let sql = `SELECT id,domain
         FROM domain
         WHERE ip_count = 3 and off = 1
-        ORDER BY id asc
-        limit 20;`
+        ORDER BY rand()
+        limit 36;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
@@ -59,7 +59,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
         FROM domain
         WHERE ip_count = 2 and off = 1
         ORDER BY rand()
-        limit 18;`
+        limit 36;`
 
     r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
