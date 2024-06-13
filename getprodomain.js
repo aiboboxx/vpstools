@@ -1,4 +1,5 @@
 const fs = require("fs")
+const axios = require('axios').default;
 const { chromium } = require('playwright-extra')
 const stealth = require('puppeteer-extra-plugin-stealth')()
 chromium.use(stealth)
@@ -26,7 +27,7 @@ const pool = mysql.createPool({
     charset: 'utf8' //字符集设置
 });
 const runId = process.env.runId
-const domainExcludes = ['yuanshare.org','yunshare.org','.cn']
+const domainExcludes = ['yuanshare.org','yunshare.org','eu.org','.pp.ua','.free.hr','.tk','.cn']
 const ipExcludes = ['0.0.0.0','127.0.0.1']
 let browser
 
