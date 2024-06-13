@@ -26,7 +26,7 @@ const pool = mysql.createPool({
     charset: 'utf8' //字符集设置
 });
 const runId = process.env.runId
-const domainExcludes = ['yuanshare.org','yunshare.org','eu.org','.pp.ua','.free.hr','.tk']
+const domainExcludes = ['yuanshare.org','yunshare.org','eu.org','.pp.ua','.free.hr','.tk','.cn']
 const ipExcludes = ['0.0.0.0','127.0.0.1']
 let browser
 
@@ -97,7 +97,7 @@ async function main() {
         FROM domain 
         WHERE (update_time < date_sub(now(), interval 7 day) or update_time is null) and off < 2
         ORDER BY update_time asc
-        limit 500;`
+        limit 1000;`
     //sql = `SELECT id,domain   FROM domain  WHERE off = 0 ORDER BY update_time asc  limit 1;`
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
