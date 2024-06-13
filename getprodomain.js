@@ -26,7 +26,7 @@ const pool = mysql.createPool({
     charset: 'utf8' //字符集设置
 });
 const runId = process.env.runId
-const domainExcludes = ['yuanshare.org','yunshare.org']
+const domainExcludes = ['yuanshare.org','yunshare.org','.cn']
 const ipExcludes = ['0.0.0.0','127.0.0.1']
 let browser
 
