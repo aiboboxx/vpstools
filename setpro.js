@@ -50,7 +50,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     tags = []
     for (let zone of zones){
         //console.log(zone)
-        for (let i=5; i<9; i++){
+        for (let i=5; i<8; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
