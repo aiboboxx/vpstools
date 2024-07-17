@@ -135,7 +135,7 @@ async function main() {
 
     sql = `SELECT id,ip
     FROM ip
-    WHERE ( update_time < date_sub(now(), interval 15 day) or update_time is null ) and off < 2
+    WHERE ( update_time < date_sub(now(), interval 15 day) and off =1  ) or off = 0
     ORDER BY update_time asc
     limit 500;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
