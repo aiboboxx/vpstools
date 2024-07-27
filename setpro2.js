@@ -30,7 +30,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
         FROM ip_fd
         WHERE (good_count > 5 and off = 1 and good_count_time > date_sub(now(), interval 15 HOUR)) or stick = 1
         ORDER BY good_count desc
-        limit 12;`
+        limit 36;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个 ip`);
