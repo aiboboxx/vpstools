@@ -22,7 +22,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let tags = []
     for (let zone of zones){
         //console.log(zone)
-        for (let i=1; i<5; i++){
+        for (let i=1; i<4; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
@@ -50,7 +50,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     tags = []
     for (let zone of zones){
         //console.log(zone)
-        for (let i=5; i<7; i++){
+        for (let i=4; i<7; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
