@@ -59,7 +59,7 @@ async function ipProCheck(row, page) {
         })
     ).data
     console.log(data["ip"],data["timezone"])
-    await pool.query(`UPDATE ip SET  timezone = ? WHERE id = ?`, [data["timezone"],row.id])
+    await pool.query(`UPDATE ip SET update_time = now(), timezone = ? WHERE id = ?`, [data["timezone"],row.id])
     await sleep(300)
     //console.log('All done, getDomain. ✨')
   }
@@ -114,7 +114,7 @@ async function main() {
     FROM ip
     WHERE  off = 1
     ORDER BY update_time asc
-    limit 500;`
+    limit 3000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
     r = await pool.query(sql)
     console.log(`共有${r[0].length}个ip ipProCheck`);
