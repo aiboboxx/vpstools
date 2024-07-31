@@ -44,16 +44,8 @@ async function ipFdCheck(row, page) {
         await pool.query(`UPDATE ip_fd SET off = 3 WHERE id = ?`, [row.id]);
     })
     ).data
-    console.log(data["anycast"],data["org"])
-    if (data["org"]) {
-        if ( data["org"].includes('Cloudflare')) {
-            await pool.query(`UPDATE ip_fd SET off = 2, timezone = ?  WHERE id = ?`, [data["timezone"],row.id])
-        } else {
-            await pool.query(`UPDATE ip_fd SET off = 1, timezone = ? WHERE id = ?`, [data["timezone"],row.id])
-        }
-    }else{
-        await pool.query(`UPDATE ip_fd SET off = 3, timezone = ? WHERE id = ?`, [data["timezone"],row.id])
-    }
+    console.log(data["ip"],data["timezone"])
+    await pool.query(`UPDATE ip_fd SET timezone = ?  WHERE id = ?`, [data["timezone"],row.id])
     await sleep(300)
     //console.log('All done, getDomain. ✨')
   }
@@ -69,14 +61,14 @@ async function ipProCheck(row, page) {
     console.log(data["anycast"],data["org"])
     if (data["org"]) {
         if ( data["org"].includes('Cloudflare')) {
-            await pool.query(`UPDATE ip SET update_time = now(), off = 1, timezone = ?  WHERE id = ?`, [data["timezone"],row.id])
+            await pool.query(`UPDATE ip SET update_time = now(), off = 1  WHERE id = ?`, [row.id])
         } else {
-            await pool.query(`UPDATE ip SET update_time = now(), off = 2, timezone = ? WHERE id = ?`, [data["timezone"],row.id])
+            await pool.query(`UPDATE ip SET update_time = now(), off = 2 WHERE id = ?`, [row.id])
             await pool.query(`UPDATE domain SET update_time = now(), off = 4 WHERE LOCATE(?,ips) > 0`, [row.ip])
         }
 
     }else{
-        await pool.query(`UPDATE ip SET update_time = now(), off = 3, timezone = ? WHERE id = ?`, [data["timezone"],row.id])
+        await pool.query(`UPDATE ip SET update_time = now(), off = 3 WHERE id = ?`, [row.id])
         await pool.query(`UPDATE domain SET update_time = now(), off = 4 WHERE LOCATE(?,ips) > 0`, [row.ip])
     }
     await sleep(300)
@@ -116,7 +108,7 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE update_time is null and off = 0
+        WHERE  good_count_time > 0
         ORDER BY id asc
         limit 1000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
@@ -129,20 +121,20 @@ async function main() {
     //return
     console.log('ipFdCheck done ✨')
 
-    sql = `SELECT id,ip
-    FROM ip
-    WHERE ( update_time < date_sub(now(), interval 15 day) and off =1  ) or off = 0
-    ORDER BY update_time asc
-    limit 500;`
-    //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
-    r = await pool.query(sql)
-    console.log(`共有${r[0].length}个ip ipProCheck`);
-    for (let row of r[0]) {
-        console.log(row.id, row.ip);
-        if (row.ip) await ipProCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
-    }
-    //return
-    console.log('ipProCheck done ✨')  
+    // sql = `SELECT id,ip
+    // FROM ip
+    // WHERE ( update_time < date_sub(now(), interval 15 day) and off =1  ) or off = 0
+    // ORDER BY update_time asc
+    // limit 500;`
+    // //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
+    // r = await pool.query(sql)
+    // console.log(`共有${r[0].length}个ip ipProCheck`);
+    // for (let row of r[0]) {
+    //     console.log(row.id, row.ip);
+    //     if (row.ip) await ipProCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
+    // }
+    // //return
+    // console.log('ipProCheck done ✨')  
 
     await pool.end()
     await page.close()
