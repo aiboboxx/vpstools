@@ -95,24 +95,24 @@ async function main() {
             route.continue()
         }
     });
-    // let sql = `SELECT id,ip
-    //     FROM ip_fd 
-    //     WHERE  good_count_time > 0
-    //     ORDER BY id asc
-    //     limit 1000;`
-    // //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
-    // let r = await pool.query(sql)
-    // console.log(`共有${r[0].length}个ip ipFdCheck`);
-    // for (let row of r[0]) {
-    //     console.log(row.id, row.ip);
-    //     if (row.ip) await ipFdCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
-    // }
-    // //return
-    // console.log('ipFdCheck done ✨')
+    let sql = `SELECT id,ip
+        FROM ip_fd 
+        WHERE  good_count_time > 0
+        ORDER BY id asc
+        limit 1000;`
+    //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
+    let r = await pool.query(sql)
+    console.log(`共有${r[0].length}个ip ipFdCheck`);
+    for (let row of r[0]) {
+        console.log(row.id, row.ip);
+        if (row.ip) await ipFdCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
+    }
+    //return
+    console.log('ipFdCheck done ✨')
 
     sql = `SELECT id,ip
     FROM ip
-    WHERE  off = 1
+    WHERE  off = 1 and timezone is null
     ORDER BY update_time asc
     limit 3000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
