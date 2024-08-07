@@ -97,7 +97,7 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE  good_count_time > 0
+        WHERE  good_count_time > 0 and timezone is null
         ORDER BY id asc
         limit 1000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
@@ -110,20 +110,20 @@ async function main() {
     //return
     console.log('ipFdCheck done ✨')
 
-    sql = `SELECT id,ip
-    FROM ip
-    WHERE  off = 1 and timezone is null
-    ORDER BY update_time asc
-    limit 3000;`
-    //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
-    r = await pool.query(sql)
-    console.log(`共有${r[0].length}个ip ipProCheck`);
-    for (let row of r[0]) {
-        console.log(row.id, row.ip);
-        if (row.ip) await ipProCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
-    }
-    //return
-    console.log('ipProCheck done ✨')  
+    // sql = `SELECT id,ip
+    // FROM ip
+    // WHERE  off = 1 and timezone is null
+    // ORDER BY update_time asc
+    // limit 3000;`
+    // //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
+    // r = await pool.query(sql)
+    // console.log(`共有${r[0].length}个ip ipProCheck`);
+    // for (let row of r[0]) {
+    //     console.log(row.id, row.ip);
+    //     if (row.ip) await ipProCheck(row, page).catch(async (error) => { console.log('error: ', error.message); })
+    // }
+    // //return
+    // console.log('ipProCheck done ✨')  
 
     await pool.end()
     await page.close()
