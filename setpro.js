@@ -22,7 +22,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let tags = []
     for (let zone of zones){
         //console.log(zone)
-        for (let i=1; i<4; i++){
+        for (let i=1; i<6; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
@@ -32,7 +32,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
         FROM domain
         WHERE ip_count = 3 and off = 1
         ORDER BY rand()
-        limit 36;`
+        limit 45;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);

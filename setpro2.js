@@ -22,7 +22,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let tags = [];
     for (let zone of zones){
         //console.log(zone)
-        for (let i=4; i<11; i++){
+        for (let i=6; i<11; i++){
             tags.push(zone + i.toString().padStart(2,0))
         } 
     }
@@ -31,7 +31,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
         FROM ip_fd
         WHERE (good_count > 20 and off = 1 and good_count_time > date_sub(now(), interval 5 HOUR)) or stick = 1
         ORDER BY good_count desc
-        limit 36;`
+        limit 28;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个 ip`);
