@@ -30,8 +30,8 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     //console.log(tags)
     let sql = `SELECT id,domain
         FROM domain
-        WHERE ip_count = 3 and off = 1
-        ORDER BY rand()
+        WHERE ip_count = 3 and off = 1 and good_count_time > date_sub(now(), interval 15 HOUR)
+        ORDER BY good_count desc
         limit 45;`
 
     let r = await pool.query(sql)
