@@ -31,7 +31,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let sql = `SELECT id,domain
         FROM domain
         WHERE ip_count = 3 and off = 1 and good_count_time > date_sub(now(), interval 10 HOUR)
-        ORDER BY good_count desc
+        ORDER BY good_count_time desc, good_count desc
         limit 45;`
 
     let r = await pool.query(sql)
