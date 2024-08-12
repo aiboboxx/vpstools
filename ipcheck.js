@@ -116,7 +116,7 @@ async function main() {
     });
     let sql = `SELECT id,ip
         FROM ip_fd 
-        WHERE update_time is null and off = 0
+        WHERE ( update_time is null and off = 0 ) or ( good_count_time > date_sub(now(), interval 7 day) and off = 1 and update_time < date_sub(now(), interval 7 day) )
         ORDER BY id asc
         limit 1000;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
@@ -131,7 +131,7 @@ async function main() {
 
     sql = `SELECT id,ip
     FROM ip
-    WHERE ( update_time < date_sub(now(), interval 15 day) and off =1  ) or off = 0
+    WHERE ( good_count_time > date_sub(now(), interval 7 day) and off = 1 and update_time < date_sub(now(), interval 7 day)  ) or off = 0
     ORDER BY update_time asc
     limit 500;`
     //sql = `SELECT id,ip   FROM ip   ORDER BY update_time asc  limit 1;`
