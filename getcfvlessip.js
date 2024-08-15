@@ -20,9 +20,12 @@ let nodes = [...new Set(arr)];
 (async function () {
     //await dnsPromises.setServers(['8.8.8.8'])
     for (const node of nodes) {
-        let ip = cutString( node,'@',':',false)
-        console.log(ip);
-        await pool.query(`INSERT INTO ip_fd ( ip ) VALUES  ( "${ip}" )  ON DUPLICATE KEY UPDATE id = id`)
+        //let ip = cutString( node,'@',':',false)
+        let ip = node.trim()
+        console.log(ip)
+        //await pool.query(`INSERT INTO ip_fd ( ip ) VALUES  ( "${ip}" )  ON DUPLICATE KEY UPDATE id = id`)
+        await pool.query(`INSERT INTO ip ( ip ) VALUES  ( "${ip}" )  ON DUPLICATE KEY UPDATE id = id`)
+         .then((r) => { console.log('添加成功:', r[0].insertId, ip); sleep(200); })
     }
     console.log('getcfvlessip.js Done')
     await pool.end()
