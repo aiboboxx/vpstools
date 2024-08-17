@@ -72,8 +72,8 @@ steps: # 定义管道的执行步骤
       - export DISPLAY=:7 
       - node ipcheck.js
       - node domaincheck.js
-      #- node getfdip.js
-      #- node getfddomain.js
+      - node getfdip.js
+      - node getfddomain.js
 trigger:
   event:
   - cron
