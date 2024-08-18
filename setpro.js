@@ -31,21 +31,25 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
     let sql = `SELECT id,domain
         FROM domain
         WHERE ip_count = 3 and off = 1 and good_count_time > date_sub(now(), interval 10 HOUR)
-        ORDER BY good_count_time desc, good_count desc
+        ORDER BY good_count desc
         limit 45;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
     r[0] = getRndElements (r[0],r[0].length) //随机排序
-    //return
-    for (let i=0; i<tags.length; i++) {
-        let index = i%r[0].length
-        //console.log(index)
-        await axios.get(`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`)
-        .then( (response) => {
-            console.log(index,`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
-        }).catch( (error) => console.log(error))
+    if ( r[0].length > 10 ) {
+                //return
+        for (let i=0; i<tags.length; i++) {
+            let index = i%r[0].length
+            //console.log(index)
+            await axios.get(`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`)
+            .then( (response) => {
+                console.log(index,`${sethost_url}/sethost.php?host=${r[0][index].domain}&tags=${tags[i]}&token=dzakYE8TAga7`,response.data)
+            }).catch( (error) => console.log(error))
+        }
+
     }
+
 
     // tags = []
     // for (let zone of zones){
