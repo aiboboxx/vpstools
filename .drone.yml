@@ -78,7 +78,7 @@ trigger:
   event:
   - cron
   cron:
-  - none
+  - threehours
 ---
 kind: pipeline
 type: docker

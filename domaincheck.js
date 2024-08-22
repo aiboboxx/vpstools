@@ -26,7 +26,7 @@ const pool = mysql.createPool({
     charset: 'utf8' //字符集设置
 });
 const runId = process.env.runId
-const domainExcludes = ['yuanshare.org','yunshare.org','eu.org','.pp.ua','.free.hr','.tk','.cn']
+const domainExcludes = ['yuanshare.org','yunshare.org','eu.org','.pp.ua','.free.hr','.tk','.cn','.cc']
 const ipExcludes = ['0.0.0.0','127.0.0.1']
 let browser
 
@@ -38,13 +38,18 @@ function isIncludeArrayElement(e,array) {
 }
 
 async function getIp(row, page) {
-    await dnsPromises.resolve(row.domain.trim(), 'A')
+    if ( isIncludeArrayElement( row.domain.trim(),domainExcludes ) ) {
+        console.log('domainExcludes:',row.domain.trim())
+        await pool.query(`UPDATE domain SET off = 2 WHERE id = ${row.id}`)
+    }else{
+        await dnsPromises.resolve(row.domain.trim(), 'A')
         .then(async (result) => {
             console.log(result);
             if ( [2,3].includes(result.length) ){  //ip个数为2或3
                 if ( !isIncludeArrayElement( result,ipExcludes ) ) {
                     for (let i = 0; i < result.length; i++) {
-                        await pool.query(`INSERT INTO ip ( ip ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
+                        //await pool.query(`INSERT INTO ip ( ip ) VALUES  ( "${result[i]}" )  ON DUPLICATE KEY UPDATE id = id`)
+                        await pool.query(`INSERT IGNORE INTO ip ( ip ) VALUES  ( "${result[i]}" )`)
                         .then((r) => { console.log('添加成功:', r[0].insertId, result[i]); sleep(200); })
                     }
                     await pool.query(`UPDATE domain SET ips = ?, ip_count = ?, update_time = now(), off = 1  WHERE id = ?`, [JSON.stringify(result, null, '\t'),result.length,row.id])
@@ -59,7 +64,8 @@ async function getIp(row, page) {
                 await pool.query(`UPDATE domain SET ips = ?, ip_count = 0, update_time = now(), off = 3  WHERE id = ?`, ["",row.id])
                 console.log('error: ', error.message); 
             })
-    await sleep(300)
+        await sleep(300)
+    }
     //console.log('All done, getIp. ✨')
 }
 async function launchBrowser() {
