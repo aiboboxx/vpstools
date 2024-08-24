@@ -17,7 +17,7 @@ const pool = mysql.createPool({
     timezone: '+08:00',  //时区配置
     charset: 'utf8'      //字符集设置
 });
-const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
+const zones = ['jp','hk','sg','hk2','us','ust','gb','de','tr'];
 (async () => {
     let tags = []
     for (let zone of zones){
@@ -32,7 +32,7 @@ const zones = ['jp','hk','sg','vn','us','ust','gb','de','tr'];
         FROM domain
         WHERE ip_count = 3 and off = 1 and good_count_time > date_sub(now(), interval 10 HOUR)
         ORDER BY good_count desc
-        limit 45;`
+        limit 60;`
 
     let r = await pool.query(sql)
     console.log(`共有${r[0].length}个domain`);
